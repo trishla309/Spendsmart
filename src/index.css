@@ -3,7 +3,16 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Custom SaaS Redesign 3 - Grozio Visual Style */
+  --color-cream: #FAF7F2;
+  --color-navy: #1E3A8A;
+  --color-navy-hover: #1d4ed8;
+  --color-nearblack: #0A0A0A;
+  --color-graytext: #6B7280;
+  --color-sand-border: #E8E1D3;
 
   /* Premium soft dark blue/gray theme grays */
   --color-gray-950: #0a0d16; /* Deepest background */

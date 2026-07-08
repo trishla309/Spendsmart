@@ -127,8 +127,18 @@ const NotificationM = mongoose.models.Notification || mongoose.model("Notificati
 
 // Try connecting to MongoDB. If it fails, fall back to JSON database.
 export async function initDatabaseConnection(): Promise<boolean> {
+  const isProduction = process.env.NODE_ENV === "production";
+  const allowFallback = process.env.ALLOW_LOCAL_DB_FALLBACK === "true";
+
   if (!MONGODB_URI) {
-    console.warn("No MONGODB_URI configured. Defaulting to local JSON database.");
+    if (isProduction && !allowFallback) {
+      const msg = "CRITICAL ERROR: No MONGODB_URI configured in production. Local JSON database fallback is disabled.";
+      console.error("\n======================================================\n" + msg + "\n======================================================\n");
+      throw new Error(msg);
+    }
+    console.warn("\n======================================================\n" +
+                 "WARNING: No MONGODB_URI configured. Defaulting to local JSON database.\n" +
+                 "======================================================\n");
     isMongoConnected = false;
     return false;
   }
@@ -140,14 +150,22 @@ export async function initDatabaseConnection(): Promise<boolean> {
     mongoose.set("bufferCommands", false);
 
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 2000, // 2 seconds timeout before fallback
-      connectTimeoutMS: 2000,
+      serverSelectionTimeoutMS: 15000, // 15 seconds timeout to prevent false timeout fallbacks
+      connectTimeoutMS: 15000,
     });
     isMongoConnected = true;
     console.log("Connected to MongoDB Atlas successfully!");
     return true;
-  } catch (error) {
-    console.error("MongoDB Atlas connection failed. Falling back to local JSON database. Error:", error);
+  } catch (error: any) {
+    if (isProduction && !allowFallback) {
+      const msg = `CRITICAL ERROR: MongoDB Atlas connection failed in production. Local JSON database fallback is disabled. Error: ${error.message}`;
+      console.error("\n======================================================\n" + msg + "\n======================================================\n");
+      throw new Error(msg);
+    }
+    console.error("\n======================================================\n" +
+                  `WARNING: MongoDB Atlas connection failed. Falling back to local JSON database.\n` +
+                  `Error: ${error.message || error}\n` +
+                  "======================================================\n");
     isMongoConnected = false;
     return false;
   }

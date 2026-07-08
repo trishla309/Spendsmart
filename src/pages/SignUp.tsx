@@ -36,13 +36,12 @@ export const SignUp: React.FC<SignUpProps> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Password Requirement Rules
   const checks = {
     length: password.length >= 8,
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /\d/.test(password),
-    special: /[@$!%*?&]/.test(password),
+    special: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?/~`]/.test(password),
   };
 
   const getPasswordStrengthText = () => {
@@ -396,7 +395,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onLoginSuccess }) => {
                       ) : (
                         <span className="text-gray-600 block shrink-0">○</span>
                       )}
-                      <span className={checks.special ? "text-emerald-400" : "text-gray-500"}>Special character (@$!%*?&amp;)</span>
+                      <span className={checks.special ? "text-emerald-400" : "text-gray-500"}>Special character (e.g. !@#_&lt;&gt;~)</span>
                     </div>
                   </div>
                 </div>

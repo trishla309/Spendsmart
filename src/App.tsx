@@ -74,16 +74,17 @@ export default function App() {
   };
 
   if (loading) {
+    const isPublic = ["/", "/login", "/signup"].includes(window.location.pathname);
     return (
-      <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col items-center justify-center font-sans">
+      <div className={`min-h-screen ${isPublic ? "bg-cream text-nearblack" : "bg-gray-950 text-gray-100"} flex flex-col items-center justify-center font-sans`}>
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center animate-spin">
+          <div className={`h-10 w-10 rounded-xl ${isPublic ? "bg-navy/5 border border-navy/10 text-navy" : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"} flex items-center justify-center animate-spin`}>
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <span className="text-sm font-semibold tracking-wide text-gray-400">Loading SpendSmart Workspace...</span>
+          <span className={`text-sm font-semibold tracking-wide ${isPublic ? "text-graytext" : "text-gray-400"}`}>Loading SpendSmart Workspace...</span>
         </div>
       </div>
     );

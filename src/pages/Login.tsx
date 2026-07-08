@@ -145,7 +145,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     } catch (err: any) {
       if (err.response && err.response.status) {
         // Distinguish between validation/mismatch issues and full server errors
-        if (err.response.status === 400 || err.response.status === 401) {
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 404) {
           const rawError = err.response.data && err.response.data.error;
           if (rawError === "User Not Found." || rawError === "Invalid Password.") {
             setGeneralError("Incorrect email or password. Please try again.");

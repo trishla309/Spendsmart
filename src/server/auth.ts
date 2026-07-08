@@ -68,9 +68,14 @@ function isValidEmail(email: string): boolean {
 }
 
 function isStrongPassword(password: string): boolean {
-  // At least 8 chars, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special char
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  return passwordRegex.test(password);
+  if (password.length < 8) return false;
+  if (!/[a-z]/.test(password)) return false;
+  if (!/[A-Z]/.test(password)) return false;
+  if (!/\d/.test(password)) return false;
+  
+  // Expanded special characters list
+  const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?/~`]/;
+  return specialCharRegex.test(password);
 }
 
 // Sign Up Route
