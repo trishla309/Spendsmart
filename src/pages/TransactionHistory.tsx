@@ -37,7 +37,7 @@ const monthsOf2026 = [
 ];
 
 // Binary Search helper functions for date range filtering in an ascending/descending date-sorted array of Expenses
-export function findFirstOnOrAfterAsc(arr: Expense[], startDate: string): number {
+function findFirstOnOrAfterAsc(arr: Expense[], startDate: string): number {
   let low = 0;
   let high = arr.length - 1;
   let ans = arr.length;
@@ -53,7 +53,7 @@ export function findFirstOnOrAfterAsc(arr: Expense[], startDate: string): number
   return ans;
 }
 
-export function findLastOnOrBeforeAsc(arr: Expense[], endDate: string): number {
+function findLastOnOrBeforeAsc(arr: Expense[], endDate: string): number {
   let low = 0;
   let high = arr.length - 1;
   let ans = -1;
@@ -69,7 +69,7 @@ export function findLastOnOrBeforeAsc(arr: Expense[], endDate: string): number {
   return ans;
 }
 
-export function findFirstOnOrBeforeDesc(arr: Expense[], endDate: string): number {
+function findFirstOnOrBeforeDesc(arr: Expense[], endDate: string): number {
   let low = 0;
   let high = arr.length - 1;
   let ans = arr.length;
@@ -85,7 +85,7 @@ export function findFirstOnOrBeforeDesc(arr: Expense[], endDate: string): number
   return ans;
 }
 
-export function findLastOnOrAfterDesc(arr: Expense[], startDate: string): number {
+function findLastOnOrAfterDesc(arr: Expense[], startDate: string): number {
   let low = 0;
   let high = arr.length - 1;
   let ans = -1;
@@ -283,7 +283,7 @@ export const TransactionHistory: React.FC = () => {
   const [editError, setEditError] = useState<string | null>(null);
 
   // Undo Delete Stack state
-  const undoStack = useRef(new Stack<Expense>());
+  const undoStack = useRef(new Stack<Expense>()); // [DSA] Stack data structure for Last-In-First-Out (LIFO) undo functionality
   const [showUndoToast, setShowUndoToast] = useState(false);
   const [undoItemName, setUndoItemName] = useState("");
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -452,7 +452,7 @@ export const TransactionHistory: React.FC = () => {
   const monthExpenses = expenses.filter((exp) => exp.date.startsWith(selectedMonth));
 
   // TRIE SEARCH engine: Match title/category instantly while typing
-  const trie = useRef(new Trie<Expense>());
+  const trie = useRef(new Trie<Expense>()); // [DSA] Prefix Tree (Trie) for O(L) time complexity auto-completion and fast searching
   useEffect(() => {
     const newTrie = new Trie<Expense>();
     for (const exp of expenses) {
@@ -558,7 +558,7 @@ export const TransactionHistory: React.FC = () => {
     return 0;
   };
 
-  const sortedExpenses = sortBy === "date" ? dateFilteredExpenses : mergeSort(dateFilteredExpenses, compareExpenses);
+  const sortedExpenses = sortBy === "date" ? dateFilteredExpenses : mergeSort(dateFilteredExpenses, compareExpenses); // [DSA] Stable O(N log N) Merge Sort for ledger sorting
 
   // Group sortedExpenses by date
   const uniqueDates: string[] = [];

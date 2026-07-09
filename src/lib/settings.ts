@@ -38,7 +38,7 @@ export const saveSettings = (settings: Partial<AppSettings>) => {
   applyTheme(updated.theme);
 };
 
-export const applyTheme = (theme: "dark" | "light") => {
+const applyTheme = (theme: "dark" | "light") => {
   const root = document.documentElement;
   if (theme === "light") {
     root.classList.add("light-mode");

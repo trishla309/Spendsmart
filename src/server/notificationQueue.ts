@@ -1,5 +1,6 @@
 import { Queue } from "./dsa";
-import { Notification, Budget, Expense } from "./db";
+import { Notification, Budget, Expense, User } from "./db";
+import { sendNotificationEmail } from "./mailer";
 
 export class NotificationQueueManager {
   private static queue = new Queue<{
@@ -48,6 +49,16 @@ export class NotificationQueueManager {
               message: item.message,
               read: false,
             });
+
+            // Send notification email in background
+            try {
+              const user = await User.findOne({ _id: item.userId });
+              if (user && user.email) {
+                sendNotificationEmail(user.email, item.title, item.message, item.type).catch(e => console.error("Notification email error:", e));
+              }
+            } catch (err) {
+              console.error("Failed to send notification email:", err);
+            }
           }
         }
       }

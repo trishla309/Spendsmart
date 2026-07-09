@@ -9,15 +9,29 @@ dotenv.config();
 const DB_FILE = path.join(process.cwd(), "db.json");
 
 // Define basic models types
-export interface IUser {
+interface IUser {
   _id: string;
   name: string;
   email: string;
-  passwordHash: string;
+  phone?: string;
+  passwordHash?: string;
   createdAt: string;
 }
 
-export interface IBudget {
+interface IOtp {
+  _id: string;
+  email: string;
+  otp: string;
+  type: "login" | "signup";
+  expiresAt: string;
+  tempData?: {
+    name?: string;
+    phone?: string;
+  };
+  createdAt: string;
+}
+
+interface IBudget {
   _id: string;
   userId: string;
   month: string; // "YYYY-MM"
@@ -42,7 +56,7 @@ export interface IBudget {
   createdAt: string;
 }
 
-export interface IExpense {
+interface IExpense {
   _id: string;
   userId: string;
   amount: number;
@@ -53,7 +67,7 @@ export interface IExpense {
   createdAt: string;
 }
 
-export interface INotification {
+interface INotification {
   _id: string;
   userId: string;
   type: "info" | "warning" | "success";
@@ -68,6 +82,7 @@ interface IDatabaseSchema {
   budgets: IBudget[];
   expenses: IExpense[];
   notifications: INotification[];
+  otps: IOtp[];
 }
 
 // Check MongoDB connection availability
@@ -78,7 +93,17 @@ let isMongoConnected = false;
 const UserMongoSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true },
+  phone: { type: String },
+  passwordHash: { type: String },
+  createdAt: { type: String, default: () => new Date().toISOString() },
+});
+
+const OTPMongoSchema = new Schema({
+  email: { type: String, required: true },
+  otp: { type: String, required: true },
+  type: { type: String, required: true },
+  expiresAt: { type: String, required: true },
+  tempData: { type: Schema.Types.Mixed },
   createdAt: { type: String, default: () => new Date().toISOString() },
 });
 
@@ -124,6 +149,7 @@ const UserM = mongoose.models.User || mongoose.model("User", UserMongoSchema);
 const BudgetM = mongoose.models.Budget || mongoose.model("Budget", BudgetMongoSchema);
 const ExpenseM = mongoose.models.Expense || mongoose.model("Expense", ExpenseMongoSchema);
 const NotificationM = mongoose.models.Notification || mongoose.model("Notification", NotificationMongoSchema);
+const OtpM = mongoose.models.OTP || mongoose.model("OTP", OTPMongoSchema);
 
 // Try connecting to MongoDB. If it fails, fall back to JSON database.
 export async function initDatabaseConnection(): Promise<boolean> {
@@ -228,6 +254,7 @@ class JsonDatabase {
         budgets: [],
         expenses: [],
         notifications: [],
+        otps: [],
       };
       await fs.writeFile(DB_FILE, JSON.stringify(initialSchema, null, 2), "utf-8");
       return initialSchema;
@@ -249,6 +276,7 @@ class JsonDatabase {
       if (collectionName === "users") return UserM;
       if (collectionName === "budgets") return BudgetM;
       if (collectionName === "notifications") return NotificationM;
+      if (collectionName === "otps") return OtpM;
       return ExpenseM;
     };
 
@@ -393,9 +421,10 @@ class JsonDatabase {
   }
 }
 
-export const db = new JsonDatabase();
+const db = new JsonDatabase();
 
 export const User = db.getModel("users");
 export const Budget = db.getModel("budgets");
 export const Expense = db.getModel("expenses");
 export const Notification = db.getModel("notifications");
+export const OTP = db.getModel("otps");

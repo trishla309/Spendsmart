@@ -1,6 +1,6 @@
 import { api } from "./api";
 
-export interface BackupBudget {
+interface BackupBudget {
   month: string;
   pocketMoney: number;
   savingsGoal: number;

@@ -1,18 +1,95 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, AlertCircle, Loader2 } from "lucide-react";
+import { api } from "../lib/api";
 
-export function LandingPage() {
+
+interface LandingPageProps {
+  onLoginSuccess?: (token: string, user: { id: string; name: string; email: string }) => void;
+}
+
+export function LandingPage({ onLoginSuccess }: LandingPageProps = {}) {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
+  // Auth state
+  const [step, setStep] = useState<"email" | "signup-details" | "otp">("email");
+  const [authType, setAuthType] = useState<"login" | "signup">("login");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(false);
 
-    const handleScroll = () => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    if (!email) {
+      setAuthError("Please enter your email.");
+      return;
+    }
+    setAuthLoading(true);
+    try {
+      // Try requesting a login OTP
+      await api.post("/auth/request-otp", { email });
+      setAuthType("login");
+      setStep("otp");
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        // User not found, proceed to signup
+        setAuthType("signup");
+        setStep("signup-details");
+      } else {
+        setAuthError(err.response?.data?.error || "An error occurred.");
+      }
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    if (!name) {
+      setAuthError("Please enter your name.");
+      return;
+    }
+    setAuthLoading(true);
+    try {
+      await api.post("/auth/signup-request", { name, email, phone });
+      setStep("otp");
+    } catch (err: any) {
+      setAuthError(err.response?.data?.error || "An error occurred.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    if (!otp) {
+      setAuthError("Please enter the OTP.");
+      return;
+    }
+    setAuthLoading(true);
+    try {
+      const response = await api.post("/auth/verify-otp", { email, otp, type: authType });
+      const { token, user } = response.data;
+      if (onLoginSuccess) {
+        onLoginSuccess(token, user);
+      }
+      navigate("/dashboard");
+    } catch (err: any) {
+      setAuthError(err.response?.data?.error || "Incorrect OTP.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {    const handleScroll = () => {
       setScrolled(window.scrollY > 16);
     };
     window.addEventListener("scroll", handleScroll);
@@ -54,47 +131,31 @@ export function LandingPage() {
           </nav>
 
           <div className="hidden md:flex items-center gap-5">
-            {isAuthenticated ? (
-              <>
-                <button
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    setIsAuthenticated(false);
-                    window.location.reload();
-                  }}
-                  className="text-sm font-normal text-nearblack/80 hover:text-navy transition-colors cursor-pointer"
-                  id="landing-signout-btn"
-                >
-                  Sign Out
-                </button>
-                <Link
-                  to="/dashboard"
-                  className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-md transition-all shadow-xs"
-                  id="landing-dashboard-btn"
-                >
-                  Workspace
-                  <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="text-sm font-normal text-nearblack/80 hover:text-navy transition-colors"
-                  id="landing-login-btn"
-                >
-                  Log In
-                </Link>
-                <Link
-                  to="/signup"
-                  className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-md transition-all shadow-xs"
-                  id="landing-signup-btn"
-                >
-                  Open Account
-                </Link>
-              </>
-            )}
+            <a
+              href="#login"
+              onClick={(e) => {
+                e.preventDefault();
+                setAuthType("login");
+                setStep("email");
+                document.getElementById("login")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="text-sm font-medium text-nearblack/80 hover:text-navy transition-colors"
+            >
+              Log In
+            </a>
+            <a
+              href="#login"
+              onClick={(e) => {
+                e.preventDefault();
+                setAuthType("signup");
+                setStep("signup-details");
+                document.getElementById("login")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-md transition-all shadow-xs"
+              id="landing-login-btn"
+            >
+              Create Account
+            </a>
           </div>
 
           {/* Mobile menu button */}
@@ -123,47 +184,33 @@ export function LandingPage() {
             <a href="#problem" onClick={() => setMobileMenuOpen(false)} className="text-sm text-nearblack/80 py-2 border-b border-sand-border/50">The Problem</a>
             <a href="#capabilities" onClick={() => setMobileMenuOpen(false)} className="text-sm text-nearblack/80 py-2 border-b border-sand-border/50">Capabilities</a>
             <a href="#ledger" onClick={() => setMobileMenuOpen(false)} className="text-sm text-nearblack/80 py-2 border-b border-sand-border/50">Architecture</a>
-            <div className="flex items-center gap-3 pt-2">
-              {isAuthenticated ? (
-                <>
-                  <button
-                    onClick={() => {
-                      localStorage.removeItem("token");
-                      localStorage.removeItem("user");
-                      setIsAuthenticated(false);
-                      setMobileMenuOpen(false);
-                      window.location.reload();
-                    }}
-                    className="flex-1 py-2 text-center text-sm border border-sand-border rounded-md"
-                  >
-                    Sign Out
-                  </button>
-                  <Link
-                    to="/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex-1 py-2 text-center text-sm font-medium text-white bg-navy rounded-md"
-                  >
-                    Workspace
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex-1 py-2 text-center text-sm border border-sand-border rounded-md"
-                  >
-                    Log In
-                  </Link>
-                  <Link
-                    to="/signup"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex-1 py-2 text-center text-sm font-medium text-white bg-navy rounded-md"
-                  >
-                    Open Account
-                  </Link>
-                </>
-              )}
+            <div className="flex flex-col gap-3 pt-2">
+              <a
+                href="#login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setAuthType("login");
+                  setStep("email");
+                  setMobileMenuOpen(false);
+                  document.getElementById("login")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="w-full py-2 text-center text-sm font-medium text-nearblack bg-cream border border-sand-border rounded-md"
+              >
+                Log In
+              </a>
+              <a
+                href="#login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setAuthType("signup");
+                  setStep("signup-details");
+                  setMobileMenuOpen(false);
+                  document.getElementById("login")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="w-full py-2 text-center text-sm font-medium text-white bg-navy rounded-md"
+              >
+                Create Account
+              </a>
             </div>
           </div>
         )}
@@ -189,16 +236,20 @@ export function LandingPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
-                <Link
-                  to={isAuthenticated ? "/dashboard" : "/signup"}
-                  className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-md transition-colors shadow-xs"
+                <button
+                  onClick={() => {
+                    setAuthType("signup");
+                    setStep("signup-details");
+                    document.getElementById("login")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-md transition-colors shadow-xs"
                 >
-                  {isAuthenticated ? "Open Ledger" : "Start Personal Ledger"}
-                  <ArrowRight className="ml-2.5 h-3.5 w-3.5" />
-                </Link>
+                  Create an Account
+                  <ArrowRight className="ml-2.5 h-3.5 w-3.5 text-white/70" />
+                </button>
                 <a
                   href="#capabilities"
-                  className="inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-nearblack bg-white border border-sand-border hover:border-nearblack/30 rounded-md transition-colors"
+                  className="inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-nearblack bg-white border border-sand-border hover:border-nearblack/30 rounded-md transition-colors shadow-xs"
                 >
                   Review Specifications
                 </a>
@@ -221,56 +272,171 @@ export function LandingPage() {
               </div>
             </div>
 
-            {/* Right Column: Refined Abstract Structural Visual (No UI Mockup) */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            {/* Right Column: Login Form */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end" id="login">
               <div className="w-full max-w-sm bg-white border border-sand-border p-8 rounded-xl shadow-xs">
-                <div className="flex items-center justify-between pb-6 border-b border-sand-border">
-                  <span className="font-mono text-xs text-graytext">LEDGER STATE</span>
-                  <span className="font-mono text-xs text-navy font-medium">ACT-8402</span>
-                </div>
-
-                <div className="py-6 space-y-5">
-                  <div>
-                    <div className="flex justify-between text-xs mb-1.5 font-mono">
-                      <span className="text-graytext">RESERVE RATIO</span>
-                      <span className="text-nearblack font-medium">74.2%</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-cream rounded-full overflow-hidden border border-sand-border">
-                      <div className="h-full bg-navy w-[74%]"></div>
-                    </div>
+                <h2 className="text-xl font-display font-medium text-nearblack mb-2">
+                  {authType === "signup" ? "Create Account" : "Sign In"}
+                </h2>
+                <p className="text-xs text-graytext mb-6">
+                  {authType === "signup" ? "Set up your personal ledger." : "Access your personal ledger."}
+                </p>
+                
+                {authError && (
+                  <div className="mb-4 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs p-3 rounded-lg flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{authError}</span>
                   </div>
+                )}
 
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <div className="p-3.5 bg-cream/70 border border-sand-border rounded-lg">
-                      <span className="block font-mono text-[10px] text-graytext uppercase tracking-wider mb-1">CARRY-OVER</span>
-                      <span className="font-display text-xl text-nearblack font-medium">+$142.50</span>
+                {step === "email" && (
+                  <form onSubmit={handleEmailSubmit} className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-medium text-nearblack">Email Address</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-cream/50 border border-sand-border focus:border-navy text-sm rounded-lg outline-none transition-colors"
+                        placeholder="student@example.com"
+                        required
+                      />
                     </div>
-                    <div className="p-3.5 bg-cream/70 border border-sand-border rounded-lg">
-                      <span className="block font-mono text-[10px] text-graytext uppercase tracking-wider mb-1">ALLOTTED</span>
-                      <span className="font-display text-xl text-nearblack font-medium">$450.00</span>
+                    <button
+                      type="submit"
+                      disabled={authLoading}
+                      className="w-full mt-2 py-3 bg-navy hover:bg-navy-hover text-white text-sm font-medium rounded-lg transition-colors flex justify-center items-center gap-2"
+                    >
+                      {authLoading ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Loading...</>
+                      ) : (
+                        "Continue with Email"
+                      )}
+                    </button>
+                    <div className="mt-4 pt-4 border-t border-sand-border flex flex-col gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthType("signup");
+                          setStep("signup-details");
+                        }}
+                        className="text-xs text-nearblack hover:text-navy hover:underline font-medium text-center"
+                      >
+                        Don't have an account? Create one
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setEmail("student@example.com"); handleEmailSubmit({ preventDefault: () => {} } as any); }}
+                        className="text-xs text-navy hover:underline font-medium text-center"
+                      >
+                        Try Demo Account
+                      </button>
                     </div>
-                  </div>
+                  </form>
+                )}
 
-                  <div className="pt-2 border-t border-sand-border space-y-2.5 font-mono text-xs">
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-graytext">INDEX DEPTH</span>
-                      <span className="text-nearblack">8 Categories</span>
+                {step === "signup-details" && (
+                  <form onSubmit={handleSignupSubmit} className="flex flex-col gap-4">
+                    <div className="text-sm font-medium text-navy bg-cream/50 p-3 rounded-lg border border-sand-border mb-2">
+                      Let's set up your account.
                     </div>
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-graytext">TRANSACTION SYNC</span>
-                      <span className="text-nearblack">Deterministic</span>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-medium text-nearblack">Email Address</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-cream/50 border border-sand-border focus:border-navy text-sm rounded-lg outline-none transition-colors"
+                        placeholder="student@example.com"
+                        required
+                      />
                     </div>
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-graytext">STABILITY</span>
-                      <span className="text-navy font-medium">Verified</span>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-medium text-nearblack">Full Name</label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-cream/50 border border-sand-border focus:border-navy text-sm rounded-lg outline-none transition-colors"
+                        placeholder="Rahul Sharma"
+                        required
+                      />
                     </div>
-                  </div>
-                </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-medium text-nearblack">Phone Number (Optional)</label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-cream/50 border border-sand-border focus:border-navy text-sm rounded-lg outline-none transition-colors"
+                        placeholder="+91 98765 43210"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={authLoading}
+                      className="w-full mt-2 py-3 bg-navy hover:bg-navy-hover text-white text-sm font-medium rounded-lg transition-colors flex justify-center items-center gap-2"
+                    >
+                      {authLoading ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Sending OTP...</>
+                      ) : (
+                        "Send OTP"
+                      )}
+                    </button>
+                    <div className="mt-4 pt-4 border-t border-sand-border text-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthType("login");
+                          setStep("email");
+                        }}
+                        className="text-xs text-graytext hover:text-navy hover:underline"
+                      >
+                        Already have an account? Log In
+                      </button>
+                    </div>
+                  </form>
+                )}
 
-                <div className="pt-4 border-t border-sand-border flex items-center justify-between font-mono text-[11px] text-graytext">
-                  <span>STRUCTURAL INTEGRITY</span>
-                  <span>O(L) / O(N log N)</span>
-                </div>
+                {step === "otp" && (
+                  <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
+                    <div className="text-sm text-graytext mb-2">
+                      We've sent a 6-digit verification code to <strong className="text-nearblack">{email}</strong>.
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-medium text-nearblack">Verification Code (OTP)</label>
+                      <input
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        className="w-full px-3 py-2.5 text-center tracking-widest font-mono font-medium text-lg bg-cream/50 border border-sand-border focus:border-navy rounded-lg outline-none transition-colors"
+                        placeholder="000000"
+                        maxLength={6}
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={authLoading}
+                      className="w-full mt-2 py-3 bg-navy hover:bg-navy-hover text-white text-sm font-medium rounded-lg transition-colors flex justify-center items-center gap-2"
+                    >
+                      {authLoading ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Verifying...</>
+                      ) : (
+                        "Verify & Sign In"
+                      )}
+                    </button>
+                    <div className="mt-2 text-center">
+                      <button
+                        type="button"
+                        onClick={() => { setStep("email"); setOtp(""); }}
+                        className="text-xs text-graytext hover:text-navy underline"
+                      >
+                        Use a different email
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
 
@@ -412,31 +578,13 @@ export function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              {isAuthenticated ? (
-                <Link
-                  to="/dashboard"
-                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-medium text-navy bg-white hover:bg-cream rounded-md transition-colors shadow-xs"
-                >
-                  Enter Workspace
-                  <ArrowRight className="ml-2.5 h-4 w-4" />
-                </Link>
-              ) : (
-                <>
-                  <Link
-                    to="/signup"
-                    className="inline-flex items-center justify-center px-8 py-4 text-sm font-medium text-navy bg-white hover:bg-cream rounded-md transition-colors shadow-xs"
-                  >
-                    Create Free Account
-                    <ArrowRight className="ml-2.5 h-4 w-4" />
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center justify-center px-8 py-4 text-sm font-medium text-white border border-white/30 hover:border-white rounded-md transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                </>
-              )}
+              <a
+                href="#login"
+                className="inline-flex items-center justify-center px-8 py-4 text-sm font-medium text-navy bg-white hover:bg-cream rounded-md transition-colors shadow-xs"
+              >
+                Sign In To Ledger
+                <ArrowRight className="ml-2.5 h-4 w-4" />
+              </a>
             </div>
 
             <div className="mt-14 pt-10 border-t border-white/15 flex flex-wrap items-center gap-8 font-mono text-xs text-cream/60">

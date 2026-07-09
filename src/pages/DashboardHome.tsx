@@ -237,7 +237,7 @@ export const DashboardHome: React.FC = () => {
   const [editBudgetLoading, setEditBudgetLoading] = useState(false);
 
   // Undo Delete Stack state
-  const undoStack = useRef(new Stack<Expense>());
+  const undoStack = useRef(new Stack<Expense>()); // [DSA] Stack data structure for Last-In-First-Out (LIFO) undo functionality
   const [showUndoToast, setShowUndoToast] = useState(false);
   const [undoItemName, setUndoItemName] = useState("");
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -571,7 +571,7 @@ export const DashboardHome: React.FC = () => {
 
   // TRIE SEARCH engine: Match title/category instantly while typing
   // We rebuild the Trie when the expenses array updates
-  const trie = useRef(new Trie<Expense>());
+  const trie = useRef(new Trie<Expense>()); // [DSA] Prefix Tree (Trie) for O(L) time complexity auto-completion and fast searching
   useEffect(() => {
     const newTrie = new Trie<Expense>();
     for (const exp of expenses) {
@@ -648,7 +648,7 @@ export const DashboardHome: React.FC = () => {
     return 0;
   };
 
-  const sortedExpenses = mergeSort(filteredExpenses, compareExpenses);
+  const sortedExpenses = mergeSort(filteredExpenses, compareExpenses); // [DSA] Stable O(N log N) Merge Sort for ledger sorting
 
   // Recharts Pie Chart Data
   const COLORS = [

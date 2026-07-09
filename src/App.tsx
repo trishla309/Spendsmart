@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { api } from "./lib/api";
 import { User } from "./types";
-import { Login } from "./pages/Login";
-import { SignUp } from "./pages/SignUp";
 import { BudgetPlanning } from "./pages/BudgetPlanning";
 import { DashboardHome } from "./pages/DashboardHome";
 import { TransactionHistory } from "./pages/TransactionHistory";
@@ -74,7 +72,7 @@ export default function App() {
   };
 
   if (loading) {
-    const isPublic = ["/", "/login", "/signup"].includes(window.location.pathname);
+    const isPublic = ["/"].includes(window.location.pathname);
     return (
       <div className={`min-h-screen ${isPublic ? "bg-cream text-nearblack" : "bg-gray-950 text-gray-100"} flex flex-col items-center justify-center font-sans`}>
         <div className="flex flex-col items-center gap-4">
@@ -93,33 +91,18 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Landing Page */}
+        {/* Public Landing Page (Now includes Login) */}
         <Route
           path="/"
-          element={<LandingPage />}
+          element={
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <LandingPage onLoginSuccess={handleLoginSuccess} />
+            )
+          }
         />
 
-        {/* Public Auth Routes */}
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/budget" replace />
-            ) : (
-              <Login onLoginSuccess={handleLoginSuccess} />
-            )
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/budget" replace />
-            ) : (
-              <SignUp onLoginSuccess={handleLoginSuccess} />
-            )
-          }
-        />
 
         {/* Protected Dashboard/Planning Routes */}
         <Route
@@ -134,7 +117,7 @@ export default function App() {
                 <BudgetPlanning />
               </DashboardLayout>
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate to="/" replace />
             )
           }
         />
@@ -151,7 +134,7 @@ export default function App() {
                 <DashboardHome />
               </DashboardLayout>
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate to="/" replace />
             )
           }
         />
@@ -168,7 +151,7 @@ export default function App() {
                 <TransactionHistory />
               </DashboardLayout>
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate to="/" replace />
             )
           }
         />
@@ -185,7 +168,7 @@ export default function App() {
                 <Analytics />
               </DashboardLayout>
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate to="/" replace />
             )
           }
         />
@@ -202,7 +185,7 @@ export default function App() {
                 <SettingsPage onLogout={handleLogout} />
               </DashboardLayout>
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate to="/" replace />
             )
           }
         />
@@ -210,7 +193,7 @@ export default function App() {
         {/* Fallback routing */}
         <Route
           path="*"
-          element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />}
+          element={<Navigate to={isAuthenticated ? "/dashboard" : "/"} replace />}
         />
       </Routes>
     </BrowserRouter>

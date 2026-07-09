@@ -48,21 +48,21 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
         });
         isRolledOver = true;
       } else {
-        // Standard initial fallback
+        // Standard initial fallback (Start at 0 for fresh users)
         budget = await Budget.create({
           userId,
           month,
-          pocketMoney: 1000,
-          savingsGoal: 200,
+          pocketMoney: 0,
+          savingsGoal: 0,
           allocated: {
-            food: 250,
-            transport: 150,
-            shopping: 150,
-            entertainment: 100,
-            emergency: 100,
-            stationery: 50,
-            savings: 150,
-            other: 50,
+            food: 0,
+            transport: 0,
+            shopping: 0,
+            entertainment: 0,
+            emergency: 0,
+            stationery: 0,
+            savings: 0,
+            other: 0,
           },
         });
         isRolledOver = true;
@@ -460,7 +460,7 @@ router.post("/", authMiddleware, async (req: AuthenticatedRequest, res: Response
 
   if (allocatedSum > pocketMoney) {
     res.status(400).json({
-      error: `Total allocated amount ($${allocatedSum}) cannot exceed Monthly Pocket Money ($${pocketMoney}). Remaining: $${pocketMoney - allocatedSum}`,
+      error: `Total allocated amount (₹${allocatedSum}) cannot exceed Monthly Pocket Money (₹${pocketMoney}). Remaining: ₹${pocketMoney - allocatedSum}`,
     });
     return;
   }

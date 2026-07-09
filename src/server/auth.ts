@@ -1,7 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User, Budget, Expense } from "./db";
+import { User, Budget, Expense, OTP } from "./db";
+import { sendOTP, sendWelcomeEmail } from "./mailer";
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || "spendsmart_secret_key_for_jwt_tokens_123";
@@ -78,24 +79,53 @@ function isStrongPassword(password: string): boolean {
   return specialCharRegex.test(password);
 }
 
-// Sign Up Route
-router.post("/signup", async (req: Request, res: Response): Promise<void> => {
-  const { name, email, password } = req.body;
+// Helper to generate 6-digit OTP
+function generateOTP(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
-  if (!name || !email || !password) {
-    res.status(400).json({ error: "Name, email, and password are required." });
-    return;
-  }
-
-  if (!isValidEmail(email)) {
+// Request OTP for Login
+router.post("/request-otp", async (req: Request, res: Response): Promise<void> => {
+  const { email } = req.body;
+  if (!email || !isValidEmail(email)) {
     res.status(400).json({ error: "Please enter a valid email address." });
     return;
   }
 
-  if (!isStrongPassword(password)) {
-    res.status(400).json({
-      error: "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.",
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      res.status(404).json({ error: "User not found. Please create an account first." });
+      return;
+    }
+
+    const otp = generateOTP();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
+
+    // Clear old OTPs for this email
+    await OTP.deleteMany({ email: email.toLowerCase() });
+
+    await OTP.create({
+      email: email.toLowerCase(),
+      otp,
+      type: "login",
+      expiresAt,
     });
+
+    await sendOTP(email.toLowerCase(), otp, "login");
+
+    res.json({ message: "OTP sent successfully." });
+  } catch (error) {
+    console.error("Error requesting OTP:", error);
+    res.status(500).json({ error: "An error occurred while requesting OTP." });
+  }
+});
+
+// Request OTP for Signup
+router.post("/signup-request", async (req: Request, res: Response): Promise<void> => {
+  const { name, email, phone } = req.body;
+  if (!name || !email || !isValidEmail(email)) {
+    res.status(400).json({ error: "Name and a valid email are required." });
     return;
   }
 
@@ -106,60 +136,81 @@ router.post("/signup", async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
-      name,
+    const otp = generateOTP();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
+
+    // Clear old OTPs for this email
+    await OTP.deleteMany({ email: email.toLowerCase() });
+
+    await OTP.create({
       email: email.toLowerCase(),
-      passwordHash,
+      otp,
+      type: "signup",
+      expiresAt,
+      tempData: { name, phone },
     });
 
-    const token = jwt.sign(
-      { id: newUser._id, email: newUser.email, name: newUser.name },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    await sendOTP(email.toLowerCase(), otp, "signup");
 
-    res.status(201).json({
-      token,
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-      },
-    });
+    res.json({ message: "OTP sent successfully." });
   } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({ error: "An error occurred during sign up." });
+    console.error("Error requesting signup OTP:", error);
+    res.status(500).json({ error: "An error occurred while requesting OTP." });
   }
 });
 
-// Login Route
-router.post("/login", async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    res.status(400).json({ error: "Email and password are required." });
+// Verify OTP (for both login and signup)
+router.post("/verify-otp", async (req: Request, res: Response): Promise<void> => {
+  const { email, otp, type } = req.body;
+  if (!email || !otp || !type) {
+    res.status(400).json({ error: "Email, OTP, and type are required." });
     return;
   }
 
   try {
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      res.status(404).json({ error: "User Not Found." });
+    const otpRecord = await OTP.findOne({ email: email.toLowerCase(), otp, type });
+    if (!otpRecord) {
+      res.status(401).json({ error: "Invalid OTP." });
       return;
     }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) {
-      res.status(401).json({ error: "Invalid Password." });
+    if (new Date(otpRecord.expiresAt) < new Date()) {
+      res.status(401).json({ error: "OTP has expired. Please request a new one." });
       return;
     }
 
+    let user;
+
+    if (type === "signup") {
+      // Create user
+      const name = otpRecord.tempData?.name || "New User";
+      const phone = otpRecord.tempData?.phone || "";
+      
+      user = await User.create({
+        name,
+        email: email.toLowerCase(),
+        phone,
+      });
+      
+      // Send welcome email in background
+      sendWelcomeEmail(email.toLowerCase(), name).catch(err => console.error("Welcome email error:", err));
+    } else {
+      user = await User.findOne({ email: email.toLowerCase() });
+      if (!user) {
+        res.status(404).json({ error: "User not found." });
+        return;
+      }
+    }
+
+    // Generate JWT
     const token = jwt.sign(
       { id: user._id, email: user.email, name: user.name },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
+
+    // Clean up used OTP
+    await OTP.deleteOne({ _id: otpRecord._id });
 
     res.json({
       token,
@@ -167,11 +218,12 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "An error occurred during login." });
+    console.error("Error verifying OTP:", error);
+    res.status(500).json({ error: "An error occurred during verification." });
   }
 });
 

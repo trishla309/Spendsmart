@@ -6,7 +6,7 @@ import authRouter, { seedDemoUser } from "./src/server/auth";
 import budgetRouter from "./src/server/budget";
 import expensesRouter from "./src/server/expenses";
 import notificationsRouter from "./src/server/notifications";
-
+import { initCronJobs } from "./src/server/cron";
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -31,6 +31,9 @@ async function startServer() {
   app.use("/api/budget", budgetRouter);
   app.use("/api/expenses", expensesRouter);
   app.use("/api/notifications", notificationsRouter);
+
+  // Initialize Background Tasks
+  initCronJobs();
 
   // Database Connection Status Route
   app.get("/api/db-status", (req, res) => {
