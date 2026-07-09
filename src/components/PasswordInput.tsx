@@ -18,7 +18,8 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
 
   const toggleShowPassword = (e: React.MouseEvent) => {
     e.preventDefault();
-    setShowPassword(!showPassword);
+    e.stopPropagation();
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -40,33 +41,36 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
         <button
           type="button"
           onClick={toggleShowPassword}
-          className="absolute right-3 p-1.5 text-gray-500 hover:text-gray-300 transition-colors focus:outline-none"
-          tabIndex={-1}
+          aria-label={showPassword ? "Hide password" : "Show password"}
+          title={showPassword ? "Hide password" : "Show password"}
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 p-2 text-gray-400 hover:text-emerald-400 active:scale-95 transition-all focus:outline-none cursor-pointer flex items-center justify-center rounded-md"
           id={`${id}-toggle`}
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {showPassword ? (
-              <motion.div
-                key="eye-off"
-                initial={{ opacity: 0, scale: 0.8, rotate: -15 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={{ opacity: 0, scale: 0.8, rotate: 15 }}
-                transition={{ duration: 0.15 }}
-              >
-                <EyeOff className="h-4 w-4" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="eye-on"
-                initial={{ opacity: 0, scale: 0.8, rotate: 15 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={{ opacity: 0, scale: 0.8, rotate: -15 }}
-                transition={{ duration: 0.15 }}
-              >
-                <Eye className="h-4 w-4" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <span className="pointer-events-none flex items-center justify-center">
+            <AnimatePresence mode="wait" initial={false}>
+              {showPassword ? (
+                <motion.div
+                  key="eye-off"
+                  initial={{ opacity: 0, scale: 0.8, rotate: -15 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, rotate: 15 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <EyeOff className="h-4 w-4 text-emerald-400" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="eye-on"
+                  initial={{ opacity: 0, scale: 0.8, rotate: 15 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, rotate: -15 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Eye className="h-4 w-4" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </span>
         </button>
       </div>
       {error && (
