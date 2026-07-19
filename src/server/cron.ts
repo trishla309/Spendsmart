@@ -79,10 +79,8 @@ export function initCronJobs() {
         if (!budget) continue;
 
         // Find all expenses for the user in the previous month
-        const monthExpenses = await Expense.find({ 
-          userId: user._id,
-          date: { $regex: `^${prevMonthStr}` } 
-        });
+        const allExpenses = await Expense.find({ userId: user._id });
+        const monthExpenses = allExpenses.filter((e: any) => e.date && e.date.startsWith(prevMonthStr));
         
         const spendingExpenses = monthExpenses.filter((e: any) => e.category !== "income" && e.category !== "savings");
         const savingsExpenses = monthExpenses.filter((e: any) => e.category === "savings");
