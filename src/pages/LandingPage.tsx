@@ -402,6 +402,11 @@ export function LandingPage({ onLoginSuccess }: LandingPageProps = {}) {
                   <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
                     <div className="text-sm text-graytext mb-2">
                       We've sent a 6-digit verification code to <strong className="text-nearblack">{email}</strong>.
+                      {email === "student@example.com" && (
+                        <div className="mt-2 p-2 bg-navy/5 border border-navy/10 rounded-md text-navy font-medium text-xs">
+                          Demo Account: Use OTP <strong>123456</strong>
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-medium text-nearblack">Verification Code (OTP)</label>
