@@ -35,13 +35,22 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     .filter((m) => m.direction === "to_savings")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
+  const totalMovedFromCurrentBalance = movements
+    .filter((m) => m.direction === "to_savings" && m.fundingSource !== "previous_savings")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  const totalPreviousSavingsRecorded = movements
+    .filter((m) => m.direction === "to_savings" && m.fundingSource === "previous_savings")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
   const totalReturnedFromSavings = movements
     .filter((m) => m.direction === "from_savings")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
-  // Cumulative Available Balance (does not reset across month changes)
+  // Cumulative Available Balance: Only transfers from current balance reduce spendable funds.
+  // Existing previous/starting savings already saved in the past do not reduce current available balance.
   const availableBalance =
-    allIncome + totalReturnedFromSavings - allSpendingExpenses - totalMovedToSavings;
+    allIncome + totalReturnedFromSavings - allSpendingExpenses - totalMovedFromCurrentBalance;
 
   // Cumulative Cash Savings
   const cashSavings = movements
@@ -96,8 +105,16 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     .filter((m) => m.direction === "from_savings" && m.source === "gpay_upi")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
-  // Net Savings for Selected Month = Money Moved To Savings - Money Returned From Savings
-  const netMonthSavings = monthMovedToSavings - monthReturnedFromSavings;
+  const monthMovedFromCurrentBalance = monthMovements
+    .filter((m) => m.direction === "to_savings" && m.fundingSource !== "previous_savings")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  const monthPreviousSavingsRecorded = monthMovements
+    .filter((m) => m.direction === "to_savings" && m.fundingSource === "previous_savings")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  // Net Savings for Selected Month = Money Moved from current income/pocket money - Money Returned
+  const netMonthSavings = monthMovedFromCurrentBalance - monthReturnedFromSavings;
   const monthSavingsProgress = Math.max(0, netMonthSavings);
   const savingsGoalPercentage =
     monthSavingsGoal > 0
@@ -110,6 +127,8 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     allIncome,
     allSpendingExpenses,
     totalMovedToSavings,
+    totalMovedFromCurrentBalance,
+    totalPreviousSavingsRecorded,
     totalReturnedFromSavings,
     availableBalance,
     cashSavings,
@@ -118,6 +137,8 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     totalMoney,
     monthSavingsGoal,
     monthMovedToSavings,
+    monthMovedFromCurrentBalance,
+    monthPreviousSavingsRecorded,
     monthReturnedFromSavings,
     monthMovedToCash,
     monthMovedToGpay,
@@ -165,6 +186,8 @@ router.get("/", authMiddleware, async (req: AuthenticatedRequest, res: Response)
       monthMovedToGpay: data.monthMovedToGpay,
       monthReturnedFromCash: data.monthReturnedFromCash,
       monthReturnedFromGpay: data.monthReturnedFromGpay,
+      previousSavingsRecorded: data.totalPreviousSavingsRecorded,
+      monthPreviousSavingsRecorded: data.monthPreviousSavingsRecorded,
       netMonthSavings: data.netMonthSavings,
       monthSavingsProgress: data.monthSavingsProgress,
       savingsGoalPercentage: data.savingsGoalPercentage,
@@ -185,7 +208,7 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
     return;
   }
 
-  const { amount, direction, source, date, note } = req.body;
+  const { amount, direction, source, fundingSource = "current_balance", date, note } = req.body;
 
   // 1. Validate Amount
   const numAmount = Number(amount);
@@ -214,62 +237,78 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
 
     // Validate transfer limits
     if (direction === "to_savings") {
-      if (safeAmount > current.availableBalance) {
-        res.status(400).json({
-          error: `Insufficient Available Balance. You have ₹${current.availableBalance} available for spending, but tried to move ₹${safeAmount}.`,
-        });
-        return;
+      // If saving from current spendable balance, ensure user has enough available balance
+      if (fundingSource === "current_balance") {
+        if (safeAmount > current.availableBalance) {
+          res.status(400).json({
+            error: `Insufficient Available Balance. You have ₹${current.availableBalance} available for spending, but tried to move ₹${safeAmount}. (If this is past savings already saved before, choose 'Previous Savings' instead).`,
+          });
+          return;
+        }
       }
+      // If fundingSource is "previous_savings", user is recording starting/past savings from previous months;
+      // No availableBalance bound check needed!
     } else if (direction === "from_savings") {
-      if (source === "cash" && safeAmount > current.cashSavings) {
+      // Withdraw bound check
+      const maxAvailableInSource = source === "cash" ? current.cashSavings : current.gpaySavings;
+      const sourceName = source === "cash" ? "Cash Savings" : "GPay / UPI Savings";
+
+      if (safeAmount > maxAvailableInSource) {
         res.status(400).json({
-          error: `Insufficient Cash Savings. You currently have ₹${current.cashSavings} in Cash Savings, but tried to withdraw ₹${safeAmount}.`,
-        });
-        return;
-      }
-      if (source === "gpay_upi" && safeAmount > current.gpaySavings) {
-        res.status(400).json({
-          error: `Insufficient GPay / UPI Savings. You currently have ₹${current.gpaySavings} in GPay / UPI Savings, but tried to withdraw ₹${safeAmount}.`,
+          error: `Cannot withdraw ₹${safeAmount} from ${sourceName}. You only have ₹${maxAvailableInSource} saved there.`,
         });
         return;
       }
     }
 
-    const transferDate = date && String(date).trim() ? String(date).trim() : new Date().toISOString().split("T")[0];
-
-    // Create the savings movement
+    // Record movement in Database
     const newMovement = await SavingsMovement.create({
       userId,
       amount: safeAmount,
       direction,
       source,
-      date: transferDate,
-      note: note ? String(note).trim() : "",
+      fundingSource: direction === "to_savings" ? (fundingSource || "current_balance") : "current_balance",
+      date: date || new Date().toISOString().split("T")[0],
+      note: note || "",
     });
 
-    // Enqueue in-app notification
-    const sourceLabel = source === "cash" ? "Cash" : "GPay / UPI";
+    const sourceLabel = source === "cash" ? "Cash Savings" : "GPay / UPI Savings";
+
+    // Enqueue notification
     if (direction === "to_savings") {
-      NotificationQueueManager.enqueueNotification(
-        userId,
-        "success",
-        "Moved to Savings",
-        `Successfully transferred ₹${safeAmount} to ${sourceLabel} Savings.`
-      );
+      if (fundingSource === "previous_savings") {
+        NotificationQueueManager.enqueueNotification(
+          userId,
+          "success",
+          "Previous Savings Recorded",
+          `Recorded ₹${safeAmount} of previous/starting savings in ${sourceLabel}. Future savings added in new months will build on top of this.`
+        );
+      } else {
+        NotificationQueueManager.enqueueNotification(
+          userId,
+          "success",
+          "Moved to Savings",
+          `Moved ₹${safeAmount} from Available Balance to ${sourceLabel}.`
+        );
+      }
     } else {
       NotificationQueueManager.enqueueNotification(
         userId,
-        "success",
+        "info",
         "Returned to Available Balance",
-        `Successfully transferred ₹${safeAmount} from ${sourceLabel} Savings back to Available Balance.`
+        `Returned ₹${safeAmount} from ${sourceLabel} to Available Balance.`
       );
     }
 
-    // Get updated financials
-    const updated = await getUserCumulativeFinancials(userId, transferDate.substring(0, 7));
-
+    // Return fresh updated snapshot
+    const updated = await getUserCumulativeFinancials(userId);
     res.status(201).json({
-      message: direction === "to_savings" ? "Successfully moved money to savings" : "Successfully moved money back to available balance",
+      message:
+        direction === "to_savings"
+          ? fundingSource === "previous_savings"
+            ? `Recorded ₹${safeAmount} as previous savings in ${sourceLabel}.`
+            : `Moved ₹${safeAmount} to ${sourceLabel}.`
+          : `Returned ₹${safeAmount} from ${sourceLabel} to Available Balance.`,
       movement: newMovement,
       cashSavings: updated.cashSavings,
       gpaySavings: updated.gpaySavings,

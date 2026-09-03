@@ -83,6 +83,7 @@ export interface ISavingsMovement {
   amount: number;
   direction: "to_savings" | "from_savings";
   source: "cash" | "gpay_upi";
+  fundingSource?: "current_balance" | "previous_savings";
   date: string; // "YYYY-MM-DD"
   note?: string;
   createdAt: string;
@@ -162,6 +163,7 @@ const SavingsMovementMongoSchema = new Schema({
   amount: { type: Number, required: true },
   direction: { type: String, required: true }, // "to_savings" | "from_savings"
   source: { type: String, required: true }, // "cash" | "gpay_upi"
+  fundingSource: { type: String, default: "current_balance" }, // "current_balance" | "previous_savings"
   date: { type: String, required: true },
   note: { type: String, default: "" },
   createdAt: { type: String, default: () => new Date().toISOString() },

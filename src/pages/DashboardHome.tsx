@@ -224,9 +224,9 @@ export const DashboardHome: React.FC = () => {
   const [moneyLoading, setMoneyLoading] = useState(false);
   const [moneyError, setMoneyError] = useState<string | null>(null);
 
-  // Add to Savings Form states
   const [savingsAmount, setSavingsAmount] = useState("");
   const [savingsSource, setSavingsSource] = useState<"cash" | "gpay_upi">("cash");
+  const [savingsFundingSource, setSavingsFundingSource] = useState<"current_balance" | "previous_savings">("current_balance");
   const [savingsNote, setSavingsNote] = useState("");
   const [savingsDate, setSavingsDate] = useState(new Date().toISOString().split("T")[0]);
   const [savingsLoading, setSavingsLoading] = useState(false);
@@ -400,8 +400,8 @@ export const DashboardHome: React.FC = () => {
       return;
     }
 
-    if (num > remainingCash) {
-      setSavingsError(`Cannot move more than Available Balance (${currency}${remainingCash}).`);
+    if (savingsFundingSource === "current_balance" && num > remainingCash) {
+      setSavingsError(`Cannot move more than Available Balance (${currency}${remainingCash}). If this is money you already had saved before, choose 'Previous Savings' below.`);
       return;
     }
 
@@ -413,13 +413,15 @@ export const DashboardHome: React.FC = () => {
         amount: num,
         direction: "to_savings",
         source: savingsSource,
+        fundingSource: savingsFundingSource,
         date: savingsDate,
-        note: savingsNote || "Moved to savings from dashboard",
+        note: savingsNote || (savingsFundingSource === "previous_savings" ? "Previous savings recorded from dashboard" : "Moved to savings from dashboard"),
       });
 
       // Reset Form and close modal
       setSavingsAmount("");
       setSavingsSource("cash");
+      setSavingsFundingSource("current_balance");
       setSavingsNote("");
       setSavingsDate(new Date().toISOString().split("T")[0]);
       setIsAddSavingsOpen(false);
@@ -1713,10 +1715,47 @@ export const DashboardHome: React.FC = () => {
                   </p>
                 )}
 
-                <div className="p-3 bg-gray-950/60 rounded-xl border border-gray-800 flex justify-between items-center text-xs">
-                  <span className="text-gray-400 font-semibold">Available for Transfer:</span>
-                  <span className="text-blue-400 font-bold">{currency}{availableBalance}</span>
+                {/* Savings Origin Selection: Current Balance vs Previous Savings */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Savings Origin</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSavingsFundingSource("current_balance")}
+                      className={`p-2.5 rounded-xl border text-left flex flex-col gap-0.5 transition-all cursor-pointer ${
+                        savingsFundingSource === "current_balance"
+                          ? "bg-purple-500/10 border-purple-500/50 text-white shadow-sm ring-1 ring-purple-500/30"
+                          : "bg-gray-950 border-gray-800 text-gray-400"
+                      }`}
+                    >
+                      <span className="text-xs font-black text-purple-300">💳 Spendable</span>
+                      <span className="text-[10px] text-gray-500">From current month</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSavingsFundingSource("previous_savings")}
+                      className={`p-2.5 rounded-xl border text-left flex flex-col gap-0.5 transition-all cursor-pointer ${
+                        savingsFundingSource === "previous_savings"
+                          ? "bg-amber-500/10 border-amber-500/50 text-white shadow-sm ring-1 ring-amber-500/30"
+                          : "bg-gray-950 border-gray-800 text-gray-400"
+                      }`}
+                    >
+                      <span className="text-xs font-black text-amber-300">🏦 Previous Savings</span>
+                      <span className="text-[10px] text-gray-500">Saved in past months</span>
+                    </button>
+                  </div>
                 </div>
+
+                {savingsFundingSource === "current_balance" ? (
+                  <div className="p-3 bg-gray-950/60 rounded-xl border border-gray-800 flex justify-between items-center text-xs">
+                    <span className="text-gray-400 font-semibold">Available for Transfer:</span>
+                    <span className="text-blue-400 font-bold">{currency}{availableBalance}</span>
+                  </div>
+                ) : (
+                  <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-200/90 font-medium leading-relaxed">
+                    💡 Records previous/starting savings without deducting from your current spendable cash. Future months will add on top of this.
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-gray-400">Amount ({currency}) *</label>

@@ -40,6 +40,7 @@ export interface SavingsMovement {
   amount: number;
   direction: "to_savings" | "from_savings";
   source: "cash" | "gpay_upi";
+  fundingSource?: "current_balance" | "previous_savings";
   date: string;
   note?: string;
   createdAt: string;
@@ -59,6 +60,7 @@ export interface SavingsSummary {
   monthMovedToGpay?: number;
   monthReturnedFromCash?: number;
   monthReturnedFromGpay?: number;
+  previousSavingsRecorded?: number;
   netMonthSavings: number;
   monthSavingsProgress: number;
   savingsGoalPercentage: number;
