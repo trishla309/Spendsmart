@@ -55,6 +55,10 @@ export interface SavingsSummary {
   monthSavingsGoal: number;
   monthMovedToSavings: number;
   monthReturnedFromSavings: number;
+  monthMovedToCash?: number;
+  monthMovedToGpay?: number;
+  monthReturnedFromCash?: number;
+  monthReturnedFromGpay?: number;
   netMonthSavings: number;
   monthSavingsProgress: number;
   savingsGoalPercentage: number;

@@ -900,6 +900,18 @@ export const DashboardHome: React.FC = () => {
                     <span className="text-[9px] text-gray-500 font-mono font-bold block mt-0.5">MONTH GOAL</span>
                   </div>
                 </div>
+
+                {/* Small sections: Cash vs GPay breakdown */}
+                <div className="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-gray-800/40">
+                  <div className="bg-gray-950/60 border border-amber-500/20 rounded-xl px-2.5 py-1.5 flex flex-col">
+                    <span className="text-[9px] font-bold text-amber-400 uppercase">Cash</span>
+                    <span className="text-xs font-black text-white">{currency}{summary?.cashSavings || 0}</span>
+                  </div>
+                  <div className="bg-gray-950/60 border border-sky-500/20 rounded-xl px-2.5 py-1.5 flex flex-col">
+                    <span className="text-[9px] font-bold text-sky-400 uppercase">GPay / UPI</span>
+                    <span className="text-xs font-black text-white">{currency}{summary?.gpaySavings || 0}</span>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-4">

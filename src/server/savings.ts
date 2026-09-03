@@ -80,6 +80,22 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     .filter((m) => m.direction === "from_savings")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
+  const monthMovedToCash = monthMovements
+    .filter((m) => m.direction === "to_savings" && m.source === "cash")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  const monthMovedToGpay = monthMovements
+    .filter((m) => m.direction === "to_savings" && m.source === "gpay_upi")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  const monthReturnedFromCash = monthMovements
+    .filter((m) => m.direction === "from_savings" && m.source === "cash")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  const monthReturnedFromGpay = monthMovements
+    .filter((m) => m.direction === "from_savings" && m.source === "gpay_upi")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
   // Net Savings for Selected Month = Money Moved To Savings - Money Returned From Savings
   const netMonthSavings = monthMovedToSavings - monthReturnedFromSavings;
   const monthSavingsProgress = Math.max(0, netMonthSavings);
@@ -103,6 +119,10 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     monthSavingsGoal,
     monthMovedToSavings,
     monthReturnedFromSavings,
+    monthMovedToCash,
+    monthMovedToGpay,
+    monthReturnedFromCash,
+    monthReturnedFromGpay,
     netMonthSavings,
     monthSavingsProgress,
     savingsGoalPercentage,
@@ -141,6 +161,10 @@ router.get("/", authMiddleware, async (req: AuthenticatedRequest, res: Response)
       monthSavingsGoal: data.monthSavingsGoal,
       monthMovedToSavings: data.monthMovedToSavings,
       monthReturnedFromSavings: data.monthReturnedFromSavings,
+      monthMovedToCash: data.monthMovedToCash,
+      monthMovedToGpay: data.monthMovedToGpay,
+      monthReturnedFromCash: data.monthReturnedFromCash,
+      monthReturnedFromGpay: data.monthReturnedFromGpay,
       netMonthSavings: data.netMonthSavings,
       monthSavingsProgress: data.monthSavingsProgress,
       savingsGoalPercentage: data.savingsGoalPercentage,
