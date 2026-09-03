@@ -84,38 +84,6 @@ function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// Instant Temporary Access Endpoint
-router.post("/temp-access", async (req: Request, res: Response): Promise<void> => {
-  const targetEmail = (req.body.email || "tristha97@gmail.com").toLowerCase().trim();
-  try {
-    let user = await User.findOne({ email: targetEmail });
-    if (!user) {
-      const passwordHash = await bcrypt.hash("Tristha@123", 10);
-      user = await User.create({
-        name: targetEmail.includes("tristha") ? "Tristha" : "Main User",
-        email: targetEmail,
-        passwordHash,
-      });
-      await seedDemoDataForUser(user._id);
-    }
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email, name: user.name },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.json({
-      token,
-      user: { id: user._id, email: user.email, name: user.name },
-      message: `Temporary access granted for ${targetEmail}.`,
-    });
-  } catch (error) {
-    console.error("Temp access error:", error);
-    res.status(500).json({ error: "Failed to grant temporary access." });
-  }
-});
-
 // Request OTP for Login
 router.post("/request-otp", async (req: Request, res: Response): Promise<void> => {
   const { email } = req.body;
@@ -125,24 +93,14 @@ router.post("/request-otp", async (req: Request, res: Response): Promise<void> =
   }
 
   try {
-    let user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      if (email.toLowerCase() === "tristha97@gmail.com" || email.toLowerCase().includes("tristha") || email.toLowerCase().includes("trishla")) {
-        const passwordHash = await bcrypt.hash("Tristha@123", 10);
-        user = await User.create({
-          name: "Tristha",
-          email: email.toLowerCase(),
-          passwordHash,
-        });
-        await seedDemoDataForUser(user._id);
-      } else {
-        res.status(404).json({ error: "User not found. Please create an account first." });
-        return;
-      }
+      res.status(404).json({ error: "User not found. Please create an account first." });
+      return;
     }
 
-    const isMasterEmail = email.toLowerCase() === "student@example.com" || email.toLowerCase() === "tristha97@gmail.com" || email.toLowerCase().includes("tristha");
-    const otp = isMasterEmail ? "123456" : generateOTP();
+    const isDemoEmail = email.toLowerCase() === "student@example.com";
+    const otp = isDemoEmail ? "123456" : generateOTP();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
 
     // Clear old OTPs for this email
@@ -160,7 +118,7 @@ router.post("/request-otp", async (req: Request, res: Response): Promise<void> =
     const isDevNoEmail = !process.env.EMAIL_USER || !process.env.EMAIL_PASS;
     res.json({
       message: "OTP sent successfully.",
-      ...(isDevNoEmail || isMasterEmail ? { devOtp: otp } : {}),
+      ...(isDevNoEmail || isDemoEmail ? { devOtp: otp } : {}),
     });
   } catch (error) {
     console.error("Error requesting OTP:", error);
@@ -219,9 +177,9 @@ router.post("/verify-otp", async (req: Request, res: Response): Promise<void> =>
   }
 
   try {
-    const isMasterEmail = email.toLowerCase() === "student@example.com" || email.toLowerCase() === "tristha97@gmail.com" || email.toLowerCase().includes("tristha");
+    const isDemoEmail = email.toLowerCase() === "student@example.com";
     const otpRecord = await OTP.findOne({ email: email.toLowerCase(), otp, type });
-    if (!otpRecord && !(isMasterEmail && otp === "123456")) {
+    if (!otpRecord && !(isDemoEmail && otp === "123456")) {
       res.status(401).json({ error: "Invalid OTP." });
       return;
     }
@@ -249,18 +207,8 @@ router.post("/verify-otp", async (req: Request, res: Response): Promise<void> =>
     } else {
       user = await User.findOne({ email: email.toLowerCase() });
       if (!user) {
-        if (isMasterEmail) {
-          const passwordHash = await bcrypt.hash("Tristha@123", 10);
-          user = await User.create({
-            name: "Tristha",
-            email: email.toLowerCase(),
-            passwordHash,
-          });
-          await seedDemoDataForUser(user._id);
-        } else {
-          res.status(404).json({ error: "User not found." });
-          return;
-        }
+        res.status(404).json({ error: "User not found." });
+        return;
       }
     }
 

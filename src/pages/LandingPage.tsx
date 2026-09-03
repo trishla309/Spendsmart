@@ -163,25 +163,6 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
     }
   };
 
-  const handleTristhaLogin = async () => {
-    setEmail("tristha97@gmail.com");
-    setAuthError(null);
-    setAuthLoading(true);
-    try {
-      const response = await api.post("/auth/temp-access", { email: "tristha97@gmail.com" });
-      const { token, user } = response.data;
-      if (onLoginSuccess) {
-        onLoginSuccess(token, user);
-      }
-      closeModal();
-      navigate("/dashboard");
-    } catch (err: any) {
-      setAuthError(err.response?.data?.error || "Failed to access account.");
-    } finally {
-      setAuthLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-cream text-nearblack font-sans selection:bg-navy/15 selection:text-navy relative overflow-x-hidden">
       
@@ -644,15 +625,7 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
                   )}
                 </button>
 
-                <div className="mt-3 pt-3 border-t border-sand-border flex flex-col gap-2">
-                  <button
-                    type="button"
-                    onClick={handleTristhaLogin}
-                    className="w-full py-2.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 rounded-lg transition-colors text-center cursor-pointer flex items-center justify-center gap-1.5"
-                    id="tristha-access-btn"
-                  >
-                    <span>🔑 Direct Access: tristha97@gmail.com</span>
-                  </button>
+                <div className="mt-3 pt-3 border-t border-sand-border flex flex-col gap-2.5">
                   <button
                     type="button"
                     onClick={handleDemoLogin}
@@ -722,9 +695,9 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
               <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
                 <div className="text-xs text-graytext leading-relaxed">
                   We've sent a 6-digit verification code to <strong className="text-nearblack font-semibold">{email}</strong>.
-                  {email === "student@example.com" || email === "tristha97@gmail.com" ? (
+                  {email === "student@example.com" ? (
                     <div className="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg font-medium text-xs">
-                      Master / Demo Mode: Enter OTP <strong className="font-mono text-sm">123456</strong>
+                      Demo Mode: Enter OTP <strong className="font-mono text-sm">123456</strong>
                     </div>
                   ) : devOtp ? (
                     <div className="mt-2 p-2.5 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg font-medium text-xs">
