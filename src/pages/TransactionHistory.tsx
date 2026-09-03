@@ -794,13 +794,24 @@ export const TransactionHistory: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* Amount */}
-                          <div className="flex items-center gap-2 shrink-0">
+                          {/* Amount & Actions */}
+                          <div className="flex items-center gap-2.5 shrink-0">
                             <div className="text-right">
                               <span className={`text-xs font-black font-mono tracking-tight ${isIncome ? "text-emerald-400" : "text-white"}`}>
                                 {isIncome ? "+" : "-"}{currency}{formatIndianNumber(exp.amount)}
                               </span>
                             </div>
+
+                            {isCurrentMonthEditable && (
+                              <button
+                                onClick={() => openEditModal(exp)}
+                                className="p-1.5 bg-gray-900/80 hover:bg-emerald-500/10 border border-gray-800 hover:border-emerald-500/30 text-gray-400 hover:text-emerald-400 rounded-lg transition-all cursor-pointer"
+                                title="Edit transaction"
+                                id={`edit-transaction-${exp._id}`}
+                              >
+                                <Edit className="h-3.5 w-3.5" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       );

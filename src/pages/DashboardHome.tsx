@@ -233,6 +233,7 @@ export const DashboardHome: React.FC = () => {
   const [savingsError, setSavingsError] = useState<string | null>(null);
 
   const [editingCategoryBudgetKey, setEditingCategoryBudgetKey] = useState<string | null>(null);
+  const [viewingCategoryKey, setViewingCategoryKey] = useState<string | null>(null);
   const [newBudgetVal, setNewBudgetVal] = useState("");
   const [editBudgetError, setEditBudgetError] = useState<string | null>(null);
   const [editBudgetLoading, setEditBudgetLoading] = useState(false);
@@ -1028,6 +1029,27 @@ export const DashboardHome: React.FC = () => {
                     )}
                   </span>
                 </div>
+
+                {/* View & Edit Category Expenses */}
+                {(() => {
+                  const catExps = expenses.filter(
+                    (e) => e.category === cat.key && e.date.startsWith(selectedMonth)
+                  );
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => setViewingCategoryKey(cat.key)}
+                      className="mt-1 pt-2.5 border-t border-gray-800/40 text-[11px] font-bold text-gray-400 hover:text-emerald-400 transition-colors flex items-center justify-between cursor-pointer w-full text-left"
+                      id={`view-category-expenses-${cat.key}`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Edit className="h-3 w-3 text-emerald-400/80" />
+                        <span>View / Edit Expenses ({catExps.length})</span>
+                      </span>
+                      <span>→</span>
+                    </button>
+                  );
+                })()}
               </div>
             );
           })}
@@ -1236,10 +1258,22 @@ export const DashboardHome: React.FC = () => {
                               </div>
                             </div>
 
-                            <div className="text-right shrink-0">
-                              <span className={`text-base font-black tracking-tight ${isIncome ? "text-emerald-400" : "text-white"}`}>
-                                {isIncome ? "+" : "-"}{currency}{exp.amount}
-                              </span>
+                            <div className="flex items-center gap-3 shrink-0">
+                              <div className="text-right">
+                                <span className={`text-base font-black tracking-tight ${isIncome ? "text-emerald-400" : "text-white"}`}>
+                                  {isIncome ? "+" : "-"}{currency}{exp.amount}
+                                </span>
+                              </div>
+                              {isCurrentMonthEditable && (
+                                <button
+                                  onClick={() => openEditModal(exp)}
+                                  className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all cursor-pointer"
+                                  title="Edit transaction"
+                                  id={`edit-today-expense-${exp._id}`}
+                                >
+                                  <Edit className="h-3.5 w-3.5" />
+                                </button>
+                              )}
                             </div>
                           </div>
                         );
@@ -1826,6 +1860,104 @@ export const DashboardHome: React.FC = () => {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 10. View / Edit Category Expenses Modal */}
+      <AnimatePresence>
+        {viewingCategoryKey && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-gray-900 border border-gray-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative max-h-[85vh] flex flex-col"
+              id="category-expenses-view-modal"
+            >
+              <button
+                onClick={() => setViewingCategoryKey(null)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="border-b border-gray-800 pb-3.5 mb-4">
+                <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                  <span className="text-xl">{getCategoryEmoji(viewingCategoryKey)}</span>
+                  <span>{getCategoryLabel(viewingCategoryKey)} Expenses</span>
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Review, edit, or fix any mistakes recorded under this category.
+                </p>
+              </div>
+
+              {(() => {
+                const catExpenses = expenses
+                  .filter((e) => e.category === viewingCategoryKey && e.date.startsWith(selectedMonth))
+                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+                if (catExpenses.length === 0) {
+                  return (
+                    <div className="py-12 text-center text-gray-500 border border-dashed border-gray-800 rounded-2xl bg-gray-950/30 px-6 flex flex-col items-center justify-center gap-2 my-auto">
+                      <FileText className="h-7 w-7 text-gray-600" />
+                      <span className="text-xs font-bold text-gray-400">
+                        No expenses recorded in {getCategoryLabel(viewingCategoryKey)} for this month.
+                      </span>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 my-2">
+                    {catExpenses.map((exp) => (
+                      <div
+                        key={exp._id}
+                        className="p-3 bg-gray-950/50 hover:bg-gray-950/80 border border-gray-800/60 rounded-xl flex items-center justify-between gap-3 transition-colors"
+                      >
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-xs font-bold text-gray-100 truncate">
+                            {exp.description}
+                          </span>
+                          <span className="text-[10px] text-gray-500 font-mono">
+                            {exp.date} {exp.note ? `• ${exp.note}` : ""}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-3 shrink-0">
+                          <span className="text-xs font-mono font-black text-white">
+                            {currency}{exp.amount}
+                          </span>
+                          {isCurrentMonthEditable && (
+                            <button
+                              onClick={() => {
+                                setViewingCategoryKey(null);
+                                openEditModal(exp);
+                              }}
+                              className="p-1.5 bg-gray-900 border border-gray-800 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-lg transition-all cursor-pointer flex items-center gap-1 text-[11px] font-bold"
+                              title="Edit this expense"
+                            >
+                              <Edit className="h-3.5 w-3.5" />
+                              <span>Edit</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              <div className="border-t border-gray-800 pt-3.5 mt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setViewingCategoryKey(null)}
+                  className="px-4 py-2 bg-gray-950 hover:bg-gray-800 border border-gray-800 text-gray-300 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
