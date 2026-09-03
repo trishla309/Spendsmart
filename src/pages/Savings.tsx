@@ -812,14 +812,6 @@ export const SavingsPage: React.FC = () => {
             />
           </div>
         </div>
-
-        {/* Educational Student Note */}
-        <div className="bg-purple-950/20 border border-purple-500/15 rounded-2xl p-4 flex items-start gap-3">
-          <Info className="h-4.5 w-4.5 text-purple-400 shrink-0 mt-0.5" />
-          <p className="text-xs text-gray-300 leading-relaxed font-medium">
-            <strong className="text-purple-300 font-bold">Understanding Fenno Savings:</strong> Actual Savings represents real money physically set aside in Cash or kept in your UPI wallet. Savings Goals are optional targets you set for each month. You can save money freely without needing to create or fulfill any goal.
-          </p>
-        </div>
       </div>
 
       {/* MODAL 1: Move to Savings */}
@@ -942,7 +934,7 @@ export const SavingsPage: React.FC = () => {
                   className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-gray-950 font-bold rounded-xl text-xs cursor-pointer shadow-md"
                   id="confirm-move-to-savings-btn"
                 >
-                  {toLoading ? "Transferring..." : "Confirm Transfer"}
+                  {toLoading ? "Saving..." : "Confirm Savings"}
                 </button>
               </div>
             </form>

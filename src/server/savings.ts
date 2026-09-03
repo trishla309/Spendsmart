@@ -47,10 +47,9 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     .filter((m) => m.direction === "from_savings")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
-  // Cumulative Available Balance: Only transfers from current balance reduce spendable funds.
-  // Existing previous/starting savings already saved in the past do not reduce current available balance.
-  const availableBalance =
-    allIncome + totalReturnedFromSavings - allSpendingExpenses - totalMovedFromCurrentBalance;
+  // Available Balance: Main spendable money (Income - Spending Expenses).
+  // Has NO relation with savings balances or previous savings.
+  const availableBalance = allIncome - allSpendingExpenses;
 
   // Cumulative Cash Savings
   const cashSavings = movements
@@ -237,17 +236,8 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
 
     // Validate transfer limits
     if (direction === "to_savings") {
-      // If saving from current spendable balance, ensure user has enough available balance
-      if (fundingSource === "current_balance") {
-        if (safeAmount > current.availableBalance) {
-          res.status(400).json({
-            error: `Insufficient Available Balance. You have ₹${current.availableBalance} available for spending, but tried to move ₹${safeAmount}. (If this is past savings already saved before, choose 'Previous Savings' instead).`,
-          });
-          return;
-        }
-      }
-      // If fundingSource is "previous_savings", user is recording starting/past savings from previous months;
-      // No availableBalance bound check needed!
+      // Adding savings has NO relation with current available balance in dashboard or analytics.
+      // User can add any amount freely.
     } else if (direction === "from_savings") {
       // Withdraw bound check
       const maxAvailableInSource = source === "cash" ? current.cashSavings : current.gpaySavings;
