@@ -47,10 +47,9 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     .filter((m) => m.direction === "from_savings")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
-  // Cumulative Available Balance: Only transfers from current balance reduce spendable funds.
-  // Existing previous/starting savings already saved in the past do not reduce current available balance.
-  const availableBalance =
-    allIncome + totalReturnedFromSavings - allSpendingExpenses - totalMovedFromCurrentBalance;
+  // Cumulative Available Balance of the main account:
+  // Complete separation: Savings is an independent emergency fund with NO relation to the main account.
+  const availableBalance = allIncome - allSpendingExpenses;
 
   // Cumulative Cash Savings
   const cashSavings = movements
@@ -237,17 +236,8 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
 
     // Validate transfer limits
     if (direction === "to_savings") {
-      // If saving from current spendable balance, ensure user has enough available balance
-      if (fundingSource === "current_balance") {
-        if (safeAmount > current.availableBalance) {
-          res.status(400).json({
-            error: `Insufficient Available Balance. You have ₹${current.availableBalance} available for spending, but tried to move ₹${safeAmount}. (If this is past savings already saved before, choose 'Previous Savings' instead).`,
-          });
-          return;
-        }
-      }
-      // If fundingSource is "previous_savings", user is recording starting/past savings from previous months;
-      // No availableBalance bound check needed!
+      // Savings is an independent emergency fund with NO RELATION to the main account.
+      // User can add any amount to their emergency savings without restriction.
     } else if (direction === "from_savings") {
       // Withdraw bound check
       const maxAvailableInSource = source === "cash" ? current.cashSavings : current.gpaySavings;
@@ -276,27 +266,18 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
 
     // Enqueue notification
     if (direction === "to_savings") {
-      if (fundingSource === "previous_savings") {
-        NotificationQueueManager.enqueueNotification(
-          userId,
-          "success",
-          "Previous Savings Recorded",
-          `Recorded ₹${safeAmount} of previous/starting savings in ${sourceLabel}. Future savings added in new months will build on top of this.`
-        );
-      } else {
-        NotificationQueueManager.enqueueNotification(
-          userId,
-          "success",
-          "Moved to Savings",
-          `Moved ₹${safeAmount} from Available Balance to ${sourceLabel}.`
-        );
-      }
+      NotificationQueueManager.enqueueNotification(
+        userId,
+        "success",
+        "Added to Emergency Savings",
+        `Successfully added ₹${safeAmount} to ${sourceLabel} emergency reserve.`
+      );
     } else {
       NotificationQueueManager.enqueueNotification(
         userId,
         "info",
-        "Returned to Available Balance",
-        `Returned ₹${safeAmount} from ${sourceLabel} to Available Balance.`
+        "Withdrawn from Emergency Savings",
+        `Withdrew ₹${safeAmount} from ${sourceLabel} for emergency use.`
       );
     }
 
@@ -305,10 +286,8 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
     res.status(201).json({
       message:
         direction === "to_savings"
-          ? fundingSource === "previous_savings"
-            ? `Recorded ₹${safeAmount} as previous savings in ${sourceLabel}.`
-            : `Moved ₹${safeAmount} to ${sourceLabel}.`
-          : `Returned ₹${safeAmount} from ${sourceLabel} to Available Balance.`,
+          ? `Successfully added ₹${safeAmount} to ${sourceLabel}.`
+          : `Withdrew ₹${safeAmount} from ${sourceLabel} for emergency.`,
       movement: newMovement,
       cashSavings: updated.cashSavings,
       gpaySavings: updated.gpaySavings,

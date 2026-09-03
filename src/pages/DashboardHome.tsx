@@ -33,7 +33,9 @@ import {
   HelpCircle,
   ArrowUpRight,
   ChevronDown,
-  History
+  History,
+  Target,
+  ArrowRight
 } from "lucide-react";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
@@ -214,7 +216,6 @@ export const DashboardHome: React.FC = () => {
   // New modal states
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isAddMoneyOpen, setIsAddMoneyOpen] = useState(false);
-  const [isAddSavingsOpen, setIsAddSavingsOpen] = useState(false);
 
   // Add Money Form states
   const [moneyAmount, setMoneyAmount] = useState("");
@@ -223,14 +224,6 @@ export const DashboardHome: React.FC = () => {
   const [moneyNote, setMoneyNote] = useState("");
   const [moneyLoading, setMoneyLoading] = useState(false);
   const [moneyError, setMoneyError] = useState<string | null>(null);
-
-  const [savingsAmount, setSavingsAmount] = useState("");
-  const [savingsSource, setSavingsSource] = useState<"cash" | "gpay_upi">("cash");
-  const [savingsFundingSource, setSavingsFundingSource] = useState<"current_balance" | "previous_savings">("current_balance");
-  const [savingsNote, setSavingsNote] = useState("");
-  const [savingsDate, setSavingsDate] = useState(new Date().toISOString().split("T")[0]);
-  const [savingsLoading, setSavingsLoading] = useState(false);
-  const [savingsError, setSavingsError] = useState<string | null>(null);
 
   const [editingCategoryBudgetKey, setEditingCategoryBudgetKey] = useState<string | null>(null);
   const [viewingCategoryKey, setViewingCategoryKey] = useState<string | null>(null);
@@ -386,54 +379,7 @@ export const DashboardHome: React.FC = () => {
     }
   };
 
-  // ADD TO SAVINGS handler (Internal Transfer)
-  const handleAddToSavings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!savingsAmount || !savingsDate) {
-      setSavingsError("Please fill in all required fields.");
-      return;
-    }
 
-    const num = Number(savingsAmount);
-    if (isNaN(num) || num <= 0) {
-      setSavingsError("Please enter a valid amount greater than 0.");
-      return;
-    }
-
-    if (savingsFundingSource === "current_balance" && num > remainingCash) {
-      setSavingsError(`Cannot move more than Available Balance (${currency}${remainingCash}). If this is money you already had saved before, choose 'Previous Savings' below.`);
-      return;
-    }
-
-    setSavingsError(null);
-    setSavingsLoading(true);
-
-    try {
-      await api.post("/savings/transfer", {
-        amount: num,
-        direction: "to_savings",
-        source: savingsSource,
-        fundingSource: savingsFundingSource,
-        date: savingsDate,
-        note: savingsNote || (savingsFundingSource === "previous_savings" ? "Previous savings recorded from dashboard" : "Moved to savings from dashboard"),
-      });
-
-      // Reset Form and close modal
-      setSavingsAmount("");
-      setSavingsSource("cash");
-      setSavingsFundingSource("current_balance");
-      setSavingsNote("");
-      setSavingsDate(new Date().toISOString().split("T")[0]);
-      setIsAddSavingsOpen(false);
-
-      // Reload dashboard
-      await fetchDashboardData();
-    } catch (err: any) {
-      setSavingsError(err.response?.data?.error || "Failed to record savings.");
-    } finally {
-      setSavingsLoading(false);
-    }
-  };
 
   const openEditBudgetModal = (catKey: string, currentBudget: number) => {
     setEditingCategoryBudgetKey(catKey);
@@ -873,52 +819,36 @@ export const DashboardHome: React.FC = () => {
           </span>
         </div>
 
-        {/* Metric 4: Savings Progress Card */}
+        {/* Metric 4: Monthly Savings Goal */}
         {(() => {
           const savingsPercentage = savingsGoal > 0 ? Math.min(100, Math.round((monthSavingsProgress / savingsGoal) * 100)) : 0;
           return (
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="savings-progress-card">
+            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="savings-goal-card">
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                    Total Savings
+                    Monthly Savings Goal
                   </span>
                   <div className="p-3 bg-purple-500/5 border border-purple-500/15 rounded-2xl text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
-                    <Percent className="h-4.5 w-4.5" />
+                    <Target className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 
                 <div className="flex items-baseline justify-between gap-2">
                   <div>
-                    <span className="text-2xl font-black tracking-tight text-white block">
-                      {currency}{currentSavings}
-                    </span>
-                    <span className="text-[9px] text-gray-500 font-mono font-bold block mt-0.5">SAVED</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm font-black text-purple-400 block">
+                    <span className="text-3xl font-black tracking-tight text-purple-400 block">
                       {currency}{savingsGoal}
                     </span>
-                    <span className="text-[9px] text-gray-500 font-mono font-bold block mt-0.5">MONTH GOAL</span>
-                  </div>
-                </div>
-
-                {/* Small sections: Cash vs GPay breakdown */}
-                <div className="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-gray-800/40">
-                  <div className="bg-gray-950/60 border border-amber-500/20 rounded-xl px-2.5 py-1.5 flex flex-col">
-                    <span className="text-[9px] font-bold text-amber-400 uppercase">Cash</span>
-                    <span className="text-xs font-black text-white">{currency}{summary?.cashSavings || 0}</span>
-                  </div>
-                  <div className="bg-gray-950/60 border border-sky-500/20 rounded-xl px-2.5 py-1.5 flex flex-col">
-                    <span className="text-[9px] font-bold text-sky-400 uppercase">GPay / UPI</span>
-                    <span className="text-xs font-black text-white">{currency}{summary?.gpaySavings || 0}</span>
+                    <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-1">
+                      {savingsGoal > 0 ? "Target set for this month" : "No monthly target set"}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="mt-4">
                 <div className="flex justify-between items-center text-[10px] mb-1.5 font-bold">
-                  <span className="text-gray-500">Month Goal Progress</span>
+                  <span className="text-gray-500">Goal Target Status</span>
                   <span className="text-purple-400">{savingsPercentage}%</span>
                 </div>
                 <div className="h-2 w-full bg-gray-950 rounded-full overflow-hidden relative border border-gray-800/40 shadow-inner">
@@ -929,30 +859,15 @@ export const DashboardHome: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between gap-2">
-                {isCurrentMonthEditable && (
-                  <button
-                    onClick={() => {
-                      setSavingsAmount("");
-                      setSavingsSource("cash");
-                      setSavingsNote("");
-                      setSavingsDate(new Date().toISOString().split("T")[0]);
-                      setSavingsError(null);
-                      setIsAddSavingsOpen(true);
-                    }}
-                    className="flex-1 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-400 hover:text-purple-300 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-                    id="add-savings-metric-btn"
-                  >
-                    <Plus className="h-3.5 w-3.5 font-bold stroke-[2.5px]" />
-                    <span>+ Move to Savings</span>
-                  </button>
-                )}
+              <div className="mt-4 pt-3 border-t border-gray-800/60 flex items-center justify-between">
+                <span className="text-[10px] text-gray-500 font-medium">Emergency Fund</span>
                 <Link
                   to="/savings"
-                  className="py-2 px-3 bg-gray-950 hover:bg-gray-800/60 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-bold rounded-xl transition-all inline-flex items-center justify-center"
-                  title="View Savings Page"
+                  className="py-1.5 px-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-300 text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5"
+                  title="View Emergency Savings"
                 >
-                  Breakdown →
+                  <span>Emergency Savings</span>
+                  <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             </div>
@@ -1685,163 +1600,7 @@ export const DashboardHome: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Add to Savings Modal */}
-      <AnimatePresence>
-        {isAddSavingsOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-gray-900 border border-gray-800 rounded-3xl p-6 max-w-md w-full shadow-2xl relative"
-              id="add-savings-modal"
-            >
-              <button
-                onClick={() => setIsAddSavingsOpen(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white p-1"
-              >
-                <X className="h-5 w-5" />
-              </button>
 
-              <h3 className="text-base font-extrabold text-white flex items-center gap-2 border-b border-gray-800 pb-3.5 mb-5">
-                <Percent className="h-5 w-5 text-purple-400" />
-                Move to Savings
-              </h3>
-
-              <form onSubmit={handleAddToSavings} className="flex flex-col gap-4">
-                {savingsError && (
-                  <p className="text-xs text-rose-500 font-medium bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg">
-                    {savingsError}
-                  </p>
-                )}
-
-                {/* Savings Origin Selection: Current Balance vs Previous Savings */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-gray-400">Savings Origin</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setSavingsFundingSource("current_balance")}
-                      className={`p-2.5 rounded-xl border text-left flex flex-col gap-0.5 transition-all cursor-pointer ${
-                        savingsFundingSource === "current_balance"
-                          ? "bg-purple-500/10 border-purple-500/50 text-white shadow-sm ring-1 ring-purple-500/30"
-                          : "bg-gray-950 border-gray-800 text-gray-400"
-                      }`}
-                    >
-                      <span className="text-xs font-black text-purple-300">💳 Spendable</span>
-                      <span className="text-[10px] text-gray-500">From current month</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSavingsFundingSource("previous_savings")}
-                      className={`p-2.5 rounded-xl border text-left flex flex-col gap-0.5 transition-all cursor-pointer ${
-                        savingsFundingSource === "previous_savings"
-                          ? "bg-amber-500/10 border-amber-500/50 text-white shadow-sm ring-1 ring-amber-500/30"
-                          : "bg-gray-950 border-gray-800 text-gray-400"
-                      }`}
-                    >
-                      <span className="text-xs font-black text-amber-300">🏦 Previous Savings</span>
-                      <span className="text-[10px] text-gray-500">Saved in past months</span>
-                    </button>
-                  </div>
-                </div>
-
-                {savingsFundingSource === "current_balance" ? (
-                  <div className="p-3 bg-gray-950/60 rounded-xl border border-gray-800 flex justify-between items-center text-xs">
-                    <span className="text-gray-400 font-semibold">Available for Transfer:</span>
-                    <span className="text-blue-400 font-bold">{currency}{availableBalance}</span>
-                  </div>
-                ) : (
-                  <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-200/90 font-medium leading-relaxed">
-                    💡 Records previous/starting savings without deducting from your current spendable cash. Future months will add on top of this.
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-gray-400">Amount ({currency}) *</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={savingsAmount}
-                    onChange={(e) => setSavingsAmount(e.target.value)}
-                    className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-purple-500/50 text-sm text-gray-100 rounded-xl outline-none"
-                    placeholder="e.g. 1000"
-                    required
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-gray-400">Savings Location *</label>
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => setSavingsSource("cash")}
-                      className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                        savingsSource === "cash"
-                          ? "bg-amber-500/10 border-amber-500/40 text-amber-300"
-                          : "bg-gray-950 border-gray-800 text-gray-400"
-                      }`}
-                    >
-                      Cash
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSavingsSource("gpay_upi")}
-                      className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                        savingsSource === "gpay_upi"
-                          ? "bg-sky-500/10 border-sky-500/40 text-sky-300"
-                          : "bg-gray-950 border-gray-800 text-gray-400"
-                      }`}
-                    >
-                      GPay / UPI
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-gray-400">Date *</label>
-                  <input
-                    type="date"
-                    value={savingsDate}
-                    onChange={(e) => setSavingsDate(e.target.value)}
-                    className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-purple-500/50 text-sm text-gray-100 rounded-xl outline-none font-semibold text-gray-200"
-                    required
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-gray-400">Optional Note</label>
-                  <input
-                    type="text"
-                    value={savingsNote}
-                    onChange={(e) => setSavingsNote(e.target.value)}
-                    className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-purple-500/50 text-sm text-gray-100 rounded-xl outline-none"
-                    placeholder="e.g. Saved for new laptop, Emergency backup..."
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 justify-end mt-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsAddSavingsOpen(false)}
-                    className="px-4.5 py-2.5 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={savingsLoading}
-                    className="px-5 py-2.5 bg-purple-500 hover:bg-purple-400 text-gray-950 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
-                    id="submit-add-savings-btn"
-                  >
-                    {savingsLoading ? "Moving..." : "Confirm Transfer"}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* 9. Edit Category Budget Modal */}
       <AnimatePresence>

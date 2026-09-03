@@ -147,10 +147,6 @@ export const SavingsPage: React.FC = () => {
       setToError("Please enter a valid amount greater than 0.");
       return;
     }
-    if (toFundingSource === "current_balance" && num > availableBalance) {
-      setToError(`Cannot move more than your Available Balance (${currency}${formatAmount(availableBalance)}). If this is money you already had saved before, select "Previous Savings / Starting Balance" below.`);
-      return;
-    }
 
     setToError(null);
     setToLoading(true);
@@ -160,7 +156,6 @@ export const SavingsPage: React.FC = () => {
         amount: num,
         direction: "to_savings",
         source: toSource,
-        fundingSource: toFundingSource,
         date: toDate,
         note: toNote,
       });
@@ -168,12 +163,11 @@ export const SavingsPage: React.FC = () => {
       setToAmount("");
       setToNote("");
       setToDate(getTodayDateStr());
-      setToFundingSource("current_balance");
       setIsMoveToSavingsOpen(false);
-      showToast(res.data.message || `Saved ${currency}${formatAmount(num)} to ${toSource === "cash" ? "Cash" : "GPay / UPI"} Savings.`);
+      showToast(res.data.message || `Saved ${currency}${formatAmount(num)} to ${toSource === "cash" ? "Cash" : "GPay / UPI"} Emergency Savings.`);
       setRefreshKey((k) => k + 1);
     } catch (err: any) {
-      setToError(err.response?.data?.error || "Failed to transfer money to savings.");
+      setToError(err.response?.data?.error || "Failed to add money to savings.");
     } finally {
       setToLoading(false);
     }
@@ -340,14 +334,10 @@ export const SavingsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="bg-gray-950/70 border border-gray-800 px-3.5 py-2 rounded-xl">
-              <span className="text-[10px] text-gray-500 uppercase font-bold block">Spendable Balance</span>
-              <span className="text-xs font-extrabold text-blue-400">{currency}{formatAmount(availableBalance)}</span>
-            </div>
-            <div className="bg-gray-950/70 border border-gray-800 px-3.5 py-2 rounded-xl">
-              <span className="text-[10px] text-gray-500 uppercase font-bold block">Total Net Worth</span>
-              <span className="text-xs font-extrabold text-gray-200">{currency}{formatAmount(totalMoney)}</span>
+          <div className="flex items-center gap-2">
+            <div className="bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-2 rounded-xl">
+              <span className="text-[10px] text-emerald-400 uppercase font-bold block">Emergency Reserve</span>
+              <span className="text-xs font-extrabold text-emerald-300">Separate from Main Account</span>
             </div>
           </div>
         </div>
@@ -548,37 +538,20 @@ export const SavingsPage: React.FC = () => {
       </div>
 
       {/* 4. Action Buttons */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
         <button
           onClick={() => {
             setToAmount("");
             setToNote("");
             setToDate(getTodayDateStr());
-            setToFundingSource("current_balance");
             setToError(null);
             setIsMoveToSavingsOpen(true);
           }}
-          className="py-3.5 px-5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/30"
-          id="move-to-savings-btn"
+          className="py-4 px-6 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/30"
+          id="add-to-savings-btn"
         >
           <Plus className="h-4 w-4 stroke-[3px]" />
-          <span>+ Save From Spendable</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setToAmount("");
-            setToNote("");
-            setToDate(getTodayDateStr());
-            setToFundingSource("previous_savings");
-            setToError(null);
-            setIsMoveToSavingsOpen(true);
-          }}
-          className="py-3.5 px-5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-extrabold rounded-2xl border border-amber-500/35 hover:border-amber-500/50 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-          id="add-previous-savings-btn"
-        >
-          <Banknote className="h-4 w-4 text-amber-400" />
-          <span>🏦 Add Previous Savings</span>
+          <span>+ Add to Emergency Savings</span>
         </button>
 
         <button
@@ -589,11 +562,11 @@ export const SavingsPage: React.FC = () => {
             setBackError(null);
             setIsMoveBackOpen(true);
           }}
-          className="py-3.5 px-5 bg-gray-900 hover:bg-gray-850 text-gray-200 hover:text-white text-xs font-extrabold rounded-2xl border border-gray-800 hover:border-gray-700 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-          id="move-back-btn"
+          className="py-4 px-6 bg-gray-900 hover:bg-gray-850 text-gray-200 hover:text-white text-xs font-extrabold rounded-2xl border border-gray-800 hover:border-gray-700 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+          id="withdraw-from-savings-btn"
         >
           <ArrowRightLeft className="h-4 w-4 text-blue-400" />
-          <span>↩ Return to Spendable</span>
+          <span>− Withdraw from Emergency Savings</span>
         </button>
       </div>
 
@@ -857,12 +830,10 @@ export const SavingsPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
               <div>
                 <h3 className="text-base font-extrabold text-white tracking-tight">
-                  {toFundingSource === "previous_savings" ? "Record Previous / Starting Savings" : "Move to Savings"}
+                  Add to Emergency Savings
                 </h3>
                 <span className="text-[11px] text-gray-400 mt-0.5 block">
-                  {toFundingSource === "previous_savings"
-                    ? "Add money already saved in past months without reducing your current spendable cash"
-                    : "Transfer money from current Available Balance into savings"}
+                  Separate money used only for emergencies (Cash or GPay / UPI)
                 </span>
               </div>
               <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
@@ -870,68 +841,12 @@ export const SavingsPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Savings Source Type Selection: Current Balance vs Previous Savings */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-gray-300">Savings Origin</label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setToFundingSource("current_balance");
-                    setToError(null);
-                  }}
-                  className={`p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer ${
-                    toFundingSource === "current_balance"
-                      ? "bg-purple-500/10 border-purple-500/50 text-white shadow-sm ring-1 ring-purple-500/30"
-                      : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                  }`}
-                >
-                  <span className="text-xs font-black text-purple-300 flex items-center gap-1.5">
-                    💳 Current Spendable
-                  </span>
-                  <span className="text-[10px] text-gray-400 leading-tight">
-                    From current month's money ({currency}{formatAmount(availableBalance)})
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setToFundingSource("previous_savings");
-                    setToError(null);
-                  }}
-                  className={`p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer ${
-                    toFundingSource === "previous_savings"
-                      ? "bg-amber-500/10 border-amber-500/50 text-white shadow-sm ring-1 ring-amber-500/30"
-                      : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                  }`}
-                >
-                  <span className="text-xs font-black text-amber-300 flex items-center gap-1.5">
-                    🏦 Previous / Past Savings
-                  </span>
-                  <span className="text-[10px] text-gray-400 leading-tight">
-                    Already saved previously. Won't reduce current available balance!
-                  </span>
-                </button>
-              </div>
+            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-start gap-2.5">
+              <Info className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-emerald-200/90 leading-relaxed font-medium">
+                <strong>Emergency Money:</strong> This savings reserve has no relation to your main account. You can add any amount freely at any time.
+              </p>
             </div>
-
-            {/* Helper Notice */}
-            {toFundingSource === "current_balance" ? (
-              <div className="p-3.5 bg-gray-950/80 rounded-2xl border border-gray-800 flex items-center justify-between">
-                <span className="text-xs text-gray-400 font-semibold">Available for Transfer:</span>
-                <span className="text-sm font-extrabold text-blue-400">
-                  {currency}{formatAmount(availableBalance)}
-                </span>
-              </div>
-            ) : (
-              <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-start gap-2.5">
-                <Info className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                <p className="text-[11px] text-amber-200/90 leading-relaxed font-medium">
-                  <strong>Previous Savings:</strong> This records money you already had saved before using the app. It increases your total savings without deducting from your current month's spendable cash. New savings in future months will add on top of this.
-                </p>
-              </div>
-            )}
 
             {toError && (
               <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs font-semibold flex items-center gap-2">
@@ -1050,10 +965,10 @@ export const SavingsPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
               <div>
                 <h3 className="text-base font-extrabold text-white tracking-tight">
-                  Move Back to Available Balance
+                  Withdraw from Emergency Savings
                 </h3>
                 <span className="text-[11px] text-gray-400 mt-0.5 block">
-                  Withdraw saved money back into your everyday spendable funds
+                  Record funds used from your emergency reserve
                 </span>
               </div>
               <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
