@@ -287,7 +287,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
 
           {/* Delete User Account Wiping Data */}
           <div className="flex flex-col gap-2 mt-2 border-t border-gray-850/60 pt-4">
-            <span className="text-xs font-bold text-rose-400">Permanently Delete SpendSmart Account</span>
+            <span className="text-xs font-bold text-rose-400">Permanently Delete Fenno Account</span>
             <p className="text-[11px] text-gray-500 leading-relaxed">
               This completely purges your credentials, budgets, transactions, and categories irreversibly.
             </p>

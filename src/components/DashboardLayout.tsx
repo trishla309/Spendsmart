@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check } from "lucide-react";
+import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check, PiggyBank } from "lucide-react";
 import { motion } from "motion/react";
 import { api } from "../lib/api";
 
@@ -94,6 +94,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       desc: "Overview & summary",
     },
     {
+      name: "Savings",
+      path: "/savings",
+      icon: PiggyBank,
+      desc: "Cash & UPI reserves",
+    },
+    {
       name: "Transaction History",
       path: "/history",
       icon: History,
@@ -135,11 +141,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <Award className="h-5.5 w-5.5 animate-pulse" />
             </div>
             <div>
-              <h1 className="text-base font-black tracking-tight text-white flex items-center gap-1">
-                Spend<span className="text-emerald-400">Smart</span>
+              <h1 className="text-lg font-black tracking-tight text-white flex items-center gap-1">
+                Fenno
               </h1>
               <span className="text-[10px] text-gray-500 font-mono font-extrabold tracking-wider uppercase block mt-0.5">
-                College Edition
+                Student Edition
               </span>
             </div>
           </Link>
@@ -210,6 +216,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <h2 className="text-base md:text-lg font-black text-white tracking-tight mt-0.5">
               {location.pathname === "/dashboard"
                 ? "Financial Dashboard"
+                : location.pathname === "/savings"
+                ? "Savings & Reserves"
                 : location.pathname === "/history"
                 ? "Transaction History"
                 : location.pathname === "/budget"

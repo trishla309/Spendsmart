@@ -77,12 +77,24 @@ interface INotification {
   createdAt: string;
 }
 
+export interface ISavingsMovement {
+  _id: string;
+  userId: string;
+  amount: number;
+  direction: "to_savings" | "from_savings";
+  source: "cash" | "gpay_upi";
+  date: string; // "YYYY-MM-DD"
+  note?: string;
+  createdAt: string;
+}
+
 interface IDatabaseSchema {
   users: IUser[];
   budgets: IBudget[];
   expenses: IExpense[];
   notifications: INotification[];
   otps: IOtp[];
+  savingsMovements: ISavingsMovement[];
 }
 
 // Check MongoDB connection availability
@@ -145,11 +157,22 @@ const NotificationMongoSchema = new Schema({
   createdAt: { type: String, default: () => new Date().toISOString() },
 });
 
+const SavingsMovementMongoSchema = new Schema({
+  userId: { type: String, required: true },
+  amount: { type: Number, required: true },
+  direction: { type: String, required: true }, // "to_savings" | "from_savings"
+  source: { type: String, required: true }, // "cash" | "gpay_upi"
+  date: { type: String, required: true },
+  note: { type: String, default: "" },
+  createdAt: { type: String, default: () => new Date().toISOString() },
+});
+
 const UserM = mongoose.models.User || mongoose.model("User", UserMongoSchema);
 const BudgetM = mongoose.models.Budget || mongoose.model("Budget", BudgetMongoSchema);
 const ExpenseM = mongoose.models.Expense || mongoose.model("Expense", ExpenseMongoSchema);
 const NotificationM = mongoose.models.Notification || mongoose.model("Notification", NotificationMongoSchema);
 const OtpM = mongoose.models.OTP || mongoose.model("OTP", OTPMongoSchema);
+const SavingsMovementM = mongoose.models.SavingsMovement || mongoose.model("SavingsMovement", SavingsMovementMongoSchema);
 
 // Try connecting to MongoDB. If it fails, fall back to JSON database.
 export async function initDatabaseConnection(): Promise<boolean> {
@@ -247,6 +270,9 @@ class JsonDatabase {
       if (!parsed.notifications) {
         parsed.notifications = [];
       }
+      if (!parsed.savingsMovements) {
+        parsed.savingsMovements = [];
+      }
       return parsed;
     } catch (error) {
       const initialSchema: IDatabaseSchema = {
@@ -255,6 +281,7 @@ class JsonDatabase {
         expenses: [],
         notifications: [],
         otps: [],
+        savingsMovements: [],
       };
       await fs.writeFile(DB_FILE, JSON.stringify(initialSchema, null, 2), "utf-8");
       return initialSchema;
@@ -277,6 +304,7 @@ class JsonDatabase {
       if (collectionName === "budgets") return BudgetM;
       if (collectionName === "notifications") return NotificationM;
       if (collectionName === "otps") return OtpM;
+      if (collectionName === "savingsMovements") return SavingsMovementM;
       return ExpenseM;
     };
 
@@ -428,3 +456,4 @@ export const Budget = db.getModel("budgets");
 export const Expense = db.getModel("expenses");
 export const Notification = db.getModel("notifications");
 export const OTP = db.getModel("otps");
+export const SavingsMovement = db.getModel("savingsMovements");

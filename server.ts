@@ -6,10 +6,11 @@ import authRouter, { seedDemoUser } from "./src/server/auth";
 import budgetRouter from "./src/server/budget";
 import expensesRouter from "./src/server/expenses";
 import notificationsRouter from "./src/server/notifications";
+import savingsRouter from "./src/server/savings";
 import { initCronJobs } from "./src/server/cron";
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   // Midldlewares
   app.use(express.json());
@@ -31,6 +32,7 @@ async function startServer() {
   app.use("/api/budget", budgetRouter);
   app.use("/api/expenses", expensesRouter);
   app.use("/api/notifications", notificationsRouter);
+  app.use("/api/savings", savingsRouter);
 
   // Initialize Background Tasks
   initCronJobs();

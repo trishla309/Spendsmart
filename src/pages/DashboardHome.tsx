@@ -226,6 +226,7 @@ export const DashboardHome: React.FC = () => {
 
   // Add to Savings Form states
   const [savingsAmount, setSavingsAmount] = useState("");
+  const [savingsSource, setSavingsSource] = useState<"cash" | "gpay_upi">("cash");
   const [savingsNote, setSavingsNote] = useState("");
   const [savingsDate, setSavingsDate] = useState(new Date().toISOString().split("T")[0]);
   const [savingsLoading, setSavingsLoading] = useState(false);
@@ -384,7 +385,7 @@ export const DashboardHome: React.FC = () => {
     }
   };
 
-  // ADD TO SAVINGS handler
+  // ADD TO SAVINGS handler (Internal Transfer)
   const handleAddToSavings = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!savingsAmount || !savingsDate) {
@@ -392,20 +393,32 @@ export const DashboardHome: React.FC = () => {
       return;
     }
 
+    const num = Number(savingsAmount);
+    if (isNaN(num) || num <= 0) {
+      setSavingsError("Please enter a valid amount greater than 0.");
+      return;
+    }
+
+    if (num > remainingCash) {
+      setSavingsError(`Cannot move more than Available Balance (${currency}${remainingCash}).`);
+      return;
+    }
+
     setSavingsError(null);
     setSavingsLoading(true);
 
     try {
-      await api.post("/expenses", {
-        amount: Number(savingsAmount),
-        category: "savings",
-        description: savingsNote || "Manual Savings Addition",
+      await api.post("/savings/transfer", {
+        amount: num,
+        direction: "to_savings",
+        source: savingsSource,
         date: savingsDate,
-        note: savingsNote,
+        note: savingsNote || "Moved to savings from dashboard",
       });
 
       // Reset Form and close modal
       setSavingsAmount("");
+      setSavingsSource("cash");
       setSavingsNote("");
       setSavingsDate(new Date().toISOString().split("T")[0]);
       setIsAddSavingsOpen(false);
@@ -557,11 +570,14 @@ export const DashboardHome: React.FC = () => {
   // Total spent in selected month
   const totalExpenseSum = summary?.totalExpenses || 0;
 
-  // Remaining Cash
-  const remainingCash = summary?.remainingBalance || 0;
+  // Remaining / Available Cash
+  const remainingCash = summary?.availableBalance !== undefined ? summary.availableBalance : (summary?.remainingBalance || 0);
+  const availableBalance = remainingCash;
 
-  // Current Savings (defined as all expenses assigned to the "savings" category)
-  const currentSavings = summary?.currentSavings || 0;
+  // Current / Total Savings
+  const currentSavings = summary?.totalSavings !== undefined ? summary.totalSavings : (summary?.currentSavings || 0);
+  const netMonthSavings = summary?.netMonthSavings !== undefined ? summary.netMonthSavings : 0;
+  const monthSavingsProgress = summary?.monthSavingsProgress !== undefined ? summary.monthSavingsProgress : Math.max(0, netMonthSavings);
 
   // Savings Goal indicators
   const savingsRemaining = summary?.remainingSavingsRequired || 0;
@@ -834,35 +850,35 @@ export const DashboardHome: React.FC = () => {
           <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">All expenditures this month</span>
         </div>
 
-        {/* Metric 3: Remaining Balance */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group">
+        {/* Metric 3: Available Balance */}
+        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="available-balance-metric-card">
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-1">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                Remaining Balance
+                Available Balance
               </span>
-              <span className={`text-3xl font-black tracking-tight mt-1 block ${remainingCash < 0 ? "text-rose-400" : "text-blue-400"}`}>
-                {currency}{remainingCash}
+              <span className={`text-3xl font-black tracking-tight mt-1 block ${availableBalance < 0 ? "text-rose-400" : "text-blue-400"}`}>
+                {currency}{availableBalance}
               </span>
             </div>
-            <div className={`p-3.5 rounded-2xl border ${remainingCash < 0 ? "bg-rose-500/5 border-rose-500/15 text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300" : "bg-blue-500/5 border-blue-500/15 text-blue-400 group-hover:bg-blue-500/10 group-hover:text-blue-300"} transition-colors duration-300 shadow-inner`}>
+            <div className={`p-3.5 rounded-2xl border ${availableBalance < 0 ? "bg-rose-500/5 border-rose-500/15 text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300" : "bg-blue-500/5 border-blue-500/15 text-blue-400 group-hover:bg-blue-500/10 group-hover:text-blue-300"} transition-colors duration-300 shadow-inner`}>
               <TrendingDown className="h-5 w-5 rotate-180" />
             </div>
           </div>
           <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">
-            {remainingCash < 0 ? "Overspent this month!" : "Unspent pocket money"}
+            {availableBalance < 0 ? "Overspent balance!" : "Spendable for daily needs"}
           </span>
         </div>
 
         {/* Metric 4: Savings Progress Card */}
         {(() => {
-          const savingsPercentage = savingsGoal > 0 ? Math.min(100, Math.round((currentSavings / savingsGoal) * 100)) : 0;
+          const savingsPercentage = savingsGoal > 0 ? Math.min(100, Math.round((monthSavingsProgress / savingsGoal) * 100)) : 0;
           return (
             <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="savings-progress-card">
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                    Savings Progress
+                    Total Savings
                   </span>
                   <div className="p-3 bg-purple-500/5 border border-purple-500/15 rounded-2xl text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
                     <Percent className="h-4.5 w-4.5" />
@@ -880,14 +896,14 @@ export const DashboardHome: React.FC = () => {
                     <span className="text-sm font-black text-purple-400 block">
                       {currency}{savingsGoal}
                     </span>
-                    <span className="text-[9px] text-gray-500 font-mono font-bold block mt-0.5">GOAL</span>
+                    <span className="text-[9px] text-gray-500 font-mono font-bold block mt-0.5">MONTH GOAL</span>
                   </div>
                 </div>
               </div>
 
               <div className="mt-4">
                 <div className="flex justify-between items-center text-[10px] mb-1.5 font-bold">
-                  <span className="text-gray-500">Progress</span>
+                  <span className="text-gray-500">Month Goal Progress</span>
                   <span className="text-purple-400">{savingsPercentage}%</span>
                 </div>
                 <div className="h-2 w-full bg-gray-950 rounded-full overflow-hidden relative border border-gray-800/40 shadow-inner">
@@ -898,22 +914,32 @@ export const DashboardHome: React.FC = () => {
                 </div>
               </div>
 
-              {isCurrentMonthEditable && (
-                <button
-                  onClick={() => {
-                    setSavingsAmount("");
-                    setSavingsNote("");
-                    setSavingsDate(new Date().toISOString().split("T")[0]);
-                    setSavingsError(null);
-                    setIsAddSavingsOpen(true);
-                  }}
-                  className="mt-4.5 w-full py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-400 hover:text-purple-300 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-                  id="add-savings-metric-btn"
+              <div className="mt-4 flex items-center justify-between gap-2">
+                {isCurrentMonthEditable && (
+                  <button
+                    onClick={() => {
+                      setSavingsAmount("");
+                      setSavingsSource("cash");
+                      setSavingsNote("");
+                      setSavingsDate(new Date().toISOString().split("T")[0]);
+                      setSavingsError(null);
+                      setIsAddSavingsOpen(true);
+                    }}
+                    className="flex-1 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-400 hover:text-purple-300 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                    id="add-savings-metric-btn"
+                  >
+                    <Plus className="h-3.5 w-3.5 font-bold stroke-[2.5px]" />
+                    <span>+ Move to Savings</span>
+                  </button>
+                )}
+                <Link
+                  to="/savings"
+                  className="py-2 px-3 bg-gray-950 hover:bg-gray-800/60 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-bold rounded-xl transition-all inline-flex items-center justify-center"
+                  title="View Savings Page"
                 >
-                  <Plus className="h-3.5 w-3.5 font-bold stroke-[2.5px]" />
-                  <span>Add to Savings</span>
-                </button>
-              )}
+                  Breakdown →
+                </Link>
+              </div>
             </div>
           );
         })()}
@@ -1631,7 +1657,7 @@ export const DashboardHome: React.FC = () => {
 
               <h3 className="text-base font-extrabold text-white flex items-center gap-2 border-b border-gray-800 pb-3.5 mb-5">
                 <Percent className="h-5 w-5 text-purple-400" />
-                ➕ Add to Savings
+                Move to Savings
               </h3>
 
               <form onSubmit={handleAddToSavings} className="flex flex-col gap-4">
@@ -1640,6 +1666,11 @@ export const DashboardHome: React.FC = () => {
                     {savingsError}
                   </p>
                 )}
+
+                <div className="p-3 bg-gray-950/60 rounded-xl border border-gray-800 flex justify-between items-center text-xs">
+                  <span className="text-gray-400 font-semibold">Available for Transfer:</span>
+                  <span className="text-blue-400 font-bold">{currency}{availableBalance}</span>
+                </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-gray-400">Amount ({currency}) *</label>
@@ -1655,6 +1686,34 @@ export const DashboardHome: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Savings Location *</label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setSavingsSource("cash")}
+                      className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                        savingsSource === "cash"
+                          ? "bg-amber-500/10 border-amber-500/40 text-amber-300"
+                          : "bg-gray-950 border-gray-800 text-gray-400"
+                      }`}
+                    >
+                      Cash
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSavingsSource("gpay_upi")}
+                      className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                        savingsSource === "gpay_upi"
+                          ? "bg-sky-500/10 border-sky-500/40 text-sky-300"
+                          : "bg-gray-950 border-gray-800 text-gray-400"
+                      }`}
+                    >
+                      GPay / UPI
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-gray-400">Date *</label>
                   <input
                     type="date"
@@ -1666,7 +1725,7 @@ export const DashboardHome: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-gray-400">Optional Note / Goal Description</label>
+                  <label className="text-xs font-bold text-gray-400">Optional Note</label>
                   <input
                     type="text"
                     value={savingsNote}
@@ -1690,7 +1749,7 @@ export const DashboardHome: React.FC = () => {
                     className="px-5 py-2.5 bg-purple-500 hover:bg-purple-400 text-gray-950 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
                     id="submit-add-savings-btn"
                   >
-                    {savingsLoading ? "Saving..." : "Save"}
+                    {savingsLoading ? "Moving..." : "Confirm Transfer"}
                   </button>
                 </div>
               </form>

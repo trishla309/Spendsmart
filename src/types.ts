@@ -33,3 +33,31 @@ export interface Expense {
   note?: string;
   createdAt: string;
 }
+
+export interface SavingsMovement {
+  _id: string;
+  userId: string;
+  amount: number;
+  direction: "to_savings" | "from_savings";
+  source: "cash" | "gpay_upi";
+  date: string;
+  note?: string;
+  createdAt: string;
+}
+
+export interface SavingsSummary {
+  cashSavings: number;
+  gpaySavings: number;
+  totalSavings: number;
+  availableBalance: number;
+  totalMoney: number;
+  month: string;
+  monthSavingsGoal: number;
+  monthMovedToSavings: number;
+  monthReturnedFromSavings: number;
+  netMonthSavings: number;
+  monthSavingsProgress: number;
+  savingsGoalPercentage: number;
+  remainingSavingsRequired: number;
+  movements: SavingsMovement[];
+}

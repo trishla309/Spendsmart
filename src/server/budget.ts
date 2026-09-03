@@ -3,6 +3,7 @@ import { Budget, Expense } from "./db";
 import { authMiddleware, AuthenticatedRequest } from "./auth";
 import { Queue } from "./dsa";
 import { NotificationQueueManager, checkBudgetThresholds } from "./notificationQueue";
+import { getUserCumulativeFinancials } from "./savings";
 
 const router = Router();
 
@@ -101,29 +102,29 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
 
     // 3. Perform Calculations
     const incomeEntries = monthExpenses.filter((e) => e.category === "income");
-    const savingsEntries = monthExpenses.filter((e) => e.category === "savings");
     const expenseEntries = monthExpenses.filter((e) => e.category !== "income" && e.category !== "savings");
 
-    // Total Money Received: base pocketMoney + manual income transactions
+    // Total Money Received this month: base pocketMoney + manual income transactions
     const totalMoneyReceived = (budget.pocketMoney || 0) + incomeEntries.reduce((sum, e) => sum + e.amount, 0);
 
-    // Total Expenses
+    // Total Expenses this month
     const totalExpenses = expenseEntries.reduce((sum, e) => sum + e.amount, 0);
 
-    // Remaining Balance
-    const remainingBalance = totalMoneyReceived - totalExpenses;
-
-    // Running total of manual savings entries (with historical fallback to unspent pocket money for archived months)
-    const isCurrentOrFuture = month >= currentMonthStr;
-    let currentSavings = savingsEntries.reduce((sum, e) => sum + e.amount, 0);
-    if (!isCurrentOrFuture && savingsEntries.length === 0) {
-      currentSavings = Math.max(0, totalMoneyReceived - totalExpenses);
-    }
+    // Cumulative Financials from complete user history (ensures balances don't reset when month changes)
+    const financials = await getUserCumulativeFinancials(userId, month);
+    const availableBalance = financials.availableBalance;
+    const remainingBalance = availableBalance;
+    const totalSavings = financials.totalSavings;
+    const cashSavings = financials.cashSavings;
+    const gpaySavings = financials.gpaySavings;
+    const totalMoney = financials.totalMoney;
 
     const savingsGoal = budget.savingsGoal || 0;
-    const remainingSavingsRequired = Math.max(0, savingsGoal - currentSavings);
+    const netMonthSavings = financials.netMonthSavings;
+    const monthSavingsProgress = financials.monthSavingsProgress;
+    const remainingSavingsRequired = Math.max(0, savingsGoal - monthSavingsProgress);
     const budgetUtilization = totalMoneyReceived > 0 ? Math.round((totalExpenses / totalMoneyReceived) * 100) : 0;
-    const savingsRate = totalMoneyReceived > 0 ? Math.round((currentSavings / totalMoneyReceived) * 100) : 0;
+    const savingsRate = totalMoneyReceived > 0 ? Math.round((monthSavingsProgress / totalMoneyReceived) * 100) : 0;
 
     // Categories List
     const categories = ["food", "transport", "shopping", "entertainment", "emergency", "stationery", "other"];
@@ -185,7 +186,7 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
       insights.push("Weekend spending was generally higher than weekdays.");
       insights.push("Shopping occurred only twice this month.");
     } else {
-      insights.push(`You saved ₹${currentSavings} so far this period.`);
+      insights.push(`You saved ₹${monthSavingsProgress} so far this period.`);
 
       if (totalExpenses <= totalMoneyReceived) {
         insights.push("You stayed within your monthly budget.");
@@ -193,7 +194,7 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
         insights.push("🚨 You have exceeded your monthly pocket money limit!");
       }
 
-      if (currentSavings >= savingsGoal && savingsGoal > 0) {
+      if (monthSavingsProgress >= savingsGoal && savingsGoal > 0) {
         insights.push("Savings goal achieved.");
       } else if (savingsGoal > 0) {
         insights.push(`You need ₹${remainingSavingsRequired} more to achieve your savings goal.`);
@@ -294,7 +295,7 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
       }
 
       // Savings goal achievement
-      if (savingsGoal > 0 && currentSavings >= savingsGoal) {
+      if (savingsGoal > 0 && monthSavingsProgress >= savingsGoal) {
         notificationQueue.enqueue({
           type: "success",
           text: "Savings Goal Achieved. 🎉 Great job!",
@@ -323,7 +324,16 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
       isRolledOver,
       totalExpenses,
       remainingBalance,
-      currentSavings,
+      availableBalance,
+      currentSavings: totalSavings,
+      totalSavings,
+      cashSavings,
+      gpaySavings,
+      totalMoney,
+      monthMovedToSavings: financials.monthMovedToSavings,
+      monthReturnedFromSavings: financials.monthReturnedFromSavings,
+      netMonthSavings,
+      monthSavingsProgress,
       remainingSavingsRequired,
       categorySpending,
       remainingCategoryBudget,

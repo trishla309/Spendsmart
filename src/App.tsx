@@ -8,6 +8,7 @@ import { TransactionHistory } from "./pages/TransactionHistory";
 import { DashboardLayout } from "./components/DashboardLayout";
 import { Analytics } from "./pages/Analytics";
 import { SettingsPage } from "./pages/Settings";
+import { SavingsPage } from "./pages/Savings";
 import { restoreBackupIfNeeded } from "./lib/sync";
 import { LandingPage } from "./pages/LandingPage";
 
@@ -82,7 +83,7 @@ export default function App() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <span className={`text-sm font-semibold tracking-wide ${isPublic ? "text-graytext" : "text-gray-400"}`}>Loading SpendSmart Workspace...</span>
+          <span className={`text-sm font-semibold tracking-wide ${isPublic ? "text-graytext" : "text-gray-400"}`}>Loading Fenno Workspace...</span>
         </div>
       </div>
     );
@@ -91,15 +92,14 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Landing Page (Now includes Login) */}
+        {/* Public Landing Page */}
         <Route
           path="/"
           element={
-            isAuthenticated ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <LandingPage onLoginSuccess={handleLoginSuccess} />
-            )
+            <LandingPage
+              isAuthenticated={isAuthenticated}
+              onLoginSuccess={handleLoginSuccess}
+            />
           }
         />
 
@@ -132,6 +132,23 @@ export default function App() {
                 onLogout={handleLogout}
               >
                 <DashboardHome />
+              </DashboardLayout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+
+        <Route
+          path="/savings"
+          element={
+            isAuthenticated ? (
+              <DashboardLayout
+                userName={user?.name || "Student"}
+                userEmail={user?.email || "student@example.com"}
+                onLogout={handleLogout}
+              >
+                <SavingsPage />
               </DashboardLayout>
             ) : (
               <Navigate to="/" replace />
