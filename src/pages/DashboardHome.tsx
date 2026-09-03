@@ -170,7 +170,7 @@ const getEmojiForTransaction = (description: string, category: string) => {
   const desc = description.toLowerCase();
   if (desc.includes("coffee") || desc.includes("cafe") || desc.includes("starbucks") || desc.includes("tea") || desc.includes("chai")) return "☕";
   if (desc.includes("lunch") || desc.includes("dinner") || desc.includes("burger") || desc.includes("pizza") || desc.includes("food") || desc.includes("meal")) return "🍛";
-  
+
   return getCategoryEmoji(category);
 };
 
@@ -216,6 +216,7 @@ export const DashboardHome: React.FC = () => {
   // New modal states
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isAddMoneyOpen, setIsAddMoneyOpen] = useState(false);
+  const [isAddSavingsOpen, setIsAddSavingsOpen] = useState(false);
 
   // Add Money Form states
   const [moneyAmount, setMoneyAmount] = useState("");
@@ -224,6 +225,14 @@ export const DashboardHome: React.FC = () => {
   const [moneyNote, setMoneyNote] = useState("");
   const [moneyLoading, setMoneyLoading] = useState(false);
   const [moneyError, setMoneyError] = useState<string | null>(null);
+
+  // Add to Savings Form states
+  const [savingsAmount, setSavingsAmount] = useState("");
+  const [savingsSource, setSavingsSource] = useState<"cash" | "gpay_upi">("cash");
+  const [savingsNote, setSavingsNote] = useState("");
+  const [savingsDate, setSavingsDate] = useState(new Date().toISOString().split("T")[0]);
+  const [savingsLoading, setSavingsLoading] = useState(false);
+  const [savingsError, setSavingsError] = useState<string | null>(null);
 
   const [editingCategoryBudgetKey, setEditingCategoryBudgetKey] = useState<string | null>(null);
   const [viewingCategoryKey, setViewingCategoryKey] = useState<string | null>(null);
@@ -294,7 +303,7 @@ export const DashboardHome: React.FC = () => {
           if (uId) {
             backupData(uId, dataArray, sRes.data, selectedMonth);
           }
-        } catch {}
+        } catch { }
       }
     } catch (error) {
       console.error("Error loading dashboard data:", error);
@@ -379,7 +388,52 @@ export const DashboardHome: React.FC = () => {
     }
   };
 
+  // ADD TO SAVINGS handler (Internal Transfer)
+  const handleAddToSavings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!savingsAmount || !savingsDate) {
+      setSavingsError("Please fill in all required fields.");
+      return;
+    }
 
+    const num = Number(savingsAmount);
+    if (isNaN(num) || num <= 0) {
+      setSavingsError("Please enter a valid amount greater than 0.");
+      return;
+    }
+
+    if (num > remainingCash) {
+      setSavingsError(`Cannot move more than Available Balance (${currency}${remainingCash}).`);
+      return;
+    }
+
+    setSavingsError(null);
+    setSavingsLoading(true);
+
+    try {
+      await api.post("/savings/transfer", {
+        amount: num,
+        direction: "to_savings",
+        source: savingsSource,
+        date: savingsDate,
+        note: savingsNote || "Moved to savings from dashboard",
+      });
+
+      // Reset Form and close modal
+      setSavingsAmount("");
+      setSavingsSource("cash");
+      setSavingsNote("");
+      setSavingsDate(new Date().toISOString().split("T")[0]);
+      setIsAddSavingsOpen(false);
+
+      // Reload dashboard
+      await fetchDashboardData();
+    } catch (err: any) {
+      setSavingsError(err.response?.data?.error || "Failed to record savings.");
+    } finally {
+      setSavingsLoading(false);
+    }
+  };
 
   const openEditBudgetModal = (catKey: string, currentBudget: number) => {
     setEditingCategoryBudgetKey(catKey);
@@ -628,14 +682,14 @@ export const DashboardHome: React.FC = () => {
 
   const chartData = summary?.allocated
     ? [
-        { name: "Food", value: Number(summary.allocated.food || 0) },
-        { name: "Transport", value: Number(summary.allocated.transport || 0) },
-        { name: "Shopping", value: Number(summary.allocated.shopping || 0) },
-        { name: "Entertainment", value: Number(summary.allocated.entertainment || 0) },
-        { name: "Emergency", value: Number(summary.allocated.emergency || 0) },
-        { name: "Stationery", value: Number(summary.allocated.stationery || 0) },
-        { name: "Other", value: Number(summary.allocated.other || 0) },
-      ].filter((item) => item.value > 0)
+      { name: "Food", value: Number(summary.allocated.food || 0) },
+      { name: "Transport", value: Number(summary.allocated.transport || 0) },
+      { name: "Shopping", value: Number(summary.allocated.shopping || 0) },
+      { name: "Entertainment", value: Number(summary.allocated.entertainment || 0) },
+      { name: "Emergency", value: Number(summary.allocated.emergency || 0) },
+      { name: "Stationery", value: Number(summary.allocated.stationery || 0) },
+      { name: "Other", value: Number(summary.allocated.other || 0) },
+    ].filter((item) => item.value > 0)
     : [];
 
   const formatMonthName = (mStr: string) => {
@@ -827,13 +881,13 @@ export const DashboardHome: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                    Monthly Savings Goal
+                    Savings Goal
                   </span>
                   <div className="p-3 bg-purple-500/5 border border-purple-500/15 rounded-2xl text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
                     <Target className="h-4.5 w-4.5" />
                   </div>
                 </div>
-                
+
                 <div className="flex items-baseline justify-between gap-2">
                   <div>
                     <span className="text-3xl font-black tracking-tight text-purple-400 block">
@@ -860,13 +914,13 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               <div className="mt-4 pt-3 border-t border-gray-800/60 flex items-center justify-between">
-                <span className="text-[10px] text-gray-500 font-medium">Emergency Fund</span>
+                <span className="text-[10px] text-gray-500 font-medium">Savings Section</span>
                 <Link
                   to="/savings"
                   className="py-1.5 px-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-300 text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5"
-                  title="View Emergency Savings"
+                  title="View Savings"
                 >
-                  <span>Emergency Savings</span>
+                  <span>View Savings</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -1600,7 +1654,124 @@ export const DashboardHome: React.FC = () => {
         )}
       </AnimatePresence>
 
+      {/* Add to Savings Modal */}
+      <AnimatePresence>
+        {isAddSavingsOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-gray-900 border border-gray-800 rounded-3xl p-6 max-w-md w-full shadow-2xl relative"
+              id="add-savings-modal"
+            >
+              <button
+                onClick={() => setIsAddSavingsOpen(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white p-1"
+              >
+                <X className="h-5 w-5" />
+              </button>
 
+              <h3 className="text-base font-extrabold text-white flex items-center gap-2 border-b border-gray-800 pb-3.5 mb-5">
+                <Percent className="h-5 w-5 text-purple-400" />
+                Move to Savings
+              </h3>
+
+              <form onSubmit={handleAddToSavings} className="flex flex-col gap-4">
+                {savingsError && (
+                  <p className="text-xs text-rose-500 font-medium bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg">
+                    {savingsError}
+                  </p>
+                )}
+
+                <div className="p-3 bg-gray-950/60 rounded-xl border border-gray-800 flex justify-between items-center text-xs">
+                  <span className="text-gray-400 font-semibold">Available for Transfer:</span>
+                  <span className="text-blue-400 font-bold">{currency}{availableBalance}</span>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Amount ({currency}) *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={savingsAmount}
+                    onChange={(e) => setSavingsAmount(e.target.value)}
+                    className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-purple-500/50 text-sm text-gray-100 rounded-xl outline-none"
+                    placeholder="e.g. 1000"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Savings Location *</label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setSavingsSource("cash")}
+                      className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${savingsSource === "cash"
+                          ? "bg-amber-500/10 border-amber-500/40 text-amber-300"
+                          : "bg-gray-950 border-gray-800 text-gray-400"
+                        }`}
+                    >
+                      Cash
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSavingsSource("gpay_upi")}
+                      className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${savingsSource === "gpay_upi"
+                          ? "bg-sky-500/10 border-sky-500/40 text-sky-300"
+                          : "bg-gray-950 border-gray-800 text-gray-400"
+                        }`}
+                    >
+                      GPay / UPI
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Date *</label>
+                  <input
+                    type="date"
+                    value={savingsDate}
+                    onChange={(e) => setSavingsDate(e.target.value)}
+                    className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-purple-500/50 text-sm text-gray-100 rounded-xl outline-none font-semibold text-gray-200"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Optional Note</label>
+                  <input
+                    type="text"
+                    value={savingsNote}
+                    onChange={(e) => setSavingsNote(e.target.value)}
+                    className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-purple-500/50 text-sm text-gray-100 rounded-xl outline-none"
+                    placeholder="e.g. Saved for new laptop, Emergency backup..."
+                  />
+                </div>
+
+                <div className="flex items-center gap-3 justify-end mt-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddSavingsOpen(false)}
+                    className="px-4.5 py-2.5 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={savingsLoading}
+                    className="px-5 py-2.5 bg-purple-500 hover:bg-purple-400 text-gray-950 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+                    id="submit-add-savings-btn"
+                  >
+                    {savingsLoading ? "Moving..." : "Confirm Transfer"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* 9. Edit Category Budget Modal */}
       <AnimatePresence>

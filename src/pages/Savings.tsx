@@ -156,6 +156,7 @@ export const SavingsPage: React.FC = () => {
         amount: num,
         direction: "to_savings",
         source: toSource,
+        fundingSource: toFundingSource,
         date: toDate,
         note: toNote,
       });
@@ -163,11 +164,12 @@ export const SavingsPage: React.FC = () => {
       setToAmount("");
       setToNote("");
       setToDate(getTodayDateStr());
+      setToFundingSource("current_balance");
       setIsMoveToSavingsOpen(false);
-      showToast(res.data.message || `Saved ${currency}${formatAmount(num)} to ${toSource === "cash" ? "Cash" : "GPay / UPI"} Emergency Savings.`);
+      showToast(res.data.message || `Saved ${currency}${formatAmount(num)} to ${toSource === "cash" ? "Cash" : "GPay / UPI"} Savings.`);
       setRefreshKey((k) => k + 1);
     } catch (err: any) {
-      setToError(err.response?.data?.error || "Failed to add money to savings.");
+      setToError(err.response?.data?.error || "Failed to transfer money to savings.");
     } finally {
       setToLoading(false);
     }
@@ -262,11 +264,10 @@ export const SavingsPage: React.FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-24 right-8 z-50 px-5 py-3.5 rounded-2xl shadow-2xl border text-xs font-bold flex items-center gap-2.5 backdrop-blur-xl ${
-              toastMessage.type === "success"
+            className={`fixed top-24 right-8 z-50 px-5 py-3.5 rounded-2xl shadow-2xl border text-xs font-bold flex items-center gap-2.5 backdrop-blur-xl ${toastMessage.type === "success"
                 ? "bg-emerald-950/90 border-emerald-500/30 text-emerald-300 shadow-emerald-950/40"
                 : "bg-rose-950/90 border-rose-500/30 text-rose-300 shadow-rose-950/40"
-            }`}
+              }`}
           >
             {toastMessage.type === "success" ? (
               <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
@@ -336,8 +337,8 @@ export const SavingsPage: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <div className="bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-2 rounded-xl">
-              <span className="text-[10px] text-emerald-400 uppercase font-bold block">Emergency Reserve</span>
-              <span className="text-xs font-extrabold text-emerald-300">Separate from Main Account</span>
+              <span className="text-[10px] text-emerald-400 uppercase font-bold block">Savings</span>
+              <span className="text-xs font-extrabold text-emerald-300">Cash & GPay / UPI</span>
             </div>
           </div>
         </div>
@@ -424,13 +425,12 @@ export const SavingsPage: React.FC = () => {
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <span className="text-[11px] font-semibold text-gray-400">Net Month Savings:</span>
             <span
-              className={`text-xs font-black px-3 py-1.5 rounded-xl border ${
-                netMonthSavings > 0
+              className={`text-xs font-black px-3 py-1.5 rounded-xl border ${netMonthSavings > 0
                   ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
                   : netMonthSavings < 0
-                  ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
-                  : "bg-gray-800 text-gray-400 border-gray-700"
-              }`}
+                    ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
+                    : "bg-gray-800 text-gray-400 border-gray-700"
+                }`}
             >
               {netMonthSavings > 0 ? "+" : ""}{currency}{formatAmount(netMonthSavings)}
             </span>
@@ -538,20 +538,37 @@ export const SavingsPage: React.FC = () => {
       </div>
 
       {/* 4. Action Buttons */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-stretch">
         <button
           onClick={() => {
             setToAmount("");
             setToNote("");
             setToDate(getTodayDateStr());
+            setToFundingSource("current_balance");
             setToError(null);
             setIsMoveToSavingsOpen(true);
           }}
-          className="py-4 px-6 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/30"
-          id="add-to-savings-btn"
+          className="py-3.5 px-5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/30"
+          id="move-to-savings-btn"
         >
           <Plus className="h-4 w-4 stroke-[3px]" />
-          <span>+ Add to Emergency Savings</span>
+          <span>Move to Savings</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setToAmount("");
+            setToNote("");
+            setToDate(getTodayDateStr());
+            setToFundingSource("previous_savings");
+            setToError(null);
+            setIsMoveToSavingsOpen(true);
+          }}
+          className="py-3.5 px-5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-extrabold rounded-2xl border border-amber-500/35 hover:border-amber-500/50 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+          id="add-previous-savings-btn"
+        >
+          <Banknote className="h-4 w-4 text-amber-400" />
+          <span>Add Previous Savings</span>
         </button>
 
         <button
@@ -562,11 +579,11 @@ export const SavingsPage: React.FC = () => {
             setBackError(null);
             setIsMoveBackOpen(true);
           }}
-          className="py-4 px-6 bg-gray-900 hover:bg-gray-850 text-gray-200 hover:text-white text-xs font-extrabold rounded-2xl border border-gray-800 hover:border-gray-700 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-          id="withdraw-from-savings-btn"
+          className="py-3.5 px-5 bg-gray-900 hover:bg-gray-850 text-gray-200 hover:text-white text-xs font-extrabold rounded-2xl border border-gray-800 hover:border-gray-700 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+          id="move-back-btn"
         >
           <ArrowRightLeft className="h-4 w-4 text-blue-400" />
-          <span>− Withdraw from Emergency Savings</span>
+          <span>Move Back to Available Balance</span>
         </button>
       </div>
 
@@ -596,22 +613,20 @@ export const SavingsPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActivityFilter("month")}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                      activityFilter === "month"
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${activityFilter === "month"
                         ? "bg-purple-500 text-white shadow-md shadow-purple-500/25"
                         : "text-gray-400 hover:text-gray-200"
-                    }`}
+                      }`}
                   >
                     {getMonthLabel(selectedMonth)} ({monthMovements.length})
                   </button>
                   <button
                     type="button"
                     onClick={() => setActivityFilter("all")}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                      activityFilter === "all"
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${activityFilter === "all"
                         ? "bg-purple-500 text-white shadow-md shadow-purple-500/25"
                         : "text-gray-400 hover:text-gray-200"
-                    }`}
+                      }`}
                   >
                     All Time ({summary?.movements?.length || 0})
                   </button>
@@ -632,11 +647,10 @@ export const SavingsPage: React.FC = () => {
                       >
                         <div className="flex items-center gap-3.5">
                           <div
-                            className={`p-2.5 rounded-xl shrink-0 ${
-                              isToSavings
+                            className={`p-2.5 rounded-xl shrink-0 ${isToSavings
                                 ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
                                 : "bg-blue-500/10 border border-blue-500/20 text-blue-400"
-                            }`}
+                              }`}
                           >
                             {isToSavings ? (
                               <ArrowDownLeft className="h-4 w-4" />
@@ -649,32 +663,22 @@ export const SavingsPage: React.FC = () => {
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold text-white">
                                 {isToSavings
-                                  ? movement.fundingSource === "previous_savings"
-                                    ? `Recorded Previous ${isCash ? "Cash" : "GPay / UPI"} Savings`
-                                    : `Added to ${isCash ? "Cash" : "GPay / UPI"} Savings`
+                                  ? `Added to ${isCash ? "Cash" : "GPay / UPI"} Savings`
                                   : `Withdrawn from ${isCash ? "Cash" : "GPay / UPI"} to Spendable Balance`}
                               </span>
                               <span
-                                className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md border ${
-                                  isCash
+                                className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md border ${isCash
                                     ? "bg-amber-500/10 border-amber-500/20 text-amber-300"
                                     : "bg-sky-500/10 border-sky-500/20 text-sky-300"
-                                }`}
+                                  }`}
                               >
                                 {isCash ? "Cash" : "GPay / UPI"}
                               </span>
-                              {movement.fundingSource === "previous_savings" && (
-                                <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md border bg-purple-500/10 border-purple-500/30 text-purple-300">
-                                  Previous Savings
-                                </span>
-                              )}
                             </div>
 
                             <span className="text-[11px] text-gray-400 block mt-0.5">
                               {isToSavings
-                                ? movement.fundingSource === "previous_savings"
-                                  ? `Initial/past savings from previous months → Stored in ${isCash ? "physical cash reserve" : "digital UPI wallet"} (spendable balance untouched)`
-                                  : `From Available Balance → Deposited into ${isCash ? "physical cash reserve" : "digital UPI wallet"}`
+                                ? `From Available Balance → Deposited into ${isCash ? "physical cash reserve" : "digital UPI wallet"}`
                                 : `From ${isCash ? "cash reserve" : "UPI wallet"} → Returned to Available Balance`}
                             </span>
 
@@ -696,9 +700,8 @@ export const SavingsPage: React.FC = () => {
 
                         <div className="text-left sm:text-right self-end sm:self-center">
                           <span
-                            className={`text-sm font-black font-mono block ${
-                              isToSavings ? "text-emerald-400" : "text-blue-400"
-                            }`}
+                            className={`text-sm font-black font-mono block ${isToSavings ? "text-emerald-400" : "text-blue-400"
+                              }`}
                           >
                             {isToSavings ? "+" : "↩ "}{currency}{formatAmount(movement.amount)}
                           </span>
@@ -830,22 +833,17 @@ export const SavingsPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
               <div>
                 <h3 className="text-base font-extrabold text-white tracking-tight">
-                  Add to Emergency Savings
+                  {toFundingSource === "previous_savings" ? "Add Previous Savings" : "Move to Savings"}
                 </h3>
                 <span className="text-[11px] text-gray-400 mt-0.5 block">
-                  Separate money used only for emergencies (Cash or GPay / UPI)
+                  {toFundingSource === "previous_savings"
+                    ? "Add money already saved in past months"
+                    : "Transfer money into Cash or GPay / UPI savings"}
                 </span>
               </div>
               <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
                 <Plus className="h-4.5 w-4.5" />
               </div>
-            </div>
-
-            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-start gap-2.5">
-              <Info className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-emerald-200/90 leading-relaxed font-medium">
-                <strong>Emergency Money:</strong> This savings reserve has no relation to your main account. You can add any amount freely at any time.
-              </p>
             </div>
 
             {toError && (
@@ -882,11 +880,10 @@ export const SavingsPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setToSource("cash")}
-                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
-                      toSource === "cash"
+                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${toSource === "cash"
                         ? "bg-amber-500/10 border-amber-500/40 text-amber-300 shadow-sm"
                         : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                    }`}
+                      }`}
                   >
                     <Banknote className="h-4 w-4" />
                     <span>Cash</span>
@@ -894,11 +891,10 @@ export const SavingsPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setToSource("gpay_upi")}
-                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
-                      toSource === "gpay_upi"
+                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${toSource === "gpay_upi"
                         ? "bg-sky-500/10 border-sky-500/40 text-sky-300 shadow-sm"
                         : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                    }`}
+                      }`}
                   >
                     <Smartphone className="h-4 w-4" />
                     <span>GPay / UPI</span>
@@ -965,10 +961,10 @@ export const SavingsPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
               <div>
                 <h3 className="text-base font-extrabold text-white tracking-tight">
-                  Withdraw from Emergency Savings
+                  Move Back to Available Balance
                 </h3>
                 <span className="text-[11px] text-gray-400 mt-0.5 block">
-                  Record funds used from your emergency reserve
+                  Withdraw saved money back into your everyday spendable funds
                 </span>
               </div>
               <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
@@ -983,11 +979,10 @@ export const SavingsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setBackSource("cash")}
-                  className={`py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${
-                    backSource === "cash"
+                  className={`py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${backSource === "cash"
                       ? "bg-amber-500/10 border-amber-500/40 text-amber-300 shadow-sm"
                       : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-1.5">
                     <Banknote className="h-3.5 w-3.5" />
@@ -1000,11 +995,10 @@ export const SavingsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setBackSource("gpay_upi")}
-                  className={`py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${
-                    backSource === "gpay_upi"
+                  className={`py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${backSource === "gpay_upi"
                       ? "bg-sky-500/10 border-sky-500/40 text-sky-300 shadow-sm"
                       : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-1.5">
                     <Smartphone className="h-3.5 w-3.5" />
