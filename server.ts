@@ -10,7 +10,7 @@ import savingsRouter from "./src/server/savings";
 import { initCronJobs } from "./src/server/cron";
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = 3000;
 
   // Midldlewares
   app.use(express.json());
