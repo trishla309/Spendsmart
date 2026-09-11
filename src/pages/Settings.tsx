@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
-import { getSettings, saveSettings, CurrencySymbol } from "../lib/settings";
+import { getSettings, saveSettings, CurrencySymbol, PaymentMethod } from "../lib/settings";
 import {
   User as UserIcon,
   Mail,
@@ -15,6 +15,8 @@ import {
   AlertTriangle,
   Award,
   CheckCircle,
+  CreditCard,
+  Banknote,
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -26,6 +28,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [currency, setCurrency] = useState<CurrencySymbol>("$");
+  const [defaultPaymentMethod, setDefaultPaymentMethod] = useState<PaymentMethod>("Online");
 
   // User details from localStorage
   const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
@@ -48,6 +51,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     const current = getSettings();
     setTheme(current.theme);
     setCurrency(current.currency);
+    setDefaultPaymentMethod(current.defaultPaymentMethod || "Online");
 
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -81,6 +85,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     saveSettings({ currency: newCurrency });
     triggerGlobalSettingsUpdate();
     showToast(`Currency symbol modified to ${newCurrency}.`);
+  };
+
+  const handlePaymentMethodChange = (newMethod: PaymentMethod) => {
+    setDefaultPaymentMethod(newMethod);
+    saveSettings({ defaultPaymentMethod: newMethod });
+    triggerGlobalSettingsUpdate();
+    showToast(`Default payment method set to ${newMethod}.`);
   };
 
   const triggerGlobalSettingsUpdate = () => {
@@ -258,6 +269,46 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
               <option value="€">€ Euro (EUR)</option>
               <option value="£">£ British Pound (GBP)</option>
             </select>
+          </div>
+
+          {/* Default Payment Method */}
+          <div className="flex flex-col gap-2 mt-2">
+            <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
+              <CreditCard className="h-3.5 w-3.5 text-blue-400" />
+              Default Payment Method
+            </label>
+            <span className="text-[11px] text-gray-500">
+              Automatically preselects this method when recording a new expense.
+            </span>
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              <button
+                type="button"
+                onClick={() => handlePaymentMethodChange("Online")}
+                className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                  defaultPaymentMethod === "Online"
+                    ? "bg-blue-500/10 border-blue-500/30 text-blue-300"
+                    : "bg-gray-950/40 border-gray-850 text-gray-500 hover:text-gray-300"
+                }`}
+                id="default-pay-online-btn"
+              >
+                <CreditCard className="h-4 w-4 text-blue-400" />
+                <span>Online</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handlePaymentMethodChange("Cash")}
+                className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                  defaultPaymentMethod === "Cash"
+                    ? "bg-amber-500/10 border-amber-500/30 text-amber-300"
+                    : "bg-gray-950/40 border-gray-850 text-gray-500 hover:text-gray-300"
+                }`}
+                id="default-pay-cash-btn"
+              >
+                <Banknote className="h-4 w-4 text-amber-400" />
+                <span>Cash</span>
+              </button>
+            </div>
           </div>
         </div>
 

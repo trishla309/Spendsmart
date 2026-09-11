@@ -1,4 +1,4 @@
-import { Budget, Expense } from "./db";
+import { Budget, Expense, SavingsMovement } from "./db";
 
 export async function seedDemoDataForUser(userId: string) {
   // Check if user already has budgets or expenses
@@ -135,4 +135,98 @@ export async function seedDemoDataForUser(userId: string) {
   }
 
   console.log("Seeding completed successfully! Rahul Sharma's June and April 2026 transactions are ready.");
+}
+
+export async function seedShowcaseDataForUser(userId: string) {
+  const currentMonth = "2026-09";
+  const existingBudgets = await Budget.find({ userId, month: currentMonth });
+  if (existingBudgets.length > 0) {
+    console.log(`Showcase data already seeded for user ${userId} in ${currentMonth}.`);
+    return;
+  }
+
+  console.log(`Seeding pristine showcase data for user ${userId} in ${currentMonth}...`);
+
+  // 1. Current Month Budget (September 2026)
+  await Budget.create({
+    userId,
+    month: currentMonth,
+    pocketMoney: 18000,
+    savingsGoal: 3500,
+    allocated: {
+      food: 5500,
+      transport: 2200,
+      shopping: 3000,
+      entertainment: 2000,
+      emergency: 1500,
+      stationery: 1200,
+      other: 1000,
+      savings: 0,
+    } as any,
+    thresholdsFired: {
+      food: { p80: false, p100: false },
+      transport: { p80: false, p100: false },
+      shopping: { p80: false, p100: false },
+      entertainment: { p80: false, p100: false },
+      emergency: { p80: false, p100: false },
+      stationery: { p80: false, p100: false },
+      other: { p80: false, p100: false },
+    }
+  });
+
+  // 2. Realistic September 2026 Expenses
+  const showcaseExpenses = [
+    { description: "Campus Cafeteria - Lunch & Smoothie", amount: 185, category: "food", date: "2026-09-01", paidUsing: "online", note: "Healthy lunch meal" },
+    { description: "Monthly Metro Transit SmartCard", amount: 850, category: "transport", date: "2026-09-01", paidUsing: "online", note: "Pass for commute to college" },
+    { description: "Algorithms & Data Structures Textbook", amount: 620, category: "stationery", date: "2026-09-02", paidUsing: "online", note: "Sem 5 reference textbook" },
+    { description: "Starbucks Hazelnut Latte & Bagel", amount: 380, category: "food", date: "2026-09-03", paidUsing: "online", note: "Study session cafe" },
+    { description: "Ergonomic Laptop Stand & Mousepad", amount: 899, category: "shopping", date: "2026-09-04", paidUsing: "online", note: "Desk setup upgrade" },
+    { description: "Campus Pharmacy - First Aid & Vitamins", amount: 340, category: "emergency", date: "2026-09-05", paidUsing: "cash", note: "Medical essentials" },
+    { description: "PVR Cinemas - IMAX Ticket & Popcorn", amount: 650, category: "entertainment", date: "2026-09-06", paidUsing: "online", note: "Weekend movie outing" },
+    { description: "Zomato - Weekend Dinner with Friends", amount: 720, category: "food", date: "2026-09-07", paidUsing: "online", note: "Split bill dinner" },
+    { description: "Spiral Notebooks & Gel Pen Set", amount: 210, category: "stationery", date: "2026-09-08", paidUsing: "cash", note: "Project notes" },
+    { description: "Spotify Student Duo Premium", amount: 149, category: "entertainment", date: "2026-09-08", paidUsing: "online", note: "Monthly music subscription" },
+    { description: "Uber Ride - Hackathon Venue", amount: 240, category: "transport", date: "2026-09-09", paidUsing: "online", note: "City tech hackathon" },
+    { description: "Uniqlo - Casual Denim Overshirt", amount: 1450, category: "shopping", date: "2026-09-09", paidUsing: "online", note: "Autumn wardrobe" },
+    { description: "High-Speed Hostel Wi-Fi Recharge", amount: 350, category: "other", date: "2026-09-10", paidUsing: "online", note: "Monthly internet fee" },
+    { description: "Blue Tokai Cold Brew & Sandwich", amount: 240, category: "food", date: "2026-09-10", paidUsing: "online", note: "Evening co-working space" },
+    { description: "Color Printing - Project Reports", amount: 120, category: "stationery", date: "2026-09-11", paidUsing: "cash", note: "Engineering seminar prints" },
+  ];
+
+  for (const exp of showcaseExpenses) {
+    await Expense.create({
+      userId,
+      amount: exp.amount,
+      category: exp.category,
+      description: exp.description,
+      date: exp.date,
+      paidUsing: exp.paidUsing,
+      note: exp.note
+    });
+  }
+
+  // 3. Savings Movements (Separated Online & Cash Savings)
+  await SavingsMovement.create({
+    userId,
+    amount: 2500,
+    direction: "to_savings",
+    source: "online_money",
+    destination: "online_savings",
+    fundingSource: "current_balance",
+    date: "2026-09-02",
+    note: "Allocated to Tech Gadgets Fund",
+  });
+
+  await SavingsMovement.create({
+    userId,
+    amount: 1000,
+    direction: "to_savings",
+    source: "cash",
+    destination: "cash_savings",
+    fundingSource: "current_balance",
+    date: "2026-09-05",
+    note: "Emergency cash stash",
+  });
+
+  console.log(`Showcase September 2026 data successfully seeded for user ${userId}!`);
 }

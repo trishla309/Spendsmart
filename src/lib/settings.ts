@@ -1,11 +1,13 @@
 // SpendSmart Settings & Theme Utilities
 
 export type CurrencySymbol = "$" | "₹" | "€" | "£";
+export type PaymentMethod = "Online" | "Cash";
 
 export interface AppSettings {
   theme: "dark" | "light";
   currency: CurrencySymbol;
   dismissedReminderDate: string | null; // e.g. "YYYY-MM-DD"
+  defaultPaymentMethod: PaymentMethod;
 }
 
 const SETTINGS_KEY = "spendsmart_settings";
@@ -14,6 +16,7 @@ const defaultSettings: AppSettings = {
   theme: "dark",
   currency: "₹",
   dismissedReminderDate: null,
+  defaultPaymentMethod: "Online",
 };
 
 export const getSettings = (): AppSettings => {

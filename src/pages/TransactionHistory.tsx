@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { api } from "../lib/api";
-import { Budget, Expense } from "../types";
+import { Budget, Expense, CategoryItem } from "../types";
 import {
   FileText,
   Search,
@@ -20,7 +20,9 @@ import {
   PenTool,
   AlertTriangle,
   HelpCircle,
-  Info
+  Info,
+  CreditCard,
+  Banknote,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Stack, Trie, mergeSort } from "../lib/dsa";
@@ -267,6 +269,7 @@ export const TransactionHistory: React.FC = () => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [note, setNote] = useState("");
+  const [paidUsing, setPaidUsing] = useState<"Online" | "Cash">("Online");
   const [addLoading, setAddLoading] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
 
@@ -279,6 +282,7 @@ export const TransactionHistory: React.FC = () => {
   const [editDescription, setEditDescription] = useState("");
   const [editDate, setEditDate] = useState("");
   const [editNote, setEditNote] = useState("");
+  const [editPaidUsing, setEditPaidUsing] = useState<"Online" | "Cash">("Online");
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
@@ -290,12 +294,38 @@ export const TransactionHistory: React.FC = () => {
 
   const isCurrentMonthEditable = selectedMonth === currentMonthStr;
 
+  const [categories, setCategories] = useState<CategoryItem[]>([
+    { key: "food", label: "Food & Dining", emoji: "🍔", isDefault: true },
+    { key: "transport", label: "Transport", emoji: "🚌", isDefault: true },
+    { key: "shopping", label: "Shopping", emoji: "🛍️", isDefault: true },
+    { key: "entertainment", label: "Entertainment", emoji: "🎬", isDefault: true },
+    { key: "emergency", label: "Emergency Reserve", emoji: "🚨", isDefault: true },
+    { key: "stationery", label: "Stationery", emoji: "📝", isDefault: true },
+    { key: "other", label: "Other / Misc", emoji: "📦", isDefault: true },
+  ]);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/categories");
+      if (res.data?.categories && Array.isArray(res.data.categories)) {
+        setCategories(res.data.categories);
+      }
+    } catch (err) {
+      console.error("Error loading categories:", err);
+    }
+  };
+
   const fetchTransactions = async () => {
     setLoading(true);
     try {
       const sRes = await api.get(`/budget/summary?month=${selectedMonth}`);
       setSummary(sRes.data);
       setBudget(sRes.data);
+      if (sRes.data?.userCategories && Array.isArray(sRes.data.userCategories)) {
+        setCategories(sRes.data.userCategories);
+      } else {
+        await fetchCategories();
+      }
 
       const eRes = await api.get("/expenses");
       const rawData = eRes.data;
@@ -344,6 +374,7 @@ export const TransactionHistory: React.FC = () => {
         description,
         date,
         note,
+        paidUsing: paidUsing.toLowerCase(),
       });
 
       // Clear fields
@@ -351,6 +382,7 @@ export const TransactionHistory: React.FC = () => {
       setDescription("");
       setNote("");
       setDate(new Date().toISOString().split("T")[0]);
+      setPaidUsing(getSettings().defaultPaymentMethod || "Online");
       setIsAddExpenseOpen(false);
       await fetchTransactions();
     } catch (err: any) {
@@ -368,6 +400,7 @@ export const TransactionHistory: React.FC = () => {
     setEditDescription(exp.description);
     setEditDate(exp.date);
     setEditNote(exp.note || "");
+    setEditPaidUsing((exp.paidUsing || "online").toLowerCase() === "cash" ? "Cash" : "Online");
     setEditError(null);
   };
 
@@ -391,6 +424,7 @@ export const TransactionHistory: React.FC = () => {
         description: editDescription,
         date: editDate,
         note: editNote,
+        paidUsing: editPaidUsing.toLowerCase(),
       });
 
       setEditingExpense(null);
@@ -623,13 +657,33 @@ export const TransactionHistory: React.FC = () => {
         </div>
 
         {/* Info or Add Button */}
-        <div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-gray-950/40 border border-gray-800 text-gray-400 rounded-xl text-xs max-w-md">
-            <Info className="h-4 w-4 text-emerald-400 shrink-0" />
-            <p className="leading-relaxed">
-              Transaction history ledger is in read-only view mode.
-            </p>
-          </div>
+        <div className="flex items-center gap-3">
+          {isCurrentMonthEditable ? (
+            <button
+              onClick={() => {
+                setAmount("");
+                setCategory("food");
+                setDescription("");
+                setDate(new Date().toISOString().split("T")[0]);
+                setNote("");
+                setPaidUsing(getSettings().defaultPaymentMethod || "Online");
+                setAddError(null);
+                setIsAddExpenseOpen(true);
+              }}
+              className="px-4.5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md shadow-emerald-500/10"
+              id="history-add-expense-btn"
+            >
+              <PlusCircle className="h-4 w-4" />
+              <span>Record Expense</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 px-3 py-2 bg-gray-950/40 border border-gray-800 text-gray-400 rounded-xl text-xs max-w-md">
+              <Info className="h-4 w-4 text-emerald-400 shrink-0" />
+              <p className="leading-relaxed">
+                Transaction history ledger is in read-only view mode for past months.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -678,17 +732,16 @@ export const TransactionHistory: React.FC = () => {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-3.5 py-2.5 bg-gray-900 border border-gray-800 focus:border-emerald-500/50 text-xs text-gray-200 rounded-xl outline-none cursor-pointer"
+              className="px-3.5 py-2.5 bg-gray-900 border border-gray-800 focus:border-emerald-500/50 text-xs text-gray-200 rounded-xl outline-none cursor-pointer font-bold text-gray-200"
               id="category-filter-select"
             >
               <option value="all">All Categories</option>
-              <option value="food">Food & Dining</option>
-              <option value="transport">Transport</option>
-              <option value="shopping">Shopping</option>
-              <option value="entertainment">Entertainment</option>
-              <option value="emergency">Emergency</option>
-              <option value="utilities">Utilities</option>
-              <option value="income">Income</option>
+              {categories.map((c) => (
+                <option key={c.key} value={c.key}>
+                  {c.emoji || "🏷️"} {c.label}
+                </option>
+              ))}
+              <option value="income">💰 Income</option>
             </select>
           </div>
 
@@ -791,6 +844,18 @@ export const TransactionHistory: React.FC = () => {
                               <span className="text-xs font-bold text-gray-100 truncate">
                                 {exp.description}
                               </span>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <span className="text-[10px] text-gray-400">{details.label}</span>
+                                {!isIncome && (
+                                  <span className={`text-[8px] font-extrabold uppercase px-1.5 py-0.2 rounded border ${
+                                    (exp.paidUsing || "online").toLowerCase() === "cash"
+                                      ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
+                                      : "bg-blue-500/10 border-blue-500/25 text-blue-300"
+                                  }`}>
+                                    {(exp.paidUsing || "online").toLowerCase() === "cash" ? "Cash" : "Online"}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
 
@@ -939,13 +1004,11 @@ export const TransactionHistory: React.FC = () => {
                       onChange={(e) => setCategory(e.target.value)}
                       className="px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:border-emerald-500/50 outline-none text-sm text-gray-200 font-bold cursor-pointer"
                     >
-                      <option value="food">Food & Dining</option>
-                      <option value="transport">Transport</option>
-                      <option value="shopping">Shopping</option>
-                      <option value="entertainment">Entertainment</option>
-                      <option value="emergency">Emergency</option>
-                      <option value="stationery">Stationery</option>
-                      <option value="other">Other / Misc</option>
+                      {categories.map((c) => (
+                        <option key={c.key} value={c.key}>
+                          {c.emoji || "🏷️"} {c.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -960,6 +1023,67 @@ export const TransactionHistory: React.FC = () => {
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     className="px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:border-emerald-500/50 outline-none text-sm text-gray-200 font-semibold"
+                  />
+                </div>
+
+                {/* Paid using selector */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-gray-400">Paid using *</label>
+                    {paidUsing === "Cash" && summary?.cashSavings !== undefined && (
+                      <span className="text-[10px] text-amber-400 font-mono font-bold">
+                        Avail. Cash Savings: {currency}{summary.cashSavings}
+                      </span>
+                    )}
+                    {paidUsing === "Online" && summary?.onlineMoney !== undefined && (
+                      <span className="text-[10px] text-blue-400 font-mono font-bold">
+                        Avail. Online Money: {currency}{summary.onlineMoney}
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPaidUsing("Online")}
+                      className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        paidUsing === "Online"
+                          ? "bg-blue-500/15 border-blue-500/40 text-blue-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                      id="history-add-pay-online-btn"
+                    >
+                      <CreditCard className="h-3.5 w-3.5 text-blue-400" />
+                      <span>Online</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaidUsing("Cash")}
+                      className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        paidUsing === "Cash"
+                          ? "bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                      id="history-add-pay-cash-btn"
+                    >
+                      <Banknote className="h-3.5 w-3.5 text-amber-400" />
+                      <span>Cash</span>
+                    </button>
+                  </div>
+                  <span className="text-[10px] text-gray-500">
+                    {paidUsing === "Online" ? "Deducts from your spendable Online Money." : "Deducts from your Cash Savings reserve."}
+                  </span>
+                </div>
+
+                {/* Optional Note */}
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="expense-note" className="text-xs font-bold text-gray-400">Note (Optional)</label>
+                  <input
+                    id="expense-note"
+                    type="text"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className="px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-xl focus:border-emerald-500/50 outline-none text-sm text-gray-200 font-semibold"
+                    placeholder="e.g. Any extra details..."
                   />
                 </div>
 
@@ -1084,13 +1208,11 @@ export const TransactionHistory: React.FC = () => {
                       onChange={(e) => setEditCategory(e.target.value)}
                       className="px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:border-emerald-500/50 outline-none text-sm text-gray-200 font-bold cursor-pointer"
                     >
-                      <option value="food">Food & Dining</option>
-                      <option value="transport">Transport</option>
-                      <option value="shopping">Shopping</option>
-                      <option value="entertainment">Entertainment</option>
-                      <option value="emergency">Emergency</option>
-                      <option value="stationery">Stationery</option>
-                      <option value="other">Other / Misc</option>
+                      {categories.map((c) => (
+                        <option key={c.key} value={c.key}>
+                          {c.emoji || "🏷️"} {c.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -1107,6 +1229,56 @@ export const TransactionHistory: React.FC = () => {
                     className="px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:border-emerald-500/50 outline-none text-sm text-gray-200 font-semibold"
                   />
                 </div>
+
+                {/* Paid using selector */}
+                {editingExpense?.category !== "income" && (
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-gray-400">Paid using *</label>
+                      {editPaidUsing === "Cash" && summary?.cashSavings !== undefined && (
+                        <span className="text-[10px] text-amber-400 font-mono font-bold">
+                          Avail. Cash Savings: {currency}{summary.cashSavings}
+                        </span>
+                      )}
+                      {editPaidUsing === "Online" && summary?.onlineMoney !== undefined && (
+                        <span className="text-[10px] text-blue-400 font-mono font-bold">
+                          Avail. Online Money: {currency}{summary.onlineMoney}
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditPaidUsing("Online")}
+                        className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                          editPaidUsing === "Online"
+                            ? "bg-blue-500/15 border-blue-500/40 text-blue-300 shadow-sm"
+                            : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                        }`}
+                        id="history-edit-pay-online-btn"
+                      >
+                        <CreditCard className="h-3.5 w-3.5 text-blue-400" />
+                        <span>Online</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditPaidUsing("Cash")}
+                        className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                          editPaidUsing === "Cash"
+                            ? "bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-sm"
+                            : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                        }`}
+                        id="history-edit-pay-cash-btn"
+                      >
+                        <Banknote className="h-3.5 w-3.5 text-amber-400" />
+                        <span>Cash</span>
+                      </button>
+                    </div>
+                    <span className="text-[10px] text-gray-500">
+                      {editPaidUsing === "Online" ? "Deducts from your spendable Online Money." : "Deducts from your Cash Savings reserve."}
+                    </span>
+                  </div>
+                )}
 
                 {/* Footer Buttons */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-800 mt-2">

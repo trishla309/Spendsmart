@@ -1,5 +1,5 @@
 import { Router, Response } from "express";
-import { Budget, Expense } from "./db";
+import { Budget, Expense, getUserCategories } from "./db";
 import { authMiddleware, AuthenticatedRequest } from "./auth";
 import { Queue } from "./dsa";
 import { NotificationQueueManager, checkBudgetThresholds } from "./notificationQueue";
@@ -113,8 +113,10 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
     // Cumulative Financials from complete user history (ensures balances don't reset when month changes)
     const financials = await getUserCumulativeFinancials(userId, month);
     const availableBalance = financials.availableBalance;
+    const onlineMoney = financials.onlineMoney;
     const remainingBalance = availableBalance;
     const totalSavings = financials.totalSavings;
+    const onlineSavings = financials.onlineSavings;
     const cashSavings = financials.cashSavings;
     const gpaySavings = financials.gpaySavings;
     const totalMoney = financials.totalMoney;
@@ -126,24 +128,20 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
     const budgetUtilization = totalMoneyReceived > 0 ? Math.round((totalExpenses / totalMoneyReceived) * 100) : 0;
     const savingsRate = totalMoneyReceived > 0 ? Math.round((monthSavingsProgress / totalMoneyReceived) * 100) : 0;
 
-    // Categories List
-    const categories = ["food", "transport", "shopping", "entertainment", "emergency", "stationery", "other"];
-    const categoryLabels: Record<string, string> = {
-      food: "Food & Dining",
-      transport: "Transport",
-      shopping: "Shopping",
-      entertainment: "Entertainment",
-      emergency: "Emergency",
-      stationery: "Stationery",
-      other: "Other / Misc",
-    };
+    // Dynamically retrieve all active categories for this user
+    const userCategories = await getUserCategories(userId);
+    const categoryLabels: Record<string, string> = {};
+    userCategories.forEach((c) => {
+      categoryLabels[c.key] = c.label;
+    });
+    const categories = userCategories.map((c) => c.key);
 
     const categorySpending: Record<string, number> = {};
     const remainingCategoryBudget: Record<string, number> = {};
     const categoryAllocated: Record<string, number> = {};
 
     categories.forEach((cat) => {
-      const allocated = Number(budget.allocated[cat as keyof typeof budget.allocated] || 0);
+      const allocated = Number(budget.allocated?.[cat] || 0);
       const spent = expenseEntries.filter((e) => e.category === cat).reduce((sum, e) => sum + e.amount, 0);
 
       categorySpending[cat] = spent;
@@ -325,19 +323,24 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
       totalExpenses,
       remainingBalance,
       availableBalance,
+      onlineMoney,
       currentSavings: totalSavings,
       totalSavings,
+      onlineSavings,
       cashSavings,
       gpaySavings,
       totalMoney,
       monthMovedToSavings: financials.monthMovedToSavings,
       monthReturnedFromSavings: financials.monthReturnedFromSavings,
+      monthCashExpenses: financials.monthCashExpenses,
+      monthSpentFromSavings: financials.monthSpentFromSavings,
       netMonthSavings,
       monthSavingsProgress,
       remainingSavingsRequired,
       categorySpending,
       remainingCategoryBudget,
       categoryAllocated,
+      userCategories,
       budgetUtilization,
       savingsRate,
       highestSpendingCategory,
@@ -462,10 +465,16 @@ router.post("/", authMiddleware, async (req: AuthenticatedRequest, res: Response
   }
 
   // Validate allocated amounts do not exceed pocketMoney
-  const categories = ["food", "transport", "shopping", "entertainment", "emergency", "savings", "other"];
+  // Validate allocated amounts do not exceed pocketMoney across all categories
   let allocatedSum = 0;
-  for (const cat of categories) {
-    allocatedSum += Number(allocated[cat] || 0);
+  const cleanAllocated: Record<string, number> = {};
+  if (typeof allocated === "object" && allocated !== null) {
+    for (const [cat, amt] of Object.entries(allocated)) {
+      if (cat === "savings") continue;
+      const num = Math.max(0, Number(amt) || 0);
+      cleanAllocated[cat] = num;
+      allocatedSum += num;
+    }
   }
 
   if (allocatedSum > pocketMoney) {
@@ -482,16 +491,7 @@ router.post("/", authMiddleware, async (req: AuthenticatedRequest, res: Response
       month,
       pocketMoney: Number(pocketMoney),
       savingsGoal: Number(savingsGoal),
-      allocated: {
-        food: Number(allocated.food || 0),
-        transport: Number(allocated.transport || 0),
-        shopping: Number(allocated.shopping || 0),
-        entertainment: Number(allocated.entertainment || 0),
-        emergency: Number(allocated.emergency || 0),
-        stationery: Number(allocated.stationery || 0),
-        savings: Number(allocated.savings || 0),
-        other: Number(allocated.other || 0),
-      },
+      allocated: cleanAllocated,
     };
 
     if (existing) {
@@ -525,6 +525,59 @@ router.post("/", authMiddleware, async (req: AuthenticatedRequest, res: Response
     }
   } catch (error) {
     console.error("Error saving budget:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// PATCH /api/budget/savings-goal - Quick update for monthly savings target
+router.patch("/savings-goal", authMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const userId = req.user?.id;
+  if (!userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const { month, savingsGoal } = req.body;
+  if (!month || savingsGoal === undefined) {
+    res.status(400).json({ error: "Missing required fields: month, savingsGoal" });
+    return;
+  }
+
+  const targetNum = Math.max(0, Number(savingsGoal) || 0);
+
+  try {
+    let budget = await Budget.findOne({ userId, month });
+    if (budget) {
+      await Budget.updateOne({ _id: budget._id }, { savingsGoal: targetNum });
+    } else {
+      budget = await Budget.create({
+        userId,
+        month,
+        pocketMoney: 0,
+        savingsGoal: targetNum,
+        allocated: {
+          food: 0,
+          transport: 0,
+          shopping: 0,
+          entertainment: 0,
+          emergency: 0,
+          stationery: 0,
+          savings: 0,
+          other: 0,
+        },
+      });
+    }
+
+    NotificationQueueManager.enqueueNotification(
+      userId,
+      "success",
+      "Savings Goal Updated",
+      `Your monthly savings target for ${month} has been updated to ₹${targetNum}.`
+    );
+
+    res.json({ message: "Savings target updated successfully", savingsGoal: targetNum, month });
+  } catch (error) {
+    console.error("Error updating savings goal:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

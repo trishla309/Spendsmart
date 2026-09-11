@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
-import { Budget, Expense } from "../types";
+import { Budget, Expense, CategoryItem } from "../types";
 import {
   Wallet,
   TrendingDown,
@@ -35,7 +35,9 @@ import {
   ChevronDown,
   History,
   Target,
-  ArrowRight
+  ArrowRight,
+  CreditCard,
+  Banknote,
 } from "lucide-react";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
@@ -225,6 +227,12 @@ export const DashboardHome: React.FC = () => {
   const [moneyLoading, setMoneyLoading] = useState(false);
   const [moneyError, setMoneyError] = useState<string | null>(null);
 
+  // Set Savings Goal Modal states
+  const [isSetGoalOpen, setIsSetGoalOpen] = useState(false);
+  const [goalInputVal, setGoalInputVal] = useState("");
+  const [goalLoading, setGoalLoading] = useState(false);
+  const [goalError, setGoalError] = useState<string | null>(null);
+
   const [editingCategoryBudgetKey, setEditingCategoryBudgetKey] = useState<string | null>(null);
   const [viewingCategoryKey, setViewingCategoryKey] = useState<string | null>(null);
   const [newBudgetVal, setNewBudgetVal] = useState("");
@@ -251,6 +259,7 @@ export const DashboardHome: React.FC = () => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [note, setNote] = useState("");
+  const [paidUsing, setPaidUsing] = useState<"Online" | "Cash">("Online");
   const [addLoading, setAddLoading] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
 
@@ -263,10 +272,109 @@ export const DashboardHome: React.FC = () => {
   const [editDescription, setEditDescription] = useState("");
   const [editDate, setEditDate] = useState("");
   const [editNote, setEditNote] = useState("");
+  const [editPaidUsing, setEditPaidUsing] = useState<"Online" | "Cash">("Online");
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
+  const [txViewMode, setTxViewMode] = useState<"recent" | "today">("recent");
+
   const isCurrentMonthEditable = selectedMonth === currentMonthStr;
+
+  // Custom Category States
+  const [categories, setCategories] = useState<CategoryItem[]>([
+    { key: "food", label: "Food & Dining", emoji: "🍔", color: "bg-orange-500", isDefault: true },
+    { key: "transport", label: "Transport", emoji: "🚌", color: "bg-sky-500", isDefault: true },
+    { key: "shopping", label: "Shopping", emoji: "🛍️", color: "bg-indigo-500", isDefault: true },
+    { key: "entertainment", label: "Entertainment", emoji: "🎬", color: "bg-rose-500", isDefault: true },
+    { key: "emergency", label: "Emergency Reserve", emoji: "🚨", color: "bg-red-500", isDefault: true },
+    { key: "stationery", label: "Stationery", emoji: "📝", color: "bg-emerald-500", isDefault: true },
+    { key: "other", label: "Other / Misc", emoji: "📦", color: "bg-amber-500", isDefault: true },
+  ]);
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+  const [newCatLabel, setNewCatLabel] = useState("");
+  const [newCatEmoji, setNewCatEmoji] = useState("🏷️");
+  const [newCatColor, setNewCatColor] = useState("bg-violet-500");
+  const [newCatBudget, setNewCatBudget] = useState("");
+  const [catLoading, setCatLoading] = useState(false);
+  const [catError, setCatError] = useState<string | null>(null);
+
+  // Category deletion confirm modal state
+  const [categoryToRemove, setCategoryToRemove] = useState<CategoryItem | null>(null);
+  const [removeCatLoading, setRemoveCatLoading] = useState(false);
+
+  // Fetch active categories
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/categories");
+      if (res.data?.categories && Array.isArray(res.data.categories) && res.data.categories.length > 0) {
+        setCategories(res.data.categories);
+      }
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+    }
+  };
+
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCatLabel.trim()) {
+      setCatError("Please enter a category name");
+      return;
+    }
+    setCatLoading(true);
+    setCatError(null);
+    try {
+      const res = await api.post("/categories", {
+        label: newCatLabel.trim(),
+        emoji: newCatEmoji,
+        color: newCatColor,
+        initialBudget: newCatBudget ? Number(newCatBudget) : 0,
+        month: selectedMonth,
+      });
+      if (res.data?.categories) {
+        setCategories(res.data.categories);
+      }
+      setIsAddCategoryOpen(false);
+      setNewCatLabel("");
+      setNewCatBudget("");
+      setNewCatEmoji("🏷️");
+      setNewCatColor("bg-violet-500");
+      await fetchDashboardData();
+    } catch (err: any) {
+      setCatError(err.response?.data?.error || "Failed to add category");
+    } finally {
+      setCatLoading(false);
+    }
+  };
+
+  const handleRemoveCategory = async () => {
+    if (!categoryToRemove) return;
+    setRemoveCatLoading(true);
+    try {
+      const res = await api.delete(`/categories/${categoryToRemove.key}`);
+      if (res.data?.categories) {
+        setCategories(res.data.categories);
+      }
+      setCategoryToRemove(null);
+      await fetchDashboardData();
+    } catch (err: any) {
+      console.error("Failed to remove category:", err);
+    } finally {
+      setRemoveCatLoading(false);
+    }
+  };
+
+  const handleResetCategories = async () => {
+    if (!window.confirm("Reset all categories back to system defaults?")) return;
+    try {
+      const res = await api.post("/categories/reset");
+      if (res.data?.categories) {
+        setCategories(res.data.categories);
+      }
+      await fetchDashboardData();
+    } catch (err) {
+      console.error("Failed to reset categories:", err);
+    }
+  };
 
   // Fetch full data
   const fetchDashboardData = async () => {
@@ -276,6 +384,11 @@ export const DashboardHome: React.FC = () => {
       const sRes = await api.get(`/budget/summary?month=${selectedMonth}`);
       setSummary(sRes.data);
       setBudget(sRes.data);
+      if (sRes.data?.userCategories && Array.isArray(sRes.data.userCategories)) {
+        setCategories(sRes.data.userCategories);
+      } else {
+        await fetchCategories();
+      }
 
       // 2. Get all expenses
       const eRes = await api.get("/expenses");
@@ -325,6 +438,7 @@ export const DashboardHome: React.FC = () => {
         description,
         date,
         note,
+        paidUsing: paidUsing.toLowerCase(),
       });
 
       // Clear fields
@@ -332,6 +446,7 @@ export const DashboardHome: React.FC = () => {
       setDescription("");
       setNote("");
       setDate(new Date().toISOString().split("T")[0]);
+      setPaidUsing(getSettings().defaultPaymentMethod || "Online");
 
       // Reload dashboard
       await fetchDashboardData();
@@ -429,6 +544,7 @@ export const DashboardHome: React.FC = () => {
     setEditDescription(exp.description);
     setEditDate(exp.date);
     setEditNote(exp.note || "");
+    setEditPaidUsing((exp.paidUsing || "online").toLowerCase() === "cash" ? "Cash" : "Online");
     setEditError(null);
   };
 
@@ -452,6 +568,7 @@ export const DashboardHome: React.FC = () => {
         description: editDescription,
         date: editDate,
         note: editNote,
+        paidUsing: editPaidUsing.toLowerCase(),
       });
 
       setEditingExpense(null);
@@ -507,6 +624,55 @@ export const DashboardHome: React.FC = () => {
     }
   };
 
+  // SAVE SAVINGS GOAL handler
+  const handleSaveSavingsGoal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const num = Math.max(0, Number(goalInputVal) || 0);
+    if (isNaN(num) || num < 0) {
+      setGoalError("Please enter a valid target amount.");
+      return;
+    }
+
+    setGoalLoading(true);
+    setGoalError(null);
+
+    try {
+      try {
+        await api.patch("/budget/savings-goal", {
+          month: selectedMonth,
+          savingsGoal: num,
+        });
+      } catch (patchErr) {
+        // Fallback to updating budget preserving existing allocations
+        const bRes = await api.get(`/budget?month=${selectedMonth}`);
+        const currentBudget = bRes.data;
+        await api.post("/budget", {
+          month: selectedMonth,
+          pocketMoney: currentBudget?.pocketMoney || 0,
+          savingsGoal: num,
+          allocated: currentBudget?.allocated || {
+            food: 0,
+            transport: 0,
+            shopping: 0,
+            entertainment: 0,
+            emergency: 0,
+            stationery: 0,
+            savings: 0,
+            other: 0,
+          },
+        });
+      }
+
+      setIsSetGoalOpen(false);
+      await fetchDashboardData();
+    } catch (err: any) {
+      console.error("Error saving savings goal:", err);
+      setGoalError(err.response?.data?.error || "Failed to update monthly savings goal.");
+    } finally {
+      setGoalLoading(false);
+    }
+  };
+
   // Financial calculations from backend summary (zero client-side calculations)
   const pocketMoney = summary?.totalMoneyReceived !== undefined ? summary.totalMoneyReceived : (summary?.pocketMoney || 0);
   const savingsGoal = summary?.savingsGoal || 0;
@@ -519,8 +685,10 @@ export const DashboardHome: React.FC = () => {
   // Total spent in selected month
   const totalExpenseSum = summary?.totalExpenses || 0;
 
-  // Remaining / Available Cash
-  const remainingCash = summary?.availableBalance !== undefined ? summary.availableBalance : (summary?.remainingBalance || 0);
+  // Remaining / Available Online Money
+  const remainingCash = summary?.onlineMoney !== undefined
+    ? summary.onlineMoney
+    : (summary?.availableBalance !== undefined ? summary.availableBalance : (summary?.remainingBalance || 0));
   const availableBalance = remainingCash;
 
   // Current / Total Savings
@@ -627,15 +795,12 @@ export const DashboardHome: React.FC = () => {
   ];
 
   const chartData = summary?.allocated
-    ? [
-      { name: "Food", value: Number(summary.allocated.food || 0) },
-      { name: "Transport", value: Number(summary.allocated.transport || 0) },
-      { name: "Shopping", value: Number(summary.allocated.shopping || 0) },
-      { name: "Entertainment", value: Number(summary.allocated.entertainment || 0) },
-      { name: "Emergency", value: Number(summary.allocated.emergency || 0) },
-      { name: "Stationery", value: Number(summary.allocated.stationery || 0) },
-      { name: "Other", value: Number(summary.allocated.other || 0) },
-    ].filter((item) => item.value > 0)
+    ? categories
+        .map((cat) => ({
+          name: cat.label,
+          value: Number(summary.allocated?.[cat.key] || 0),
+        }))
+        .filter((item) => item.value > 0)
     : [];
 
   const formatMonthName = (mStr: string) => {
@@ -729,6 +894,7 @@ export const DashboardHome: React.FC = () => {
                 const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                 setDate(todayStr);
                 setNote("");
+                setPaidUsing(getSettings().defaultPaymentMethod || "Online");
                 setAddError(null);
                 setIsAddExpenseOpen(true);
               }}
@@ -799,12 +965,12 @@ export const DashboardHome: React.FC = () => {
           <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">All expenditures this month</span>
         </div>
 
-        {/* Metric 3: Available Balance */}
+        {/* Metric 3: Online Money */}
         <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="available-balance-metric-card">
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-1">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                Available Balance
+                Online Money (Spendable)
               </span>
               <span className={`text-3xl font-black tracking-tight mt-1 block ${availableBalance < 0 ? "text-rose-400" : "text-blue-400"}`}>
                 {currency}{availableBalance}
@@ -829,18 +995,49 @@ export const DashboardHome: React.FC = () => {
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
                     Savings Goal
                   </span>
-                  <div className="p-3 bg-purple-500/5 border border-purple-500/15 rounded-2xl text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
-                    <Target className="h-4.5 w-4.5" />
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGoalInputVal(savingsGoal > 0 ? String(savingsGoal) : "");
+                        setGoalError(null);
+                        setIsSetGoalOpen(true);
+                      }}
+                      className="px-2.5 py-1 bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/25 text-purple-300 text-[11px] font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                      title={savingsGoal > 0 ? "Edit monthly savings goal" : "Set monthly savings goal"}
+                    >
+                      {savingsGoal > 0 ? (
+                        <>
+                          <Edit className="h-3 w-3" />
+                          <span>Edit</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-3 w-3 stroke-[2.5]" />
+                          <span>Set Target</span>
+                        </>
+                      )}
+                    </button>
+                    <div className="p-2.5 bg-purple-500/5 border border-purple-500/15 rounded-xl text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
+                      <Target className="h-4.5 w-4.5" />
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex items-baseline justify-between gap-2">
                   <div>
-                    <span className="text-3xl font-black tracking-tight text-purple-400 block">
-                      {currency}{savingsGoal}
-                    </span>
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className="text-3xl font-black tracking-tight text-purple-400 block">
+                        {currency}{formatIndianNumber(savingsGoal)}
+                      </span>
+                      {savingsGoal > 0 && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/15 border border-purple-500/30 text-purple-300 font-mono">
+                          {savingsPercentage}%
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-1">
-                      {savingsGoal > 0 ? "Target set for this month" : "No monthly target set"}
+                      {savingsGoal > 0 ? "Target set for this month" : "No monthly target set — click 'Set Target'"}
                     </span>
                   </div>
                 </div>
@@ -848,27 +1045,27 @@ export const DashboardHome: React.FC = () => {
 
               <div className="mt-4">
                 <div className="flex justify-between items-center text-[10px] mb-1.5 font-bold">
-                  <span className="text-gray-500">Goal Target Status</span>
-                  <span className="text-purple-400">{savingsPercentage}%</span>
+                  <span className="text-gray-400">Monthly Progress</span>
+                  <span className="text-purple-400 font-mono font-bold">{savingsPercentage}%</span>
                 </div>
                 <div className="h-2 w-full bg-gray-950 rounded-full overflow-hidden relative border border-gray-800/40 shadow-inner">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-500"
+                    className="h-full rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-400 transition-all duration-500"
                     style={{ width: `${savingsPercentage}%` }}
                   />
                 </div>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-gray-800/60 flex items-center justify-between">
-                <span className="text-[10px] text-gray-500 font-medium">Savings Section</span>
-                <Link
-                  to="/savings"
-                  className="py-1.5 px-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-300 text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5"
-                  title="View Savings"
-                >
-                  <span>View Savings</span>
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
+                <div className="flex justify-between items-center text-[10px] mt-1.5 font-medium">
+                  <span className="text-gray-400">
+                    {savingsGoal > 0
+                      ? `${currency}${formatIndianNumber(monthSavingsProgress)} saved`
+                      : "₹0 saved toward goal"}
+                  </span>
+                  <span className={monthSavingsProgress >= savingsGoal && savingsGoal > 0 ? "text-emerald-400 font-semibold" : "text-gray-500"}>
+                    {savingsGoal > 0
+                      ? (monthSavingsProgress >= savingsGoal ? "Goal Achieved! 🎉" : `${currency}${formatIndianNumber(Math.max(0, savingsGoal - monthSavingsProgress))} to go`)
+                      : "No target set"}
+                  </span>
+                </div>
               </div>
             </div>
           );
@@ -877,32 +1074,43 @@ export const DashboardHome: React.FC = () => {
 
       {/* 3. Category Progress Cards Layout */}
       <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col gap-6 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300" id="active-category-cards-section">
-        <div className="border-b border-gray-800 pb-3.5 flex justify-between items-center">
-          <h3 className="text-lg font-black text-white flex items-center gap-2 tracking-tight">
-            <span>Active Category Budgets</span>
-          </h3>
-          <span className="text-[10px] text-gray-500 font-mono uppercase font-bold tracking-wider">
-            Budget vs Spent Realization
-          </span>
+        <div className="border-b border-gray-800 pb-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-black text-white flex items-center gap-2 tracking-tight">
+              <span>Active Category Budgets</span>
+            </h3>
+            <span className="text-[11px] px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 font-extrabold rounded-full border border-emerald-500/20 font-mono">
+              {categories.length}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={handleResetCategories}
+              className="text-[11px] text-gray-500 hover:text-emerald-400 font-bold transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-gray-800/50 border border-transparent hover:border-gray-700/50 cursor-pointer"
+              title="Reset all categories back to system defaults"
+              id="reset-categories-defaults-btn"
+            >
+              <RefreshCw className="h-3 w-3" />
+              <span>Reset Defaults</span>
+            </button>
+            <span className="text-[10px] text-gray-500 font-mono uppercase font-bold tracking-wider hidden sm:inline">
+              Budget vs Spent Realization
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {[
-            { key: "food", label: "Food & Dining", color: "bg-orange-500", text: "text-orange-400" },
-            { key: "transport", label: "Transport", color: "bg-sky-500", text: "text-sky-400" },
-            { key: "shopping", label: "Shopping", color: "bg-indigo-500", text: "text-indigo-400" },
-            { key: "entertainment", label: "Entertainment", color: "bg-rose-500", text: "text-rose-400" },
-            { key: "emergency", label: "Emergency Reserve", color: "bg-red-500", text: "text-red-400" },
-            { key: "stationery", label: "Stationery", color: "bg-emerald-500", text: "text-emerald-400" },
-            { key: "other", label: "Other / Misc", color: "bg-amber-500", text: "text-amber-400" },
-          ].map((cat) => {
+          {categories.map((cat) => {
             const allocatedAmt = summary ? Number(summary.categoryAllocated?.[cat.key] || 0) : 0;
             const spentAmt = summary ? Number(summary.categorySpending?.[cat.key] || 0) : 0;
             const remainingAmt = summary ? Number(summary.remainingCategoryBudget?.[cat.key] || 0) : 0;
             const percentUsed = allocatedAmt > 0 ? Math.min(100, Math.round((spentAmt / allocatedAmt) * 100)) : 0;
             const isOver = spentAmt > allocatedAmt;
             const remainingAbs = Math.abs(remainingAmt);
-            const emoji = getCategoryEmoji(cat.key);
+            const emoji = cat.emoji || getCategoryEmoji(cat.key);
+            const barColor = cat.color || "bg-violet-500";
 
             return (
               <div
@@ -910,21 +1118,33 @@ export const DashboardHome: React.FC = () => {
                 className="bg-gray-950/40 border border-gray-800/50 rounded-2xl p-5.5 flex flex-col gap-4 hover:border-gray-700/60 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-gray-950/20 transition-all duration-300 relative group"
                 id={`category-card-${cat.key}`}
               >
-                {/* Header: Name and edit icon */}
+                {/* Header: Name and action icons */}
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-bold text-gray-100 flex items-center gap-2">
+                  <span className="text-sm font-bold text-gray-100 flex items-center gap-2 min-w-0 pr-2">
                     <span className="text-base shrink-0">{emoji}</span>
                     <span className="truncate">{cat.label}</span>
                   </span>
                   {isCurrentMonthEditable && (
-                    <button
-                      onClick={() => openEditBudgetModal(cat.key, allocatedAmt)}
-                      className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-emerald-500/20 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all duration-200 cursor-pointer"
-                      title="Edit Category Budget"
-                      id={`edit-budget-btn-${cat.key}`}
-                    >
-                      <Edit className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => openEditBudgetModal(cat.key, allocatedAmt)}
+                        className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-emerald-500/20 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all duration-200 cursor-pointer"
+                        title={`Edit ${cat.label} Budget`}
+                        id={`edit-budget-btn-${cat.key}`}
+                      >
+                        <Edit className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCategoryToRemove(cat)}
+                        className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-rose-500/30 hover:bg-rose-500/10 text-gray-500 hover:text-rose-400 rounded-xl transition-all duration-200 cursor-pointer"
+                        title={`Remove ${cat.label} Category`}
+                        id={`remove-category-btn-${cat.key}`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -937,7 +1157,7 @@ export const DashboardHome: React.FC = () => {
                 {/* Progress bar */}
                 <div className="h-2.5 w-full bg-gray-950 rounded-full overflow-hidden mt-0.5 relative border border-gray-900/40 shadow-inner">
                   <div
-                    className={`h-full rounded-full transition-all duration-300 ${isOver ? "bg-red-500" : cat.color}`}
+                    className={`h-full rounded-full transition-all duration-300 ${isOver ? "bg-red-500" : barColor}`}
                     style={{ width: `${percentUsed}%` }}
                   />
                 </div>
@@ -982,6 +1202,27 @@ export const DashboardHome: React.FC = () => {
               </div>
             );
           })}
+
+          {/* + Add Custom Category Card */}
+          <button
+            type="button"
+            onClick={() => {
+              setCatError(null);
+              setIsAddCategoryOpen(true);
+            }}
+            className="border-2 border-dashed border-gray-800 hover:border-emerald-500/60 bg-gray-950/30 hover:bg-emerald-500/5 rounded-2xl p-5.5 flex flex-col items-center justify-center gap-3.5 text-gray-400 hover:text-emerald-400 transition-all duration-300 min-h-[175px] group cursor-pointer"
+            id="add-category-card-btn"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gray-900/90 border border-gray-800 group-hover:border-emerald-500/40 group-hover:bg-emerald-500/10 flex items-center justify-center transition-all duration-300 shadow-lg">
+              <Plus className="w-6 h-6 text-gray-400 group-hover:text-emerald-400 group-hover:scale-125 transition-transform duration-200" />
+            </div>
+            <div className="flex flex-col items-center gap-0.5 text-center">
+              <span className="text-sm font-extrabold text-gray-200 group-hover:text-emerald-400 transition-colors">
+                Add Category
+              </span>
+              <span className="text-[11px] text-gray-500 font-medium">Personal Choice</span>
+            </div>
+          </button>
         </div>
       </div>
 
@@ -1141,36 +1382,70 @@ export const DashboardHome: React.FC = () => {
       {(() => {
         return (
           <div className="flex flex-col gap-6" id="transaction-history-section">
-            {/* Today's Transactions Summary Card */}
+            {/* Recent & Today Transactions Summary Card */}
             <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col gap-6 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300">
               <div className="border-b border-gray-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-black text-white flex items-center gap-2.5 tracking-tight" id="todays-transactions-title">
                     <History className="h-5 w-5 text-emerald-400" />
-                    Today's Transactions
+                    {txViewMode === "recent" ? "Recent Transactions" : "Today's Transactions"}
                   </h3>
                   <span className="text-xs text-gray-500 mt-1 block font-semibold">
-                    A quick summary of your spending for today
+                    {txViewMode === "recent"
+                      ? "Recent spending and income recorded this month"
+                      : "A quick summary of your spending for today"}
                   </span>
                 </div>
-                <div className="flex items-center gap-2.5 px-4 py-2 bg-gray-950/60 border border-gray-800 rounded-2xl text-xs font-mono font-bold text-gray-400 shadow-inner self-start sm:self-auto">
-                  <Calendar className="h-4 w-4 text-emerald-400" />
-                  <span>{formatDateGPay(getTodayDateStr())}</span>
+
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  {/* View Mode Toggle */}
+                  <div className="flex items-center gap-1 bg-gray-950 p-1 rounded-2xl border border-gray-800">
+                    <button
+                      type="button"
+                      onClick={() => setTxViewMode("recent")}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        txViewMode === "recent"
+                          ? "bg-emerald-500 text-gray-950 shadow-md"
+                          : "text-gray-400 hover:text-gray-200"
+                      }`}
+                      id="dashboard-tx-tab-recent"
+                    >
+                      Recent ({expenses.filter((e) => e.date.startsWith(selectedMonth)).length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTxViewMode("today")}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        txViewMode === "today"
+                          ? "bg-emerald-500 text-gray-950 shadow-md"
+                          : "text-gray-400 hover:text-gray-200"
+                      }`}
+                      id="dashboard-tx-tab-today"
+                    >
+                      Today ({expenses.filter((e) => e.date === getTodayDateStr()).length})
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Transactions list */}
               {(() => {
                 const todayStr = getTodayDateStr();
-                const todayTransactions = expenses.filter((exp) => exp.date === todayStr);
-                const sortedTodayTransactions = [...todayTransactions].sort(
-                  (a, b) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime()
-                );
+                const monthTransactions = expenses
+                  .filter((exp) => exp.date.startsWith(selectedMonth))
+                  .sort((a, b) => {
+                    const dateCmp = b.date.localeCompare(a.date);
+                    if (dateCmp !== 0) return dateCmp;
+                    return (b.createdAt || "").localeCompare(a.createdAt || "");
+                  });
 
-                if (sortedTodayTransactions.length > 0) {
+                const todayTransactions = expenses.filter((exp) => exp.date === todayStr);
+                const displayList = txViewMode === "recent" ? monthTransactions : todayTransactions;
+
+                if (displayList.length > 0) {
                   return (
                     <div className="flex flex-col gap-3.5" id="todays-transactions-list">
-                      {sortedTodayTransactions.map((exp) => {
+                      {displayList.map((exp) => {
                         const isIncome = exp.category === "income";
                         const emoji = getEmojiForTransaction(exp.description, exp.category);
                         return (
@@ -1184,6 +1459,19 @@ export const DashboardHome: React.FC = () => {
                                 <span className="text-sm font-extrabold text-gray-100 group-hover:text-white transition-colors truncate">
                                   {getCategoryLabel(exp.category)}
                                 </span>
+                                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                  <span className="text-xs text-gray-400 font-semibold truncate">{exp.description}</span>
+                                  <span className="text-[10px] text-gray-500 font-mono font-medium">• {formatDateGPay(exp.date)}</span>
+                                  {!isIncome && (
+                                    <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded border ${
+                                      (exp.paidUsing || "online").toLowerCase() === "cash"
+                                        ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
+                                        : "bg-blue-500/10 border-blue-500/25 text-blue-300"
+                                    }`}>
+                                      {(exp.paidUsing || "online").toLowerCase() === "cash" ? "Cash" : "Online"}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
 
@@ -1215,7 +1503,11 @@ export const DashboardHome: React.FC = () => {
                       <div className="p-4 bg-gray-950/40 border border-gray-800/50 rounded-2xl text-gray-600 shadow-inner">
                         <FileText className="h-8 w-8 text-gray-500" />
                       </div>
-                      <span className="text-sm font-extrabold text-gray-400">No transactions recorded today.</span>
+                      <span className="text-sm font-extrabold text-gray-400">
+                        {txViewMode === "recent"
+                          ? "No transactions recorded in this month."
+                          : "No transactions recorded today."}
+                      </span>
                     </div>
                   );
                 }
@@ -1323,13 +1615,11 @@ export const DashboardHome: React.FC = () => {
                       onChange={(e) => setEditCategory(e.target.value)}
                       className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none cursor-pointer font-bold text-gray-200"
                     >
-                      <option value="food">Food & Dining</option>
-                      <option value="transport">Transport</option>
-                      <option value="shopping">Shopping</option>
-                      <option value="entertainment">Entertainment</option>
-                      <option value="emergency">Emergency</option>
-                      <option value="stationery">Stationery</option>
-                      <option value="other">Other / Misc</option>
+                      {categories.map((c) => (
+                        <option key={c.key} value={c.key}>
+                          {c.emoji || "🏷️"} {c.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -1343,6 +1633,43 @@ export const DashboardHome: React.FC = () => {
                     className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none"
                     required
                   />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-gray-400">Paid using *</label>
+                    {editPaidUsing === "Cash" && summary?.cashSavings !== undefined && (
+                      <span className="text-[10px] text-amber-400 font-mono font-bold">
+                        Avail. Cash Savings: {currency}{summary.cashSavings}
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditPaidUsing("Online")}
+                      className={`py-2 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        editPaidUsing === "Online"
+                          ? "bg-blue-500/15 border-blue-500/40 text-blue-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                    >
+                      <CreditCard className="h-3.5 w-3.5 text-blue-400" />
+                      <span>Online</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditPaidUsing("Cash")}
+                      className={`py-2 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        editPaidUsing === "Cash"
+                          ? "bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                    >
+                      <Banknote className="h-3.5 w-3.5 text-amber-400" />
+                      <span>Cash</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-3 justify-end mt-4">
@@ -1418,13 +1745,11 @@ export const DashboardHome: React.FC = () => {
                     onChange={(e) => setCategory(e.target.value)}
                     className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none cursor-pointer font-bold text-gray-200"
                   >
-                    <option value="food">Food & Dining</option>
-                    <option value="transport">Transport</option>
-                    <option value="shopping">Shopping</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="emergency">Emergency</option>
-                    <option value="stationery">Stationery</option>
-                    <option value="other">Other / Misc</option>
+                    {categories.map((c) => (
+                      <option key={c.key} value={c.key}>
+                        {c.emoji || "🏷️"} {c.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -1474,6 +1799,66 @@ export const DashboardHome: React.FC = () => {
                     onChange={(e) => setDate(e.target.value)}
                     className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none font-semibold text-gray-200"
                     required
+                  />
+                </div>
+
+                {/* Paid using selector */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-gray-400">Paid using *</label>
+                    {paidUsing === "Cash" && summary?.cashSavings !== undefined && (
+                      <span className="text-[10px] text-amber-400 font-mono font-bold">
+                        Avail. Cash Savings: {currency}{summary.cashSavings}
+                      </span>
+                    )}
+                    {paidUsing === "Online" && summary?.onlineMoney !== undefined && (
+                      <span className="text-[10px] text-blue-400 font-mono font-bold">
+                        Avail. Online Money: {currency}{summary.onlineMoney}
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPaidUsing("Online")}
+                      className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        paidUsing === "Online"
+                          ? "bg-blue-500/15 border-blue-500/40 text-blue-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                      id="add-pay-online-btn"
+                    >
+                      <CreditCard className="h-3.5 w-3.5 text-blue-400" />
+                      <span>Online</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaidUsing("Cash")}
+                      className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        paidUsing === "Cash"
+                          ? "bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                      id="add-pay-cash-btn"
+                    >
+                      <Banknote className="h-3.5 w-3.5 text-amber-400" />
+                      <span>Cash</span>
+                    </button>
+                  </div>
+                  <span className="text-[10px] text-gray-500">
+                    {paidUsing === "Online" ? "Deducts from your spendable Online Money." : "Deducts from your Cash Savings reserve."}
+                  </span>
+                </div>
+
+                {/* Optional Note */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Note (Optional)</label>
+                  <input
+                    type="text"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className="px-3.5 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none"
+                    placeholder="e.g. Any extra details..."
                   />
                 </div>
 
@@ -1766,6 +2151,303 @@ export const DashboardHome: React.FC = () => {
                   className="px-4 py-2 bg-gray-950 hover:bg-gray-800 border border-gray-800 text-gray-300 text-xs font-bold rounded-xl transition-all cursor-pointer"
                 >
                   Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 11. Quick Set Monthly Savings Goal Modal */}
+      <AnimatePresence>
+        {isSetGoalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-gray-900 border border-gray-800 rounded-3xl max-w-md w-full p-6 md:p-7 shadow-2xl flex flex-col gap-5 relative"
+              id="set-savings-goal-modal"
+            >
+              <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-400">
+                    <Target className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-white">Monthly Savings Target</h3>
+                    <span className="text-[11px] text-gray-400">Set target for {selectedMonth}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsSetGoalOpen(false)}
+                  className="p-1.5 text-gray-500 hover:text-gray-300 rounded-lg hover:bg-gray-800 transition-all cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {goalError && (
+                <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs rounded-xl flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
+                  <span>{goalError}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSaveSavingsGoal} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Target Savings Goal ({currency}) *</label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500">{currency}</span>
+                    <input
+                      type="number"
+                      value={goalInputVal}
+                      onChange={(e) => setGoalInputVal(e.target.value)}
+                      className="w-full pl-8 pr-4 py-2.5 bg-gray-950 border border-gray-800 focus:border-purple-500/50 text-sm text-gray-100 rounded-xl outline-none font-bold"
+                      placeholder="e.g. 1000"
+                      min="0"
+                      required
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                {/* Quick Presets */}
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Quick Presets</span>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[500, 1000, 2000, 5000].map((preset) => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => setGoalInputVal(String(preset))}
+                        className="py-1.5 bg-gray-950 hover:bg-purple-500/15 border border-gray-800 hover:border-purple-500/30 text-gray-300 hover:text-purple-300 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                      >
+                        {currency}{preset}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-3 bg-gray-950/60 rounded-xl border border-gray-800 text-[11px] text-gray-400 flex items-start gap-2">
+                  <Info className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
+                  <span>Setting this target will let Fenno calculate your monthly savings achievement status and percentage progress.</span>
+                </div>
+
+                <div className="flex items-center gap-3 justify-end mt-2 pt-3 border-t border-gray-800">
+                  <button
+                    type="button"
+                    onClick={() => setIsSetGoalOpen(false)}
+                    className="px-4.5 py-2.5 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={goalLoading}
+                    className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-purple-600/25 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    {goalLoading ? "Saving..." : "Save Target Goal"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 9. Add Custom Category Modal */}
+      <AnimatePresence>
+        {isAddCategoryOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-gray-900 border border-gray-800 rounded-3xl p-6 md:p-7 max-w-md w-full shadow-2xl relative"
+              id="add-category-modal"
+            >
+              <button
+                type="button"
+                onClick={() => setIsAddCategoryOpen(false)}
+                className="absolute top-5 right-5 text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-3 border-b border-gray-800 pb-4 mb-5">
+                <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <Plus className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-white">Add Custom Category</h3>
+                  <p className="text-xs text-gray-500 font-medium">Personalize your student budget buckets</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleAddCategory} className="flex flex-col gap-4">
+                {catError && (
+                  <p className="text-xs text-rose-500 font-semibold bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl">
+                    {catError}
+                  </p>
+                )}
+
+                {/* Category Name */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Category Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newCatLabel}
+                    onChange={(e) => setNewCatLabel(e.target.value)}
+                    placeholder="e.g. Gym & Fitness, Books, Gaming, Rent"
+                    className="px-4 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none font-semibold"
+                    id="new-category-name-input"
+                  />
+                </div>
+
+                {/* Quick Emoji Picker */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Category Icon</label>
+                  <div className="flex flex-wrap gap-2 p-2 bg-gray-950/60 border border-gray-800 rounded-xl max-h-28 overflow-y-auto">
+                    {["🏋️", "📚", "☕", "🎮", "🎨", "✈️", "🐾", "💊", "🚗", "💻", "💡", "🎵", "👗", "🍕", "🏷️"].map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => setNewCatEmoji(emoji)}
+                        className={`h-9 w-9 text-base rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                          newCatEmoji === emoji
+                            ? "bg-emerald-500/20 border-2 border-emerald-500 scale-110 shadow-md shadow-emerald-500/10"
+                            : "bg-gray-900 border border-gray-800 hover:bg-gray-800 hover:scale-105"
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Color Accent Picker */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Color Accent</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      { label: "Emerald", value: "bg-emerald-500" },
+                      { label: "Violet", value: "bg-violet-500" },
+                      { label: "Sky", value: "bg-sky-500" },
+                      { label: "Rose", value: "bg-rose-500" },
+                      { label: "Amber", value: "bg-amber-500" },
+                      { label: "Indigo", value: "bg-indigo-500" },
+                      { label: "Pink", value: "bg-pink-500" },
+                      { label: "Teal", value: "bg-teal-500" },
+                    ].map((col) => (
+                      <button
+                        key={col.value}
+                        type="button"
+                        onClick={() => setNewCatColor(col.value)}
+                        className={`py-1.5 px-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          newCatColor === col.value
+                            ? "border-emerald-500/80 bg-gray-950 text-white shadow-sm"
+                            : "border-gray-800/80 bg-gray-950/40 text-gray-400 hover:text-gray-200"
+                        }`}
+                      >
+                        <span className={`w-2.5 h-2.5 rounded-full ${col.value} shrink-0`} />
+                        <span className="truncate">{col.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Optional Monthly Allocation */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">
+                    Monthly Budget Allocation (Optional)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500 font-mono">
+                      {currency}
+                    </span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={newCatBudget}
+                      onChange={(e) => setNewCatBudget(e.target.value)}
+                      placeholder="0"
+                      className="w-full pl-8 pr-4 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none font-mono font-bold"
+                      id="new-category-budget-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 justify-end mt-2 pt-3 border-t border-gray-800">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddCategoryOpen(false)}
+                    className="px-4.5 py-2.5 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={catLoading}
+                    className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-gray-950 text-xs font-extrabold rounded-xl shadow-lg shadow-emerald-500/25 transition-all cursor-pointer flex items-center gap-2"
+                    id="submit-add-category-btn"
+                  >
+                    {catLoading ? "Adding..." : "Add Category"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 10. Remove Category Confirmation Modal */}
+      <AnimatePresence>
+        {categoryToRemove && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-gray-900 border border-gray-800 rounded-3xl p-6 md:p-7 max-w-md w-full shadow-2xl relative"
+              id="remove-category-confirm-modal"
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl shrink-0">
+                  <Trash2 className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-extrabold text-white">
+                    Remove {categoryToRemove.label}?
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                    This category card will be removed from your active budgets and planning views.
+                  </p>
+                  <div className="mt-3 p-3 bg-gray-950/60 rounded-xl border border-gray-800 text-[11px] text-gray-400 flex items-start gap-2">
+                    <Info className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Any past expenses you recorded under this category will remain completely safe in your transaction history.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 justify-end mt-6 pt-4 border-t border-gray-800">
+                <button
+                  type="button"
+                  onClick={() => setCategoryToRemove(null)}
+                  disabled={removeCatLoading}
+                  className="px-4.5 py-2.5 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemoveCategory}
+                  disabled={removeCatLoading}
+                  className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-rose-600/25 transition-all cursor-pointer flex items-center gap-2"
+                  id="confirm-remove-category-btn"
+                >
+                  {removeCatLoading ? "Removing..." : "Yes, Remove Category"}
                 </button>
               </div>
             </motion.div>

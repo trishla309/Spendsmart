@@ -3,6 +3,7 @@ import { Expense, Budget } from "./db";
 import { authMiddleware, AuthenticatedRequest } from "./auth";
 import { MinHeap } from "./dsa";
 import { NotificationQueueManager, checkBudgetThresholds } from "./notificationQueue";
+import { getUserCumulativeFinancials } from "./savings";
 
 const router = Router();
 
@@ -31,21 +32,41 @@ router.post("/", authMiddleware, async (req: AuthenticatedRequest, res: Response
     return;
   }
 
-  const { amount, category, description, date, note } = req.body;
+  const { amount, category, description, date, note, paidUsing } = req.body;
 
   if (!amount || !category || !description || !date) {
     res.status(400).json({ error: "Missing required fields: amount, category, description, date" });
     return;
   }
 
+  const numAmount = Number(amount);
+  if (isNaN(numAmount) || numAmount <= 0) {
+    res.status(400).json({ error: "Please enter a valid amount greater than 0." });
+    return;
+  }
+
+  const normalizedPaidUsing = (paidUsing || "online").toString().toLowerCase() === "cash" ? "cash" : "online";
+
   try {
+    // If expense is paid using cash, validate that it does not exceed available Cash Savings
+    if (category !== "income" && category !== "savings" && normalizedPaidUsing === "cash") {
+      const financials = await getUserCumulativeFinancials(userId);
+      if (numAmount > financials.cashSavings) {
+        res.status(400).json({
+          error: `Cannot record cash expense of ₹${numAmount}. You only have ₹${financials.cashSavings} in Cash Savings.`,
+        });
+        return;
+      }
+    }
+
     const newExpense = await Expense.create({
       userId,
-      amount: Number(amount),
+      amount: numAmount,
       category,
       description,
       date,
       note: note || "",
+      paidUsing: normalizedPaidUsing,
     });
 
     // Enqueue a notification using the Queue DSA helper
@@ -111,6 +132,7 @@ router.post("/restore", authMiddleware, async (req: AuthenticatedRequest, res: R
             description: finalDesc,
             date: exp.date,
             note: "",
+            paidUsing: (exp.paidUsing || "online").toString().toLowerCase() === "cash" ? "cash" : "online",
           });
         }
       }
@@ -158,22 +180,51 @@ router.put("/:id", authMiddleware, async (req: AuthenticatedRequest, res: Respon
     return;
   }
 
-  const { amount, category, description, date, note } = req.body;
+  const { amount, category, description, date, note, paidUsing } = req.body;
 
   if (!amount || !category || !description || !date) {
     res.status(400).json({ error: "Missing required fields for update: amount, category, description, date" });
     return;
   }
 
+  const numAmount = Number(amount);
+  if (isNaN(numAmount) || numAmount <= 0) {
+    res.status(400).json({ error: "Please enter a valid amount greater than 0." });
+    return;
+  }
+
   try {
+    const existingExpense = await Expense.findOne({ _id: expenseId, userId });
+    if (!existingExpense) {
+      res.status(404).json({ error: "Expense not found or unauthorized" });
+      return;
+    }
+
+    const currentPaidUsing = (paidUsing !== undefined ? paidUsing : (existingExpense.paidUsing || "online")).toString().toLowerCase() === "cash" ? "cash" : "online";
+
+    // Validate cash balance if updating to or within cash
+    if (category !== "income" && category !== "savings" && currentPaidUsing === "cash") {
+      const financials = await getUserCumulativeFinancials(userId);
+      const existingWasCash = (existingExpense.paidUsing || "online").toString().toLowerCase() === "cash";
+      const availableCashSavings = financials.cashSavings + (existingWasCash ? Number(existingExpense.amount) : 0);
+
+      if (numAmount > availableCashSavings) {
+        res.status(400).json({
+          error: `Cannot update to ₹${numAmount} in Cash. You only have ₹${availableCashSavings} in Cash Savings.`,
+        });
+        return;
+      }
+    }
+
     const updated = await Expense.updateOne(
       { _id: expenseId, userId },
       {
-        amount: Number(amount),
+        amount: numAmount,
         category,
         description,
         date,
-        note: note || "",
+        note: note !== undefined ? note : (existingExpense.note || ""),
+        paidUsing: currentPaidUsing,
       }
     );
 

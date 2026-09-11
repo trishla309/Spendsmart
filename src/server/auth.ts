@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User, Budget, Expense, OTP, SavingsMovement } from "./db";
+import { User, Budget, Expense, OTP, SavingsMovement, DEFAULT_CATEGORIES } from "./db";
 import { sendOTP, sendWelcomeEmail } from "./mailer";
 
 const router = Router();
@@ -16,31 +16,46 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-import { seedDemoDataForUser } from "./demoData";
+import { seedDemoDataForUser, seedShowcaseDataForUser } from "./demoData";
 
-// Seed Demo User
+// Seed Demo & Showcase Users
 export async function seedDemoUser() {
   try {
+    // 1. Student Demo User
     const demoEmail = "student@example.com";
-    const existingUser = await User.findOne({ email: demoEmail });
-    if (existingUser) {
-      console.log("Demo user already exists. Skipping database seeding to preserve all data.");
-      return;
+    let existingUser = await User.findOne({ email: demoEmail });
+    if (!existingUser) {
+      console.log("No demo user found. Seeding pristine demo environment...");
+      const passwordHash = await bcrypt.hash("Student@123", 10);
+      existingUser = await User.create({
+        name: "Rahul Sharma",
+        email: demoEmail,
+        passwordHash,
+        categories: DEFAULT_CATEGORIES,
+      });
+      console.log("Demo student Rahul Sharma seeded successfully (student@example.com / Student@123)");
+      await seedDemoDataForUser(existingUser._id);
     }
+    // Ensure student demo user also has September 2026 data
+    await seedShowcaseDataForUser(existingUser._id);
 
-    console.log("No demo user found. Seeding pristine demo environment...");
-    const passwordHash = await bcrypt.hash("Student@123", 10);
-    const existing = await User.create({
-      name: "Rahul Sharma",
-      email: demoEmail,
-      passwordHash,
-    });
-    console.log("Demo student Rahul Sharma seeded successfully (student@example.com / Student@123)");
-
-    // Ensure the demo student has July 2026 budget and exact 41 expenses seeded
-    await seedDemoDataForUser(existing._id);
+    // 2. Showcase / Portfolio Account (for LinkedIn & screenshots)
+    const showcaseEmail = "demo@spendsmart.com";
+    let showcaseUser = await User.findOne({ email: showcaseEmail });
+    if (!showcaseUser) {
+      console.log("Seeding brand new showcase account (demo@spendsmart.com)...");
+      const passwordHash = await bcrypt.hash("Demo@123", 10);
+      showcaseUser = await User.create({
+        name: "Aarav Patel",
+        email: showcaseEmail,
+        passwordHash,
+        categories: DEFAULT_CATEGORIES,
+      });
+      console.log("Showcase user seeded successfully (demo@spendsmart.com / Demo@123 / OTP 123456)");
+    }
+    await seedShowcaseDataForUser(showcaseUser._id);
   } catch (error) {
-    console.error("Error seeding demo user:", error);
+    console.error("Error seeding demo/showcase user:", error);
   }
 }
 
@@ -84,6 +99,27 @@ function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Helper to normalize and resolve email aliases
+export function resolveUserEmail(rawEmail: string): string {
+  const clean = (rawEmail || "").trim().toLowerCase();
+  if (clean === "trishth97@gmail.com" || clean === "tristha97@gmail.com" || clean === "trishtha97@gmail.com") {
+    return "trishtha97@gmail.com";
+  }
+  return clean;
+}
+
+export function isQuickAccessEmail(email: string): boolean {
+  const clean = (email || "").trim().toLowerCase();
+  return (
+    clean === "student@example.com" ||
+    clean === "demo@spendsmart.com" ||
+    clean === "showcase@spendsmart.com" ||
+    clean === "trishtha97@gmail.com" ||
+    clean === "trishth97@gmail.com" ||
+    clean === "tristha97@gmail.com"
+  );
+}
+
 // Request OTP for Login
 router.post("/request-otp", async (req: Request, res: Response): Promise<void> => {
   const { email } = req.body;
@@ -93,18 +129,22 @@ router.post("/request-otp", async (req: Request, res: Response): Promise<void> =
   }
 
   try {
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const canonicalEmail = resolveUserEmail(email);
+    let user = await User.findOne({ email: canonicalEmail });
+    if (!user && canonicalEmail !== email.toLowerCase()) {
+      user = await User.findOne({ email: email.toLowerCase() });
+    }
     if (!user) {
       res.status(404).json({ error: "User not found. Please create an account first." });
       return;
     }
 
-    const isDemoEmail = email.toLowerCase() === "student@example.com";
+    const isDemoEmail = isQuickAccessEmail(email);
     const otp = isDemoEmail ? "123456" : generateOTP();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
 
-    // Clear old OTPs for this email
-    await OTP.deleteMany({ email: email.toLowerCase() });
+    // Clear old OTPs for this email and canonical email
+    await OTP.deleteMany({ email: { $in: [email.toLowerCase(), canonicalEmail] } as any });
 
     await OTP.create({
       email: email.toLowerCase(),
@@ -112,12 +152,21 @@ router.post("/request-otp", async (req: Request, res: Response): Promise<void> =
       type: "login",
       expiresAt,
     });
+    if (canonicalEmail !== email.toLowerCase()) {
+      await OTP.create({
+        email: canonicalEmail,
+        otp,
+        type: "login",
+        expiresAt,
+      });
+    }
 
-    await sendOTP(email.toLowerCase(), otp, "login");
+    await sendOTP(canonicalEmail, otp, "login");
 
     const isDevNoEmail = !process.env.EMAIL_USER || !process.env.EMAIL_PASS;
     res.json({
       message: "OTP sent successfully.",
+      resolvedEmail: canonicalEmail,
       ...(isDevNoEmail || isDemoEmail ? { devOtp: otp } : {}),
     });
   } catch (error) {
@@ -177,8 +226,13 @@ router.post("/verify-otp", async (req: Request, res: Response): Promise<void> =>
   }
 
   try {
-    const isDemoEmail = email.toLowerCase() === "student@example.com";
-    const otpRecord = await OTP.findOne({ email: email.toLowerCase(), otp, type });
+    const canonicalEmail = resolveUserEmail(email);
+    const isDemoEmail = isQuickAccessEmail(email);
+    const otpRecord = await OTP.findOne({ 
+      email: { $in: [email.toLowerCase(), canonicalEmail] } as any, 
+      otp, 
+      type 
+    });
     if (!otpRecord && !(isDemoEmail && otp === "123456")) {
       res.status(401).json({ error: "Invalid OTP." });
       return;
@@ -198,14 +252,17 @@ router.post("/verify-otp", async (req: Request, res: Response): Promise<void> =>
       
       user = await User.create({
         name,
-        email: email.toLowerCase(),
+        email: canonicalEmail,
         phone,
       });
       
       // Send welcome email in background
-      sendWelcomeEmail(email.toLowerCase(), name).catch(err => console.error("Welcome email error:", err));
+      sendWelcomeEmail(canonicalEmail, name).catch(err => console.error("Welcome email error:", err));
     } else {
-      user = await User.findOne({ email: email.toLowerCase() });
+      user = await User.findOne({ email: canonicalEmail });
+      if (!user && canonicalEmail !== email.toLowerCase()) {
+        user = await User.findOne({ email: email.toLowerCase() });
+      }
       if (!user) {
         res.status(404).json({ error: "User not found." });
         return;
@@ -220,7 +277,9 @@ router.post("/verify-otp", async (req: Request, res: Response): Promise<void> =>
     );
 
     // Clean up used OTP
-    await OTP.deleteOne({ _id: otpRecord._id });
+    if (otpRecord && otpRecord._id) {
+      await OTP.deleteOne({ _id: otpRecord._id });
+    }
 
     res.json({
       token,
@@ -249,8 +308,14 @@ router.get("/me", authMiddleware, async (req: AuthenticatedRequest, res: Respons
 // Delete user account and all associated data
 router.delete("/account", authMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const userId = req.user?.id;
+  const userEmail = req.user?.email;
   if (!userId) {
     res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  if (userEmail === "student@example.com" || userEmail === "demo@spendsmart.com" || userEmail === "showcase@spendsmart.com") {
+    res.status(403).json({ error: "The demo accounts are protected and cannot be deleted." });
     return;
   }
 

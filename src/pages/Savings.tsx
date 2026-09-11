@@ -17,6 +17,7 @@ import {
   Target,
   Info,
   Layers,
+  CreditCard,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -64,7 +65,7 @@ export const SavingsPage: React.FC = () => {
 
   // Move To Savings form state
   const [toAmount, setToAmount] = useState("");
-  const [toSource, setToSource] = useState<"cash" | "gpay_upi">("cash");
+  const [toSource, setToSource] = useState<"cash" | "online">("online");
   const [toFundingSource, setToFundingSource] = useState<"current_balance" | "previous_savings">("current_balance");
   const [toDate, setToDate] = useState(getTodayDateStr());
   const [toNote, setToNote] = useState("");
@@ -73,7 +74,7 @@ export const SavingsPage: React.FC = () => {
 
   // Move Back from Savings form state
   const [backAmount, setBackAmount] = useState("");
-  const [backSource, setBackSource] = useState<"cash" | "gpay_upi">("cash");
+  const [backSource, setBackSource] = useState<"cash" | "online">("online");
   const [backDate, setBackDate] = useState(getTodayDateStr());
   const [backNote, setBackNote] = useState("");
   const [backLoading, setBackLoading] = useState(false);
@@ -115,9 +116,10 @@ export const SavingsPage: React.FC = () => {
   // Derived financial figures
   const totalSavings = summary?.totalSavings || 0;
   const cashSavings = summary?.cashSavings || 0;
-  const gpaySavings = summary?.gpaySavings || 0;
-  const availableBalance = summary?.availableBalance || 0;
-  const totalMoney = summary?.totalMoney !== undefined ? summary.totalMoney : availableBalance + totalSavings;
+  const onlineSavings = summary?.onlineSavings ?? summary?.gpaySavings ?? 0;
+  const onlineMoney = summary?.onlineMoney ?? summary?.availableBalance ?? 0;
+  const availableBalance = onlineMoney;
+  const totalMoney = summary?.totalMoney !== undefined ? summary.totalMoney : onlineMoney + totalSavings;
 
   const monthGoal = summary?.monthSavingsGoal || 0;
   const netMonthSavings = summary?.netMonthSavings || 0;
@@ -127,9 +129,13 @@ export const SavingsPage: React.FC = () => {
   const monthMovedToSavings = summary?.monthMovedToSavings || 0;
   const monthReturnedFromSavings = summary?.monthReturnedFromSavings || 0;
   const monthMovedToCash = summary?.monthMovedToCash || 0;
-  const monthMovedToGpay = summary?.monthMovedToGpay || 0;
+  const monthMovedToOnline = summary?.monthMovedToOnline ?? summary?.monthMovedToGpay ?? 0;
   const monthReturnedFromCash = summary?.monthReturnedFromCash || 0;
-  const monthReturnedFromGpay = summary?.monthReturnedFromGpay || 0;
+  const monthReturnedFromOnline = summary?.monthReturnedFromOnline ?? summary?.monthReturnedFromGpay ?? 0;
+  const monthCashExpenses = summary?.monthCashExpenses || 0;
+  const monthSpentFromSavings = summary?.monthSpentFromSavings !== undefined
+    ? summary.monthSpentFromSavings
+    : Math.round((monthReturnedFromSavings + monthCashExpenses) * 100) / 100;
   const [activityFilter, setActivityFilter] = useState<"month" | "all">("month");
 
   const getMonthLabel = (mStr: string) => {
@@ -137,6 +143,46 @@ export const SavingsPage: React.FC = () => {
     const [y, m] = mStr.split("-").map(Number);
     const date = new Date(y, m - 1, 1);
     return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+  };
+
+  // Helper for human-readable movement logging
+  const getMovementDetails = (movement: SavingsMovement) => {
+    const isToSavings = movement.direction === "to_savings";
+    const rawSrc = (movement.source || "").toLowerCase();
+    const rawDest = (movement.destination || "").toLowerCase();
+    const isPrevSavings = movement.fundingSource === "previous_savings" || rawSrc === "previous_savings";
+
+    let title = "";
+    let description = "";
+    let badgeLabel = "";
+    let badgeType: "cash" | "online" = "online";
+
+    if (isPrevSavings) {
+      const destIsCash = rawDest === "cash_savings" || rawSrc === "cash";
+      badgeType = destIsCash ? "cash" : "online";
+      badgeLabel = destIsCash ? "Cash Savings" : "Online Savings";
+      title = `Recorded Initial ${badgeLabel}`;
+      description = `Past savings added directly to ${badgeLabel} without deducting from spendable Online Money.`;
+    } else if (isToSavings) {
+      const destIsCash = rawDest === "cash_savings" || rawSrc === "cash";
+      badgeType = destIsCash ? "cash" : "online";
+      badgeLabel = destIsCash ? "Cash Savings" : "Online Savings";
+      title = destIsCash ? "Moved to Cash Savings" : "Moved to Online Savings";
+      description = destIsCash
+        ? "Moved from Online Money → Cash Savings"
+        : "Moved from Online Money → Online Savings";
+    } else {
+      // from_savings
+      const srcIsCash = rawSrc === "cash_savings" || rawSrc === "cash";
+      badgeType = srcIsCash ? "cash" : "online";
+      badgeLabel = srcIsCash ? "Cash Savings" : "Online Savings";
+      title = srcIsCash ? "Withdrawn from Cash Savings" : "Withdrawn from Online Savings";
+      description = srcIsCash
+        ? "Moved from Cash Savings → Online Money"
+        : "Moved from Online Savings → Online Money";
+    }
+
+    return { isToSavings, isPrevSavings, title, description, badgeLabel, badgeType };
   };
 
   // Handle Move To Savings
@@ -155,7 +201,8 @@ export const SavingsPage: React.FC = () => {
       const res = await api.post("/savings/transfer", {
         amount: num,
         direction: "to_savings",
-        source: toSource,
+        source: toFundingSource === "previous_savings" ? "previous_savings" : "online_money",
+        destination: toSource === "cash" ? "cash_savings" : "online_savings",
         fundingSource: toFundingSource,
         date: toDate,
         note: toNote,
@@ -166,7 +213,7 @@ export const SavingsPage: React.FC = () => {
       setToDate(getTodayDateStr());
       setToFundingSource("current_balance");
       setIsMoveToSavingsOpen(false);
-      showToast(res.data.message || `Saved ${currency}${formatAmount(num)} to ${toSource === "cash" ? "Cash" : "GPay / UPI"} Savings.`);
+      showToast(res.data.message || `Saved ${currency}${formatAmount(num)} to ${toSource === "cash" ? "Cash" : "Online"} Savings.`);
       setRefreshKey((k) => k + 1);
     } catch (err: any) {
       setToError(err.response?.data?.error || "Failed to transfer money to savings.");
@@ -184,8 +231,8 @@ export const SavingsPage: React.FC = () => {
       return;
     }
 
-    const availableInSource = backSource === "cash" ? cashSavings : gpaySavings;
-    const sourceLabel = backSource === "cash" ? "Cash Savings" : "GPay / UPI Savings";
+    const availableInSource = backSource === "cash" ? cashSavings : onlineSavings;
+    const sourceLabel = backSource === "cash" ? "Cash Savings" : "Online Savings";
 
     if (num > availableInSource) {
       setBackError(`Cannot withdraw more than available in ${sourceLabel} (${currency}${formatAmount(availableInSource)}).`);
@@ -199,7 +246,8 @@ export const SavingsPage: React.FC = () => {
       const res = await api.post("/savings/transfer", {
         amount: num,
         direction: "from_savings",
-        source: backSource,
+        source: backSource === "cash" ? "cash_savings" : "online_savings",
+        destination: "online_money",
         date: backDate,
         note: backNote,
       });
@@ -208,10 +256,10 @@ export const SavingsPage: React.FC = () => {
       setBackNote("");
       setBackDate(getTodayDateStr());
       setIsMoveBackOpen(false);
-      showToast(res.data.message || `Returned ${currency}${formatAmount(num)} to Available Balance.`);
+      showToast(res.data.message || `Returned ${currency}${formatAmount(num)} to Online Money.`);
       setRefreshKey((k) => k + 1);
     } catch (err: any) {
-      setBackError(err.response?.data?.error || "Failed to return money to available balance.");
+      setBackError(err.response?.data?.error || "Failed to return money to online money.");
     } finally {
       setBackLoading(false);
     }
@@ -330,7 +378,7 @@ export const SavingsPage: React.FC = () => {
                 {currency}{formatAmount(totalSavings)}
               </span>
               <span className="text-xs text-gray-400 font-medium">
-                (Whatever you currently have saved across Cash & GPay/UPI)
+                (Whatever you currently have saved across Cash & Online Savings)
               </span>
             </div>
           </div>
@@ -338,12 +386,12 @@ export const SavingsPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <div className="bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-2 rounded-xl">
               <span className="text-[10px] text-emerald-400 uppercase font-bold block">Savings</span>
-              <span className="text-xs font-extrabold text-emerald-300">Cash & GPay / UPI</span>
+              <span className="text-xs font-extrabold text-emerald-300">Cash & Online Savings</span>
             </div>
           </div>
         </div>
 
-        {/* Small Sections: How much in Cash & How much in GPay */}
+        {/* Small Sections: How much in Cash & How much in Online Savings */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Cash Savings Small Section */}
           <div className="bg-gray-950/60 hover:bg-gray-950/90 border border-amber-500/25 rounded-2xl p-5 flex flex-col justify-between transition-all" id="cash-savings-card">
@@ -375,33 +423,33 @@ export const SavingsPage: React.FC = () => {
             </span>
           </div>
 
-          {/* GPay / UPI Savings Small Section */}
-          <div className="bg-gray-950/60 hover:bg-gray-950/90 border border-sky-500/25 rounded-2xl p-5 flex flex-col justify-between transition-all" id="gpay-savings-card">
+          {/* Online Savings Small Section */}
+          <div className="bg-gray-950/60 hover:bg-gray-950/90 border border-blue-500/25 rounded-2xl p-5 flex flex-col justify-between transition-all" id="online-savings-card">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-sky-500/10 border border-sky-500/20 rounded-lg text-sky-400">
-                    <Smartphone className="h-4 w-4" />
+                  <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-400">
+                    <CreditCard className="h-4 w-4" />
                   </div>
-                  <span className="text-xs font-extrabold text-sky-300 uppercase tracking-wider">
-                    GPay / UPI Savings
+                  <span className="text-xs font-extrabold text-blue-300 uppercase tracking-wider">
+                    Online Savings
                   </span>
                 </div>
-                <span className="text-[10px] font-mono font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
-                  {totalSavings > 0 ? Math.round((gpaySavings / totalSavings) * 100) : 0}% of Total
+                <span className="text-[10px] font-mono font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+                  {totalSavings > 0 ? Math.round((onlineSavings / totalSavings) * 100) : 0}% of Total
                 </span>
               </div>
               <div className="mt-3 flex items-baseline justify-between">
                 <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
-                  {currency}{formatAmount(gpaySavings)}
+                  {currency}{formatAmount(onlineSavings)}
                 </span>
                 <span className="text-[11px] text-gray-400 font-medium">
-                  Digital Wallet
+                  Digital Savings
                 </span>
               </div>
             </div>
             <span className="text-[11px] text-gray-500 font-medium block mt-3 pt-2.5 border-t border-gray-850/60">
-              Money stored in UPI account, secondary bank account, or digital pot
+              Money kept aside digitally in bank account, digital pot, or wallet
             </span>
           </div>
         </div>
@@ -461,7 +509,7 @@ export const SavingsPage: React.FC = () => {
                   +{currency}{formatAmount(monthMovedToSavings)}
                 </span>
                 <p className="text-[11px] text-gray-400 mt-1">
-                  Transferred from your Available Balance into your savings reserves.
+                  Transferred from your Online Money into your savings reserves.
                 </p>
               </div>
             </div>
@@ -478,10 +526,10 @@ export const SavingsPage: React.FC = () => {
               </div>
               <div className="flex items-center justify-between bg-gray-900/60 px-3.5 py-2 rounded-xl border border-gray-800/80">
                 <span className="text-gray-300 flex items-center gap-1.5 font-medium">
-                  <Smartphone className="h-3.5 w-3.5 text-sky-400" /> GPay / UPI Savings:
+                  <CreditCard className="h-3.5 w-3.5 text-blue-400" /> Online Savings:
                 </span>
                 <span className="font-mono font-bold text-emerald-400">
-                  +{currency}{formatAmount(monthMovedToGpay)}
+                  +{currency}{formatAmount(monthMovedToOnline)}
                 </span>
               </div>
             </div>
@@ -509,7 +557,7 @@ export const SavingsPage: React.FC = () => {
                   −{currency}{formatAmount(monthReturnedFromSavings)}
                 </span>
                 <p className="text-[11px] text-gray-400 mt-1">
-                  Moved back out of savings into your spendable Available Balance for expenses.
+                  Moved back out of savings into your spendable Online Money.
                 </p>
               </div>
             </div>
@@ -526,10 +574,10 @@ export const SavingsPage: React.FC = () => {
               </div>
               <div className="flex items-center justify-between bg-gray-900/60 px-3.5 py-2 rounded-xl border border-gray-800/80">
                 <span className="text-gray-300 flex items-center gap-1.5 font-medium">
-                  <Smartphone className="h-3.5 w-3.5 text-sky-400" /> Returned from GPay / UPI:
+                  <CreditCard className="h-3.5 w-3.5 text-blue-400" /> Returned from Online Savings:
                 </span>
                 <span className="font-mono font-bold text-blue-400">
-                  −{currency}{formatAmount(monthReturnedFromGpay)}
+                  −{currency}{formatAmount(monthReturnedFromOnline)}
                 </span>
               </div>
             </div>
@@ -583,7 +631,7 @@ export const SavingsPage: React.FC = () => {
           id="move-back-btn"
         >
           <ArrowRightLeft className="h-4 w-4 text-blue-400" />
-          <span>Move Back to Available Balance</span>
+          <span>Move Back to Online Money</span>
         </button>
       </div>
 
@@ -637,8 +685,8 @@ export const SavingsPage: React.FC = () => {
               <div className="flex flex-col gap-3">
                 {displayedMovements.length > 0 ? (
                   displayedMovements.map((movement) => {
-                    const isToSavings = movement.direction === "to_savings";
-                    const isCash = movement.source === "cash";
+                    const { isToSavings, isPrevSavings, title, description, badgeLabel, badgeType } = getMovementDetails(movement);
+                    const isCash = badgeType === "cash";
 
                     return (
                       <div
@@ -662,24 +710,20 @@ export const SavingsPage: React.FC = () => {
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold text-white">
-                                {isToSavings
-                                  ? `Added to ${isCash ? "Cash" : "GPay / UPI"} Savings`
-                                  : `Withdrawn from ${isCash ? "Cash" : "GPay / UPI"} to Spendable Balance`}
+                                {title}
                               </span>
                               <span
                                 className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md border ${isCash
                                     ? "bg-amber-500/10 border-amber-500/20 text-amber-300"
-                                    : "bg-sky-500/10 border-sky-500/20 text-sky-300"
+                                    : "bg-blue-500/10 border-blue-500/20 text-blue-300"
                                   }`}
                               >
-                                {isCash ? "Cash" : "GPay / UPI"}
+                                {badgeLabel}
                               </span>
                             </div>
 
                             <span className="text-[11px] text-gray-400 block mt-0.5">
-                              {isToSavings
-                                ? `From Available Balance → Deposited into ${isCash ? "physical cash reserve" : "digital UPI wallet"}`
-                                : `From ${isCash ? "cash reserve" : "UPI wallet"} → Returned to Available Balance`}
+                              {description}
                             </span>
 
                             <div className="flex items-center gap-2 mt-1">
@@ -706,7 +750,7 @@ export const SavingsPage: React.FC = () => {
                             {isToSavings ? "+" : "↩ "}{currency}{formatAmount(movement.amount)}
                           </span>
                           <span className="text-[9px] text-gray-500 uppercase font-semibold block mt-0.5">
-                            {isToSavings ? "Added to savings" : "Returned to spendable"}
+                            {isPrevSavings ? "Initial savings" : isToSavings ? "Added to savings" : "Returned to online money"}
                           </span>
                         </div>
                       </div>
@@ -723,7 +767,7 @@ export const SavingsPage: React.FC = () => {
                         : "No savings movements recorded yet."}
                     </span>
                     <p className="text-[11px] text-gray-500 max-w-sm leading-relaxed">
-                      Use "+ Move to Savings" above to transfer money from your spendable balance into Cash or GPay / UPI.
+                      Use "+ Move to Savings" above to transfer money from your spendable Online Money into Cash or Online Savings.
                     </p>
                   </div>
                 )}
@@ -781,8 +825,8 @@ export const SavingsPage: React.FC = () => {
             <span className="text-2xl font-black text-purple-400 mt-2 block">
               {currency}{formatAmount(monthProgress)}
             </span>
-            <span className="text-[10px] text-gray-500 mt-1">
-              (Moved ₹{formatAmount(summary?.monthMovedToSavings || 0)} - Returned ₹{formatAmount(summary?.monthReturnedFromSavings || 0)})
+            <span className="text-[10px] text-gray-400 mt-1 font-mono">
+              (Came In: +₹{formatAmount(monthMovedToSavings)} − Gone: ₹{formatAmount(monthReturnedFromSavings)})
             </span>
           </div>
 
@@ -812,6 +856,93 @@ export const SavingsPage: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Monthly Savings Activity & Spend Breakdown */}
+        <div className="pt-4 border-t border-gray-800/80 flex flex-col gap-3.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-extrabold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+              <span>Monthly Savings Activity & Spending ({selectedMonth})</span>
+            </span>
+            <span className="text-[10px] text-gray-500 font-medium hidden sm:inline">
+              Real-time Inflow, Outflow & Spend tracking
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* 1. Came Into Savings */}
+            <div className="bg-gray-950/70 border border-emerald-500/20 hover:border-emerald-500/40 p-4.5 rounded-2xl flex flex-col justify-between transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <ArrowDownLeft className="h-3.5 w-3.5" /> Came into Savings
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                  Inflow
+                </span>
+              </div>
+              <div className="my-2.5">
+                <span className="text-2xl font-black text-emerald-400 tracking-tight block">
+                  +{currency}{formatAmount(monthMovedToSavings)}
+                </span>
+                <span className="text-[10px] text-gray-400 block mt-1 leading-relaxed">
+                  Amount transferred from spendable Online Money into your savings
+                </span>
+              </div>
+              <div className="pt-2 border-t border-gray-900 flex justify-between items-center text-[10px] text-gray-400 font-mono">
+                <span>Online: +{currency}{formatAmount(monthMovedToOnline)}</span>
+                <span>Cash: +{currency}{formatAmount(monthMovedToCash)}</span>
+              </div>
+            </div>
+
+            {/* 2. Gone to Main Account */}
+            <div className="bg-gray-950/70 border border-amber-500/20 hover:border-amber-500/40 p-4.5 rounded-2xl flex flex-col justify-between transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <ArrowUpRight className="h-3.5 w-3.5" /> Gone to Main Account
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/10 text-amber-400 border border-amber-500/25">
+                  Outflow
+                </span>
+              </div>
+              <div className="my-2.5">
+                <span className="text-2xl font-black text-amber-400 tracking-tight block">
+                  −{currency}{formatAmount(monthReturnedFromSavings)}
+                </span>
+                <span className="text-[10px] text-gray-400 block mt-1 leading-relaxed">
+                  Amount withdrawn back into your spendable GPay account
+                </span>
+              </div>
+              <div className="pt-2 border-t border-gray-900 flex justify-between items-center text-[10px] text-gray-400 font-mono">
+                <span>From Online: −{currency}{formatAmount(monthReturnedFromOnline)}</span>
+                <span>From Cash: −{currency}{formatAmount(monthReturnedFromCash)}</span>
+              </div>
+            </div>
+
+            {/* 3. Total Spent from Savings */}
+            <div className="bg-gray-950/70 border border-rose-500/20 hover:border-rose-500/40 p-4.5 rounded-2xl flex flex-col justify-between transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-extrabold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <CreditCard className="h-3.5 w-3.5" /> Total Spent from Savings
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-500/10 text-rose-400 border border-rose-500/25">
+                  Spent
+                </span>
+              </div>
+              <div className="my-2.5">
+                <span className="text-2xl font-black text-rose-400 tracking-tight block">
+                  {currency}{formatAmount(monthSpentFromSavings)}
+                </span>
+                <span className="text-[10px] text-gray-400 block mt-1 leading-relaxed">
+                  {monthCashExpenses > 0
+                    ? `₹${formatAmount(monthReturnedFromSavings)} to main account + ₹${formatAmount(monthCashExpenses)} cash expenses`
+                    : "Total amount taken from savings to fund everyday or emergency expenses"}
+                </span>
+              </div>
+              <div className="pt-2 border-t border-gray-900 flex justify-between items-center text-[10px] text-gray-400">
+                <span>{monthCashExpenses > 0 ? `Direct cash spent: ₹${formatAmount(monthCashExpenses)}` : "Withdrawn to fund spending"}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* MODAL 1: Move to Savings */}
@@ -830,7 +961,7 @@ export const SavingsPage: React.FC = () => {
                 <span className="text-[11px] text-gray-400 mt-0.5 block">
                   {toFundingSource === "previous_savings"
                     ? "Add money already saved in past months"
-                    : "Transfer money into Cash or GPay / UPI savings"}
+                    : "Transfer money from Online Money into Cash or Online Savings"}
                 </span>
               </div>
               <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
@@ -867,8 +998,19 @@ export const SavingsPage: React.FC = () => {
 
               {/* Destination Source */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-gray-300">Savings Location</label>
+                <label className="text-xs font-semibold text-gray-300">Savings Destination</label>
                 <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setToSource("online")}
+                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${toSource === "online"
+                        ? "bg-blue-500/10 border-blue-500/40 text-blue-300 shadow-sm"
+                        : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    <span>Online Savings</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => setToSource("cash")}
@@ -878,18 +1020,7 @@ export const SavingsPage: React.FC = () => {
                       }`}
                   >
                     <Banknote className="h-4 w-4" />
-                    <span>Cash</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setToSource("gpay_upi")}
-                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${toSource === "gpay_upi"
-                        ? "bg-sky-500/10 border-sky-500/40 text-sky-300 shadow-sm"
-                        : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                      }`}
-                  >
-                    <Smartphone className="h-4 w-4" />
-                    <span>GPay / UPI</span>
+                    <span>Cash Savings</span>
                   </button>
                 </div>
               </div>
@@ -953,10 +1084,10 @@ export const SavingsPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
               <div>
                 <h3 className="text-base font-extrabold text-white tracking-tight">
-                  Move Back to Available Balance
+                  Move Back to Online Money
                 </h3>
                 <span className="text-[11px] text-gray-400 mt-0.5 block">
-                  Withdraw saved money back into your everyday spendable funds
+                  Withdraw saved money back into your spendable Online Money
                 </span>
               </div>
               <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
@@ -970,6 +1101,22 @@ export const SavingsPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
+                  onClick={() => setBackSource("online")}
+                  className={`py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${backSource === "online"
+                      ? "bg-blue-500/10 border-blue-500/40 text-blue-300 shadow-sm"
+                      : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                    }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <CreditCard className="h-3.5 w-3.5" />
+                    <span>Online Savings</span>
+                  </div>
+                  <span className="text-[10px] text-gray-500 font-mono">
+                    {currency}{formatAmount(onlineSavings)} avail.
+                  </span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => setBackSource("cash")}
                   className={`py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${backSource === "cash"
                       ? "bg-amber-500/10 border-amber-500/40 text-amber-300 shadow-sm"
@@ -978,26 +1125,10 @@ export const SavingsPage: React.FC = () => {
                 >
                   <div className="flex items-center gap-1.5">
                     <Banknote className="h-3.5 w-3.5" />
-                    <span>Cash</span>
+                    <span>Cash Savings</span>
                   </div>
                   <span className="text-[10px] text-gray-500 font-mono">
                     {currency}{formatAmount(cashSavings)} avail.
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBackSource("gpay_upi")}
-                  className={`py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${backSource === "gpay_upi"
-                      ? "bg-sky-500/10 border-sky-500/40 text-sky-300 shadow-sm"
-                      : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
-                    }`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Smartphone className="h-3.5 w-3.5" />
-                    <span>GPay / UPI</span>
-                  </div>
-                  <span className="text-[10px] text-gray-500 font-mono">
-                    {currency}{formatAmount(gpaySavings)} avail.
                   </span>
                 </button>
               </div>

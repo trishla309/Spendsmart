@@ -7,6 +7,7 @@ import budgetRouter from "./src/server/budget";
 import expensesRouter from "./src/server/expenses";
 import notificationsRouter from "./src/server/notifications";
 import savingsRouter from "./src/server/savings";
+import categoriesRouter from "./src/server/categories";
 import { initCronJobs } from "./src/server/cron";
 async function startServer() {
   const app = express();
@@ -33,6 +34,7 @@ async function startServer() {
   app.use("/api/expenses", expensesRouter);
   app.use("/api/notifications", notificationsRouter);
   app.use("/api/savings", savingsRouter);
+  app.use("/api/categories", categoriesRouter);
 
   // Initialize Background Tasks
   initCronJobs();

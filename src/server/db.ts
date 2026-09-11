@@ -9,12 +9,32 @@ dotenv.config();
 const DB_FILE = path.join(process.cwd(), "db.json");
 
 // Define basic models types
+export interface IUserCategory {
+  key: string;
+  label: string;
+  emoji?: string;
+  color?: string;
+  isDefault?: boolean;
+}
+
+export const DEFAULT_CATEGORIES: IUserCategory[] = [
+  { key: "food", label: "Food & Dining", emoji: "🍔", color: "bg-orange-500", isDefault: true },
+  { key: "transport", label: "Transport", emoji: "🚌", color: "bg-sky-500", isDefault: true },
+  { key: "shopping", label: "Shopping", emoji: "🛍️", color: "bg-indigo-500", isDefault: true },
+  { key: "entertainment", label: "Entertainment", emoji: "🎬", color: "bg-rose-500", isDefault: true },
+  { key: "emergency", label: "Emergency Reserve", emoji: "🚨", color: "bg-red-500", isDefault: true },
+  { key: "stationery", label: "Stationery", emoji: "📝", color: "bg-emerald-500", isDefault: true },
+  { key: "other", label: "Other / Misc", emoji: "📦", color: "bg-amber-500", isDefault: true },
+];
+
 interface IUser {
   _id: string;
   name: string;
   email: string;
   phone?: string;
   passwordHash?: string;
+  categories?: IUserCategory[];
+  hiddenCategories?: string[];
   createdAt: string;
 }
 
@@ -38,14 +58,7 @@ interface IBudget {
   pocketMoney: number;
   savingsGoal: number;
   allocated: {
-    food: number;
-    transport: number;
-    shopping: number;
-    entertainment: number;
-    emergency: number;
-    stationery: number;
-    savings: number;
-    other: number;
+    [category: string]: number;
   };
   thresholdsFired?: {
     [category: string]: {
@@ -64,6 +77,7 @@ interface IExpense {
   description: string;
   date: string; // "YYYY-MM-DD"
   note?: string; // Optional Note
+  paidUsing?: string; // "online" | "cash"
   createdAt: string;
 }
 
@@ -82,7 +96,8 @@ export interface ISavingsMovement {
   userId: string;
   amount: number;
   direction: "to_savings" | "from_savings";
-  source: "cash" | "gpay_upi";
+  source: string; // "online_money" | "online_savings" | "cash_savings" | "cash" | "gpay_upi"
+  destination?: string; // "online_money" | "online_savings" | "cash_savings"
   fundingSource?: "current_balance" | "previous_savings";
   date: string; // "YYYY-MM-DD"
   note?: string;
@@ -108,6 +123,8 @@ const UserMongoSchema = new Schema({
   email: { type: String, required: true, unique: true },
   phone: { type: String },
   passwordHash: { type: String },
+  categories: { type: [Schema.Types.Mixed], default: undefined },
+  hiddenCategories: { type: [String], default: [] },
   createdAt: { type: String, default: () => new Date().toISOString() },
 });
 
@@ -125,19 +142,10 @@ const BudgetMongoSchema = new Schema({
   month: { type: String, required: true },
   pocketMoney: { type: Number, required: true },
   savingsGoal: { type: Number, required: true },
-  allocated: {
-    food: { type: Number, default: 0 },
-    transport: { type: Number, default: 0 },
-    shopping: { type: Number, default: 0 },
-    entertainment: { type: Number, default: 0 },
-    emergency: { type: Number, default: 0 },
-    stationery: { type: Number, default: 0 },
-    savings: { type: Number, default: 0 },
-    other: { type: Number, default: 0 },
-  },
+  allocated: { type: Schema.Types.Mixed, default: {} },
   thresholdsFired: { type: Schema.Types.Mixed, default: {} },
   createdAt: { type: String, default: () => new Date().toISOString() },
-});
+}, { strict: false });
 
 const ExpenseMongoSchema = new Schema({
   userId: { type: String, required: true },
@@ -146,6 +154,7 @@ const ExpenseMongoSchema = new Schema({
   description: { type: String, required: true },
   date: { type: String, required: true },
   note: { type: String, default: "" },
+  paidUsing: { type: String, default: "online" }, // "online" | "cash"
   createdAt: { type: String, default: () => new Date().toISOString() },
 });
 
@@ -162,7 +171,8 @@ const SavingsMovementMongoSchema = new Schema({
   userId: { type: String, required: true },
   amount: { type: Number, required: true },
   direction: { type: String, required: true }, // "to_savings" | "from_savings"
-  source: { type: String, required: true }, // "cash" | "gpay_upi"
+  source: { type: String, required: true }, // "cash" | "gpay_upi" | "online_money" | "online_savings" | "cash_savings"
+  destination: { type: String, default: "" }, // "online_money" | "online_savings" | "cash_savings"
   fundingSource: { type: String, default: "current_balance" }, // "current_balance" | "previous_savings"
   date: { type: String, required: true },
   note: { type: String, default: "" },
@@ -206,6 +216,10 @@ export async function initDatabaseConnection(): Promise<boolean> {
     });
     isMongoConnected = true;
     console.log("Connected to MongoDB Atlas successfully!");
+
+    // Safeguard: Automatically restore from local backup if Mongo is fresh/empty, or sync Mongo to disk backup
+    await restoreDiskBackupToMongoIfNeeded();
+
     return true;
   } catch (error: any) {
     if (isProduction && !allowFallback) {
@@ -260,6 +274,97 @@ function sanitizeQuery(query: any) {
     }
   }
   return clean;
+}
+
+// Safeguard: Mirror Mongo to local persistent backup so data is never lost or deleted
+let backupDebounceTimer: NodeJS.Timeout | null = null;
+
+export async function backupMongoToJsonFile(): Promise<void> {
+  if (!isMongoConnected) return;
+  try {
+    const [users, budgets, expenses, notifications, otps, savingsMovements] = await Promise.all([
+      UserM.find().lean(),
+      BudgetM.find().lean(),
+      ExpenseM.find().lean(),
+      NotificationM.find().lean(),
+      OtpM.find().lean(),
+      SavingsMovementM.find().lean(),
+    ]);
+
+    const backupData: IDatabaseSchema = {
+      users: users.map(transformDoc),
+      budgets: budgets.map(transformDoc),
+      expenses: expenses.map(transformDoc),
+      notifications: notifications.map(transformDoc),
+      otps: otps.map(transformDoc),
+      savingsMovements: savingsMovements.map(transformDoc),
+    };
+
+    const jsonStr = JSON.stringify(backupData, null, 2);
+    await fs.writeFile(DB_FILE, jsonStr, "utf-8");
+    const backupFilePath = path.join(process.cwd(), "db.backup.json");
+    await fs.writeFile(backupFilePath, jsonStr, "utf-8");
+    console.log(`[BACKUP] Successfully synchronized ${backupData.users.length} accounts & data to local disk.`);
+  } catch (err) {
+    console.error("[BACKUP] Error mirroring MongoDB data to local backup:", err);
+  }
+}
+
+export function triggerDebouncedBackup() {
+  if (backupDebounceTimer) clearTimeout(backupDebounceTimer);
+  backupDebounceTimer = setTimeout(() => {
+    backupMongoToJsonFile().catch(() => {});
+  }, 2000);
+}
+
+export async function restoreDiskBackupToMongoIfNeeded(): Promise<void> {
+  if (!isMongoConnected) return;
+  try {
+    const userCount = await UserM.countDocuments();
+    if (userCount === 0) {
+      console.log("[RESTORE] MongoDB is empty. Checking local JSON database for existing account data...");
+      const db = new JsonDatabase();
+      const localData = await db.read();
+
+      if (localData.users && localData.users.length > 0) {
+        console.log(`[RESTORE] Restoring ${localData.users.length} users and ${localData.expenses?.length || 0} transactions from local backup into MongoDB...`);
+
+        const toMongoDoc = (doc: any) => {
+          const { _id, ...rest } = doc;
+          if (_id && /^[0-9a-fA-F]{24}$/.test(String(_id))) {
+            return { _id: new mongoose.Types.ObjectId(String(_id)), ...rest };
+          }
+          return { ...rest };
+        };
+
+        if (localData.users.length > 0) {
+          for (const u of localData.users) {
+            await UserM.updateOne({ email: u.email }, { $setOnInsert: toMongoDoc(u) }, { upsert: true });
+          }
+        }
+        if (localData.budgets && localData.budgets.length > 0) {
+          for (const b of localData.budgets) {
+            await BudgetM.updateOne({ userId: b.userId, month: b.month }, { $setOnInsert: toMongoDoc(b) }, { upsert: true });
+          }
+        }
+        if (localData.expenses && localData.expenses.length > 0) {
+          await ExpenseM.insertMany(localData.expenses.map(toMongoDoc));
+        }
+        if (localData.notifications && localData.notifications.length > 0) {
+          await NotificationM.insertMany(localData.notifications.map(toMongoDoc));
+        }
+        if (localData.savingsMovements && localData.savingsMovements.length > 0) {
+          await SavingsMovementM.insertMany(localData.savingsMovements.map(toMongoDoc));
+        }
+        console.log("[RESTORE] All account data restored into MongoDB successfully!");
+      }
+    } else {
+      // Keep disk backup completely fresh with MongoDB state
+      await backupMongoToJsonFile();
+    }
+  } catch (err) {
+    console.error("[RESTORE] Error checking/restoring disk backup to MongoDB:", err);
+  }
 }
 
 class JsonDatabase {
@@ -363,6 +468,7 @@ class JsonDatabase {
         if (isMongoConnected) {
           const mModel = getMongoModel();
           const doc = await mModel.create(data);
+          triggerDebouncedBackup();
           return transformDoc(doc);
         } else {
           const db = await self.read();
@@ -383,6 +489,7 @@ class JsonDatabase {
           const mModel = getMongoModel();
           const cleanQ = sanitizeQuery(query);
           const res = await mModel.updateOne(cleanQ, { $set: update });
+          triggerDebouncedBackup();
           return res.modifiedCount > 0 || res.matchedCount > 0;
         } else {
           const db = await self.read();
@@ -408,6 +515,7 @@ class JsonDatabase {
           const mModel = getMongoModel();
           const cleanQ = sanitizeQuery(query);
           const res = await mModel.deleteOne(cleanQ);
+          triggerDebouncedBackup();
           return res.deletedCount ? res.deletedCount > 0 : false;
         } else {
           const db = await self.read();
@@ -429,6 +537,7 @@ class JsonDatabase {
           const mModel = getMongoModel();
           const cleanQ = sanitizeQuery(query);
           const res = await mModel.deleteMany(cleanQ);
+          triggerDebouncedBackup();
           return res.deletedCount || 0;
         } else {
           const db = await self.read();
@@ -459,3 +568,24 @@ export const Expense = db.getModel("expenses");
 export const Notification = db.getModel("notifications");
 export const OTP = db.getModel("otps");
 export const SavingsMovement = db.getModel("savingsMovements");
+
+export async function getUserCategories(userId: string): Promise<IUserCategory[]> {
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (!user) return DEFAULT_CATEGORIES;
+
+    const hidden = new Set((user as any).hiddenCategories || []);
+    let userCats: IUserCategory[] = [];
+
+    if (Array.isArray((user as any).categories) && (user as any).categories.length > 0) {
+      userCats = (user as any).categories;
+    } else {
+      userCats = DEFAULT_CATEGORIES;
+    }
+
+    return userCats.filter((c) => !hidden.has(c.key));
+  } catch (err) {
+    console.error("Error fetching user categories:", err);
+    return DEFAULT_CATEGORIES;
+  }
+}

@@ -1,8 +1,375 @@
 {
-  "users": [],
+  "users": [
+    {
+      "_id": "6a4e97b4248e6a72d9110792",
+      "name": "Rahul Sharma",
+      "email": "student@example.com",
+      "passwordHash": "$2b$10$iejPVm8gN3BlahAaJV6Xrupqb6Krsd6xl8N4fEMUaj73D6gPx7y/m",
+      "createdAt": "2026-07-08T18:32:20.863Z",
+      "__v": 0,
+      "categories": [
+        {
+          "key": "food",
+          "label": "Food & Dining",
+          "emoji": "🍔",
+          "color": "bg-orange-500",
+          "isDefault": true
+        },
+        {
+          "key": "transport",
+          "label": "Transport",
+          "emoji": "🚌",
+          "color": "bg-sky-500",
+          "isDefault": true
+        },
+        {
+          "key": "shopping",
+          "label": "Shopping",
+          "emoji": "🛍️",
+          "color": "bg-indigo-500",
+          "isDefault": true
+        },
+        {
+          "key": "entertainment",
+          "label": "Entertainment",
+          "emoji": "🎬",
+          "color": "bg-rose-500",
+          "isDefault": true
+        },
+        {
+          "key": "emergency",
+          "label": "Emergency Reserve",
+          "emoji": "🚨",
+          "color": "bg-red-500",
+          "isDefault": true
+        },
+        {
+          "key": "stationery",
+          "label": "Stationery",
+          "emoji": "📝",
+          "color": "bg-emerald-500",
+          "isDefault": true
+        },
+        {
+          "key": "other",
+          "label": "Other / Misc",
+          "emoji": "📦",
+          "color": "bg-amber-500",
+          "isDefault": true
+        }
+      ],
+      "hiddenCategories": []
+    },
+    {
+      "_id": "6a4e97c2248e6a72d91107d1",
+      "name": "Test User",
+      "email": "testuser@example.com",
+      "passwordHash": "$2b$10$LclnO5o9mW7Fr00NH3BuxuGSoZ9qW15iRmJPyQyo9BdisRq0Xd.CS",
+      "createdAt": "2026-07-08T18:32:34.415Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e9df4248e6a72d91107d2",
+      "name": "Mongo User",
+      "email": "mongouser@example.com",
+      "passwordHash": "$2b$10$JPR9NEHylKgMQmk3uGp1f.LmZDV1MTPzt9RHV0nfRBdWRuVl8//KO",
+      "createdAt": "2026-07-08T18:59:00.022Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea2cb53198013af2e7d95",
+      "name": "Final Test User",
+      "email": "finaltest@example.com",
+      "passwordHash": "$2b$10$QbubAImoneJAXdOYXWcaZef3DFIkqqQJA.2VBNjflzr2bKRbjC3tW",
+      "createdAt": "2026-07-08T19:19:39.615Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea6cdf19b3b4f78ec9bd1",
+      "name": "Chiku User",
+      "email": "chikuuser@example.com",
+      "passwordHash": "$2b$10$GHZI1W8KNS9HO5MQiKIVUebOR2TpIm/2xF75s1gUl0xPyhHt380I6",
+      "createdAt": "2026-07-08T19:36:45.699Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea73ef19b3b4f78ec9bd2",
+      "name": "trishla",
+      "email": "trishlaprajapati07@gmail.com",
+      "passwordHash": "$2b$10$o0O.MqCSeXE9IjSt17eEJuvhLfYBmdwlfJQqnC02ItO2WR3lC/ShO",
+      "createdAt": "2026-07-08T19:38:38.527Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52bb42f28fd3536d1d3",
+      "name": "Tristha",
+      "email": "tristha97@gmail.com",
+      "passwordHash": "$2b$10$DItsiObygWv5Emc6eOCDw.AlbcQtSgb52wBHnYhmoVBdV1128QiEm",
+      "createdAt": "2026-09-03T20:14:35.998Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d6a9b42f28fd3536d217",
+      "name": "trishtha",
+      "email": "trishtha97@gmail.com",
+      "phone": "",
+      "createdAt": "2026-09-03T20:20:57.269Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02116",
+      "name": "Aarav Patel",
+      "email": "demo@spendsmart.com",
+      "passwordHash": "$2b$10$KSXaX9ri4vpby9itMakxCuJhw7RaV40coyTAorp7EijhSri1EFMVm",
+      "categories": [
+        {
+          "key": "food",
+          "label": "Food & Dining",
+          "emoji": "🍔",
+          "color": "bg-orange-500",
+          "isDefault": true
+        },
+        {
+          "key": "transport",
+          "label": "Transport",
+          "emoji": "🚌",
+          "color": "bg-sky-500",
+          "isDefault": true
+        },
+        {
+          "key": "shopping",
+          "label": "Shopping",
+          "emoji": "🛍️",
+          "color": "bg-indigo-500",
+          "isDefault": true
+        },
+        {
+          "key": "entertainment",
+          "label": "Entertainment",
+          "emoji": "🎬",
+          "color": "bg-rose-500",
+          "isDefault": true
+        },
+        {
+          "key": "emergency",
+          "label": "Emergency Reserve",
+          "emoji": "🚨",
+          "color": "bg-red-500",
+          "isDefault": true
+        },
+        {
+          "key": "stationery",
+          "label": "Stationery",
+          "emoji": "📝",
+          "color": "bg-emerald-500",
+          "isDefault": true
+        },
+        {
+          "key": "other",
+          "label": "Other / Misc",
+          "emoji": "📦",
+          "color": "bg-amber-500",
+          "isDefault": true
+        }
+      ],
+      "hiddenCategories": [],
+      "createdAt": "2026-09-11T16:04:32.330Z",
+      "__v": 0
+    }
+  ],
   "budgets": [
     {
-      "userId": "a67h63epr",
+      "_id": "6a4e97b4248e6a72d9110793",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "month": "2026-06",
+      "pocketMoney": 5500,
+      "savingsGoal": 800,
+      "allocated": {
+        "food": 2200,
+        "transport": 700,
+        "shopping": 600,
+        "entertainment": 600,
+        "emergency": 400,
+        "stationery": 300,
+        "savings": 0,
+        "other": 500
+      },
+      "createdAt": "2026-07-08T18:32:20.890Z",
+      "__v": 0,
+      "thresholdsFired": {
+        "food": {},
+        "transport": {
+          "p100": true,
+          "p80": true
+        },
+        "shopping": {
+          "p100": true,
+          "p80": true
+        },
+        "entertainment": {},
+        "emergency": {},
+        "stationery": {
+          "p100": true,
+          "p80": true
+        },
+        "other": {}
+      }
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a8",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "month": "2026-04",
+      "pocketMoney": 6000,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 2500,
+        "transport": 800,
+        "shopping": 700,
+        "entertainment": 700,
+        "emergency": 500,
+        "stationery": 200,
+        "savings": 0,
+        "other": 600
+      },
+      "createdAt": "2026-07-08T18:32:20.920Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e9f04248e6a72d91107d3",
+      "userId": "6a4e9df4248e6a72d91107d2",
+      "month": "2026-07",
+      "pocketMoney": 1000,
+      "savingsGoal": 200,
+      "allocated": {
+        "food": 250,
+        "transport": 150,
+        "shopping": 150,
+        "entertainment": 100,
+        "emergency": 100,
+        "stationery": 50,
+        "savings": 150,
+        "other": 50
+      },
+      "createdAt": "2026-07-08T19:03:32.757Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea2e553198013af2e7d96",
+      "userId": "6a4ea2cb53198013af2e7d95",
+      "month": "2026-07",
+      "pocketMoney": 1000,
+      "savingsGoal": 200,
+      "allocated": {
+        "food": 250,
+        "transport": 150,
+        "shopping": 150,
+        "entertainment": 100,
+        "emergency": 100,
+        "stationery": 50,
+        "savings": 150,
+        "other": 50
+      },
+      "createdAt": "2026-07-08T19:20:05.872Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea749f19b3b4f78ec9bd3",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "month": "2026-07",
+      "pocketMoney": 10000,
+      "savingsGoal": 3000,
+      "allocated": {
+        "food": 4000,
+        "transport": 100,
+        "shopping": 1000,
+        "entertainment": 1000,
+        "emergency": 500,
+        "stationery": 200,
+        "savings": 0,
+        "other": 300
+      },
+      "createdAt": "2026-07-08T19:38:49.118Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea8a2f19b3b4f78ec9bd5",
+      "userId": "6a4ea6cdf19b3b4f78ec9bd1",
+      "month": "2026-07",
+      "pocketMoney": 1000,
+      "savingsGoal": 200,
+      "allocated": {
+        "food": 250,
+        "transport": 150,
+        "shopping": 150,
+        "entertainment": 100,
+        "emergency": 100,
+        "stationery": 50,
+        "savings": 150,
+        "other": 50
+      },
+      "createdAt": "2026-07-08T19:44:34.842Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d917",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "month": "2026-04",
+      "pocketMoney": 1000,
+      "savingsGoal": 200,
+      "allocated": {
+        "food": 250,
+        "transport": 150,
+        "shopping": 150,
+        "entertainment": 100,
+        "emergency": 100,
+        "stationery": 50,
+        "savings": 150,
+        "other": 50
+      },
+      "createdAt": "2026-07-09T17:49:49.512Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d918",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "month": "2026-05",
+      "pocketMoney": 1000,
+      "savingsGoal": 200,
+      "allocated": {
+        "food": 250,
+        "transport": 150,
+        "shopping": 150,
+        "entertainment": 100,
+        "emergency": 100,
+        "stationery": 50,
+        "savings": 150,
+        "other": 50
+      },
+      "createdAt": "2026-07-09T17:49:49.551Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d91a",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "month": "2026-06",
+      "pocketMoney": 1000,
+      "savingsGoal": 200,
+      "allocated": {
+        "food": 250,
+        "transport": 150,
+        "shopping": 150,
+        "entertainment": 100,
+        "emergency": 100,
+        "stationery": 50,
+        "savings": 150,
+        "other": 50
+      },
+      "createdAt": "2026-07-09T17:49:49.620Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ff562e3420d549f5c1cad",
+      "userId": "arzxapry5",
       "month": "2026-07",
       "pocketMoney": 0,
       "savingsGoal": 0,
@@ -16,21 +383,2987 @@
         "savings": 0,
         "other": 0
       },
-      "_id": "7y1sf1u9c",
-      "createdAt": "2026-07-09T18:27:25.825Z"
+      "createdAt": "2026-07-09T19:24:18.974Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f0dacf5948ce4cbe123b4",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "month": "2026-08",
+      "pocketMoney": 5500,
+      "savingsGoal": 800,
+      "allocated": {
+        "food": 2200,
+        "transport": 700,
+        "shopping": 600,
+        "entertainment": 600,
+        "emergency": 400,
+        "stationery": 400,
+        "savings": 0,
+        "other": 500
+      },
+      "createdAt": "2026-08-14T12:44:28.116Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd6228c",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "month": "2026-05",
+      "pocketMoney": 5500,
+      "savingsGoal": 800,
+      "allocated": {
+        "food": 2200,
+        "transport": 700,
+        "shopping": 600,
+        "entertainment": 600,
+        "emergency": 400,
+        "stationery": 400,
+        "savings": 0,
+        "other": 500
+      },
+      "createdAt": "2026-08-14T17:33:09.234Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd6228f",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "month": "2026-07",
+      "pocketMoney": 5500,
+      "savingsGoal": 800,
+      "allocated": {
+        "food": 2200,
+        "transport": 700,
+        "shopping": 600,
+        "entertainment": 600,
+        "emergency": 400,
+        "stationery": 400,
+        "savings": 0,
+        "other": 500
+      },
+      "createdAt": "2026-08-14T17:33:09.329Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1d4",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "month": "2026-06",
+      "pocketMoney": 5500,
+      "savingsGoal": 800,
+      "allocated": {
+        "food": 2200,
+        "transport": 700,
+        "shopping": 600,
+        "entertainment": 600,
+        "emergency": 400,
+        "stationery": 300,
+        "savings": 0,
+        "other": 500
+      },
+      "createdAt": "2026-09-03T20:14:36.011Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e9",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "month": "2026-04",
+      "pocketMoney": 6000,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 2500,
+        "transport": 800,
+        "shopping": 700,
+        "entertainment": 700,
+        "emergency": 500,
+        "stationery": 200,
+        "savings": 0,
+        "other": 600
+      },
+      "createdAt": "2026-09-03T20:14:36.066Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d54cb42f28fd3536d212",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "month": "2026-09",
+      "pocketMoney": 5500,
+      "savingsGoal": 800,
+      "allocated": {
+        "food": 2200,
+        "transport": 700,
+        "shopping": 600,
+        "entertainment": 600,
+        "emergency": 400,
+        "stationery": 300,
+        "savings": 0,
+        "other": 500
+      },
+      "createdAt": "2026-09-03T20:15:08.373Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d6a9b42f28fd3536d218",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "month": "2026-09",
+      "pocketMoney": 0,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 0,
+        "transport": 0,
+        "shopping": 0,
+        "entertainment": 0,
+        "emergency": 0,
+        "stationery": 0,
+        "savings": 0,
+        "other": 0
+      },
+      "createdAt": "2026-09-03T20:20:57.594Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a91a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "month": "2026-07",
+      "pocketMoney": 0,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 0,
+        "transport": 0,
+        "shopping": 0,
+        "entertainment": 0,
+        "emergency": 0,
+        "stationery": 0,
+        "savings": 0,
+        "other": 0
+      },
+      "createdAt": "2026-09-07T05:56:04.713Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a919",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "month": "2026-06",
+      "pocketMoney": 0,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 0,
+        "transport": 0,
+        "shopping": 0,
+        "entertainment": 0,
+        "emergency": 0,
+        "stationery": 0,
+        "savings": 0,
+        "other": 0
+      },
+      "createdAt": "2026-09-07T05:56:04.702Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a91b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "month": "2026-08",
+      "pocketMoney": 0,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 0,
+        "transport": 0,
+        "shopping": 0,
+        "entertainment": 0,
+        "emergency": 0,
+        "stationery": 0,
+        "savings": 0,
+        "other": 0
+      },
+      "createdAt": "2026-09-07T05:56:04.719Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1a46e955b41da9912eb9e",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "month": "2026-09",
+      "pocketMoney": 5500,
+      "savingsGoal": 800,
+      "allocated": {
+        "food": 2200,
+        "transport": 700,
+        "shopping": 600,
+        "entertainment": 600,
+        "emergency": 400,
+        "stationery": 400,
+        "savings": 0,
+        "other": 500,
+        "gym_and_fitness": 1500,
+        "gym_and_fitness_5x69": 1500,
+        "gym_and_fitness_w5xm": 1500
+      },
+      "createdAt": "2026-09-09T18:24:46.702Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02117",
+      "userId": "6aa42690e188736503a02116",
+      "month": "2026-09",
+      "pocketMoney": 18000,
+      "savingsGoal": 3500,
+      "allocated": {
+        "food": 5500,
+        "transport": 2200,
+        "shopping": 3000,
+        "entertainment": 2000,
+        "emergency": 1500,
+        "stationery": 1200,
+        "other": 1000,
+        "savings": 0
+      },
+      "thresholdsFired": {
+        "food": {
+          "p80": false,
+          "p100": false
+        },
+        "transport": {
+          "p80": false,
+          "p100": false
+        },
+        "shopping": {
+          "p80": false,
+          "p100": false
+        },
+        "entertainment": {
+          "p80": false,
+          "p100": false
+        },
+        "emergency": {
+          "p80": false,
+          "p100": false
+        },
+        "stationery": {
+          "p80": false,
+          "p100": false
+        },
+        "other": {
+          "p80": false,
+          "p100": false
+        }
+      },
+      "createdAt": "2026-09-11T16:04:32.400Z",
+      "__v": 0
     }
   ],
-  "expenses": [],
+  "expenses": [
+    {
+      "_id": "6a4e97b4248e6a72d9110794",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 180,
+      "category": "stationery",
+      "description": "College Registration Fee",
+      "date": "2026-06-01",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.895Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d9110795",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 320,
+      "category": "transport",
+      "description": "Monthly Bus Pass",
+      "date": "2026-06-01",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.897Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d9110796",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 130,
+      "category": "food",
+      "description": "Hostel canteen lunch",
+      "date": "2026-06-02",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.899Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d9110797",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 250,
+      "category": "stationery",
+      "description": "Reference Textbook",
+      "date": "2026-06-04",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.900Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d9110798",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 90,
+      "category": "food",
+      "description": "Campus cafe snacks",
+      "date": "2026-06-05",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.902Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d9110799",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 480,
+      "category": "shopping",
+      "description": "Raincoat",
+      "date": "2026-06-06",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.903Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d911079a",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 150,
+      "category": "emergency",
+      "description": "Pharmacy / Cold medicine",
+      "date": "2026-06-07",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.904Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d911079b",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 140,
+      "category": "food",
+      "description": "Hostel canteen dinner",
+      "date": "2026-06-08",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.905Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d911079c",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 180,
+      "category": "food",
+      "description": "Subway meal",
+      "date": "2026-06-10",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.906Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d911079d",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 350,
+      "category": "entertainment",
+      "description": "Movie with friends",
+      "date": "2026-06-12",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.907Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d911079e",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 65,
+      "category": "stationery",
+      "description": "Notebooks & pens",
+      "date": "2026-06-15",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.908Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d911079f",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 100,
+      "category": "transport",
+      "description": "Auto fare",
+      "date": "2026-06-16",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.910Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a0",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 280,
+      "category": "transport",
+      "description": "Train ticket home",
+      "date": "2026-06-18",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.911Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a1",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 420,
+      "category": "food",
+      "description": "Pizza delivery",
+      "date": "2026-06-20",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.912Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a2",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 249,
+      "category": "other",
+      "description": "Mobile bill recharge",
+      "date": "2026-06-22",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.913Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a3",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 550,
+      "category": "shopping",
+      "description": "Jeans from store",
+      "date": "2026-06-24",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.914Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a4",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 160,
+      "category": "food",
+      "description": "South Indian Dinner",
+      "date": "2026-06-26",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.915Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a5",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "entertainment",
+      "description": "Ice cream parlor",
+      "date": "2026-06-28",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.916Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a6",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 150,
+      "category": "other",
+      "description": "Hostel Laundry charge",
+      "date": "2026-06-29",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.917Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a7",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 85,
+      "category": "food",
+      "description": "Coffee & cookies",
+      "date": "2026-06-30",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.918Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107a9",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 60,
+      "category": "food",
+      "description": "Breakfast",
+      "date": "2026-04-01",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.921Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107aa",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-01",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.922Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107ab",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 110,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-01",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.923Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107ac",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 20,
+      "category": "food",
+      "description": "Tea",
+      "date": "2026-04-02",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.925Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107ad",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-02",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.926Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107ae",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 40,
+      "category": "transport",
+      "description": "Bus",
+      "date": "2026-04-03",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.927Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107af",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-03",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.928Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b0",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 80,
+      "category": "food",
+      "description": "Coffee",
+      "date": "2026-04-04",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.929Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b1",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 150,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-04",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.930Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b2",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 300,
+      "category": "entertainment",
+      "description": "Friends Cafe",
+      "date": "2026-04-05",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.931Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b3",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 70,
+      "category": "food",
+      "description": "Breakfast",
+      "date": "2026-04-06",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.932Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b4",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-06",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.933Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b5",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 60,
+      "category": "transport",
+      "description": "Metro",
+      "date": "2026-04-07",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.934Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b6",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 140,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-07",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.934Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b7",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 220,
+      "category": "shopping",
+      "description": "Shampoo",
+      "date": "2026-04-08",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.936Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b8",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 130,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-09",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.936Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107b9",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 20,
+      "category": "food",
+      "description": "Tea",
+      "date": "2026-04-10",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.937Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107ba",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 100,
+      "category": "transport",
+      "description": "Auto",
+      "date": "2026-04-10",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.938Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107bb",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 90,
+      "category": "stationery",
+      "description": "Notebook",
+      "date": "2026-04-11",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.939Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107bc",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-12",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.941Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107bd",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 350,
+      "category": "entertainment",
+      "description": "Movie",
+      "date": "2026-04-13",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.942Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107be",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 60,
+      "category": "food",
+      "description": "Breakfast",
+      "date": "2026-04-14",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.943Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107bf",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 180,
+      "category": "emergency",
+      "description": "Medicines",
+      "date": "2026-04-15",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.944Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c0",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 150,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-16",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.945Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c1",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 249,
+      "category": "other",
+      "description": "Mobile Recharge",
+      "date": "2026-04-17",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.946Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c2",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-18",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.947Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c3",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "entertainment",
+      "description": "Ice Cream",
+      "date": "2026-04-18",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.948Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c4",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 40,
+      "category": "transport",
+      "description": "Bus",
+      "date": "2026-04-19",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.950Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c5",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 40,
+      "category": "stationery",
+      "description": "Pen",
+      "date": "2026-04-20",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.951Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c6",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-21",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.953Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c7",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 150,
+      "category": "other",
+      "description": "Laundry",
+      "date": "2026-04-22",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.954Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c8",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 450,
+      "category": "shopping",
+      "description": "T-Shirt",
+      "date": "2026-04-23",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.955Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107c9",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 70,
+      "category": "food",
+      "description": "Coffee",
+      "date": "2026-04-24",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.957Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107ca",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 180,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-25",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.958Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107cb",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 90,
+      "category": "transport",
+      "description": "Auto",
+      "date": "2026-04-26",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.960Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107cc",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 60,
+      "category": "food",
+      "description": "Snacks",
+      "date": "2026-04-27",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.961Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107cd",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 130,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-28",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.963Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107ce",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 20,
+      "category": "food",
+      "description": "Tea",
+      "date": "2026-04-29",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.964Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107cf",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 150,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-30",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.966Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4e97b4248e6a72d91107d0",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 260,
+      "category": "food",
+      "description": "Friends Dinner",
+      "date": "2026-04-31",
+      "note": "",
+      "createdAt": "2026-07-08T18:32:20.967Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f50bd5bee46444fd62289",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 100,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-08-14",
+      "note": "",
+      "createdAt": "2026-08-14T17:30:37.797Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1d5",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 180,
+      "category": "stationery",
+      "description": "College Registration Fee",
+      "date": "2026-06-01",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.031Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1d6",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 320,
+      "category": "transport",
+      "description": "Monthly Bus Pass",
+      "date": "2026-06-01",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.043Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1d7",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 130,
+      "category": "food",
+      "description": "Hostel canteen lunch",
+      "date": "2026-06-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.045Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1d8",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 250,
+      "category": "stationery",
+      "description": "Reference Textbook",
+      "date": "2026-06-04",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.046Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1d9",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 90,
+      "category": "food",
+      "description": "Campus cafe snacks",
+      "date": "2026-06-05",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.047Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1da",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 480,
+      "category": "shopping",
+      "description": "Raincoat",
+      "date": "2026-06-06",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.049Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1db",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 150,
+      "category": "emergency",
+      "description": "Pharmacy / Cold medicine",
+      "date": "2026-06-07",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.050Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1dc",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 140,
+      "category": "food",
+      "description": "Hostel canteen dinner",
+      "date": "2026-06-08",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.051Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1dd",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 180,
+      "category": "food",
+      "description": "Subway meal",
+      "date": "2026-06-10",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.053Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1de",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 350,
+      "category": "entertainment",
+      "description": "Movie with friends",
+      "date": "2026-06-12",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.054Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1df",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 65,
+      "category": "stationery",
+      "description": "Notebooks & pens",
+      "date": "2026-06-15",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.055Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e0",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 100,
+      "category": "transport",
+      "description": "Auto fare",
+      "date": "2026-06-16",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.056Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e1",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 280,
+      "category": "transport",
+      "description": "Train ticket home",
+      "date": "2026-06-18",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.057Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e2",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 420,
+      "category": "food",
+      "description": "Pizza delivery",
+      "date": "2026-06-20",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.058Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e3",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 249,
+      "category": "other",
+      "description": "Mobile bill recharge",
+      "date": "2026-06-22",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.059Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e4",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 550,
+      "category": "shopping",
+      "description": "Jeans from store",
+      "date": "2026-06-24",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.060Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e5",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 160,
+      "category": "food",
+      "description": "South Indian Dinner",
+      "date": "2026-06-26",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.061Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e6",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "entertainment",
+      "description": "Ice cream parlor",
+      "date": "2026-06-28",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.063Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e7",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 150,
+      "category": "other",
+      "description": "Hostel Laundry charge",
+      "date": "2026-06-29",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.064Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1e8",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 85,
+      "category": "food",
+      "description": "Coffee & cookies",
+      "date": "2026-06-30",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.065Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1ea",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 60,
+      "category": "food",
+      "description": "Breakfast",
+      "date": "2026-04-01",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.067Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1eb",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-01",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.069Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1ec",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 110,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-01",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.070Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1ed",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 20,
+      "category": "food",
+      "description": "Tea",
+      "date": "2026-04-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.071Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1ee",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.072Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1ef",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 40,
+      "category": "transport",
+      "description": "Bus",
+      "date": "2026-04-03",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.073Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f0",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-03",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.074Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f1",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 80,
+      "category": "food",
+      "description": "Coffee",
+      "date": "2026-04-04",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.075Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f2",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 150,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-04",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.077Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f3",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 300,
+      "category": "entertainment",
+      "description": "Friends Cafe",
+      "date": "2026-04-05",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.079Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f4",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 70,
+      "category": "food",
+      "description": "Breakfast",
+      "date": "2026-04-06",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.080Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f5",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-06",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.081Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f6",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 60,
+      "category": "transport",
+      "description": "Metro",
+      "date": "2026-04-07",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.083Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f7",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 140,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-07",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.084Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f8",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 220,
+      "category": "shopping",
+      "description": "Shampoo",
+      "date": "2026-04-08",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.085Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1f9",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 130,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-09",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.087Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1fa",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 20,
+      "category": "food",
+      "description": "Tea",
+      "date": "2026-04-10",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.088Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1fb",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 100,
+      "category": "transport",
+      "description": "Auto",
+      "date": "2026-04-10",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.089Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1fc",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 90,
+      "category": "stationery",
+      "description": "Notebook",
+      "date": "2026-04-11",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.090Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1fd",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-12",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.092Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1fe",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 350,
+      "category": "entertainment",
+      "description": "Movie",
+      "date": "2026-04-13",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.093Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d1ff",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 60,
+      "category": "food",
+      "description": "Breakfast",
+      "date": "2026-04-14",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.095Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d200",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 180,
+      "category": "emergency",
+      "description": "Medicines",
+      "date": "2026-04-15",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.096Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d201",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 150,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-16",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.097Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d202",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 249,
+      "category": "other",
+      "description": "Mobile Recharge",
+      "date": "2026-04-17",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.098Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d203",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-18",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.100Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d204",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "entertainment",
+      "description": "Ice Cream",
+      "date": "2026-04-18",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.101Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d205",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 40,
+      "category": "transport",
+      "description": "Bus",
+      "date": "2026-04-19",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.103Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d206",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 40,
+      "category": "stationery",
+      "description": "Pen",
+      "date": "2026-04-20",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.104Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d207",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 120,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-21",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.105Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d208",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 150,
+      "category": "other",
+      "description": "Laundry",
+      "date": "2026-04-22",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.106Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d209",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 450,
+      "category": "shopping",
+      "description": "T-Shirt",
+      "date": "2026-04-23",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.108Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d20a",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 70,
+      "category": "food",
+      "description": "Coffee",
+      "date": "2026-04-24",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.109Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d20b",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 180,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-25",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.110Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d20c",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 90,
+      "category": "transport",
+      "description": "Auto",
+      "date": "2026-04-26",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.112Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d20d",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 60,
+      "category": "food",
+      "description": "Snacks",
+      "date": "2026-04-27",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.113Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d20e",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 130,
+      "category": "food",
+      "description": "Lunch",
+      "date": "2026-04-28",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.114Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d20f",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 20,
+      "category": "food",
+      "description": "Tea",
+      "date": "2026-04-29",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.116Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d210",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 150,
+      "category": "food",
+      "description": "Dinner",
+      "date": "2026-04-30",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.118Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d52cb42f28fd3536d211",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 260,
+      "category": "food",
+      "description": "Friends Dinner",
+      "date": "2026-04-31",
+      "note": "",
+      "createdAt": "2026-09-03T20:14:36.119Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7d2b42f28fd3536d21d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1000,
+      "category": "income",
+      "description": "daddy",
+      "date": "2026-09-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:25:54.944Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7e7b42f28fd3536d220",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 800,
+      "category": "stationery",
+      "description": "laptop",
+      "date": "2026-09-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:26:15.042Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7f7b42f28fd3536d223",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 70,
+      "category": "food",
+      "description": "snacks",
+      "date": "2026-09-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:26:31.937Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d80ab42f28fd3536d225",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 100,
+      "category": "transport",
+      "description": "travel",
+      "date": "2026-09-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:26:50.697Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d823b42f28fd3536d227",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 100,
+      "category": "income",
+      "description": "cash took from savings",
+      "date": "2026-09-02",
+      "note": "",
+      "createdAt": "2026-09-03T20:27:15.929Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d848b42f28fd3536d229",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 30,
+      "category": "stationery",
+      "description": "xerox",
+      "date": "2026-09-03",
+      "note": "",
+      "createdAt": "2026-09-03T20:27:52.118Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9add6d5f307ef15933e479",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 101,
+      "category": "income",
+      "description": "supermoney rewards",
+      "date": "2026-09-04",
+      "note": "",
+      "createdAt": "2026-09-04T15:02:05.143Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9addb65f307ef15933e47d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 20,
+      "category": "transport",
+      "description": "auto ",
+      "date": "2026-09-04",
+      "note": "",
+      "createdAt": "2026-09-04T15:03:18.858Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d47a05f307ef15933e481",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1700,
+      "category": "income",
+      "description": "for E bill",
+      "date": "2026-09-04",
+      "note": "",
+      "createdAt": "2026-09-06T10:59:44.173Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d47db5f307ef15933e483",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1180,
+      "category": "other",
+      "description": "Ebill of May n June",
+      "date": "2026-09-05",
+      "note": "",
+      "createdAt": "2026-09-06T11:00:43.265Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9dcd7c5f307ef15933e487",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 2,
+      "category": "stationery",
+      "description": "one printing page ",
+      "date": "2026-09-03",
+      "note": "",
+      "createdAt": "2026-09-06T20:30:52.446Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9dce06df74cc07f8510d92",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 110,
+      "category": "emergency",
+      "description": "Medicine",
+      "date": "2026-09-05",
+      "note": "Bought using ₹100 from savings + ₹10 from online money",
+      "paidUsing": "online",
+      "createdAt": "2026-09-06T20:33:10.235Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ed1e3e336b56552c7a922",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 37,
+      "category": "food",
+      "description": "milk and dahi ",
+      "date": "2026-09-07",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-07T15:01:55.638Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa22ebad9ca38da429b7b24",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 800,
+      "category": "gym_and_fitness_w5xm",
+      "description": "Gym Membership",
+      "date": "2026-09-10",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-10T04:14:50.623Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2eef559fc2dbf978f8f82",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 500,
+      "category": "income",
+      "description": "for grocery ",
+      "date": "2026-09-10",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-10T17:55:01.519Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02118",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 185,
+      "category": "food",
+      "description": "Campus Cafeteria - Lunch & Smoothie",
+      "date": "2026-09-01",
+      "note": "Healthy lunch meal",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.427Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02119",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 850,
+      "category": "transport",
+      "description": "Monthly Metro Transit SmartCard",
+      "date": "2026-09-01",
+      "note": "Pass for commute to college",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.449Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a0211a",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 620,
+      "category": "stationery",
+      "description": "Algorithms & Data Structures Textbook",
+      "date": "2026-09-02",
+      "note": "Sem 5 reference textbook",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.453Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a0211b",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 380,
+      "category": "food",
+      "description": "Starbucks Hazelnut Latte & Bagel",
+      "date": "2026-09-03",
+      "note": "Study session cafe",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.456Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a0211c",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 899,
+      "category": "shopping",
+      "description": "Ergonomic Laptop Stand & Mousepad",
+      "date": "2026-09-04",
+      "note": "Desk setup upgrade",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.460Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a0211d",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 340,
+      "category": "emergency",
+      "description": "Campus Pharmacy - First Aid & Vitamins",
+      "date": "2026-09-05",
+      "note": "Medical essentials",
+      "paidUsing": "cash",
+      "createdAt": "2026-09-11T16:04:32.464Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a0211e",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 650,
+      "category": "entertainment",
+      "description": "PVR Cinemas - IMAX Ticket & Popcorn",
+      "date": "2026-09-06",
+      "note": "Weekend movie outing",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.467Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a0211f",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 720,
+      "category": "food",
+      "description": "Zomato - Weekend Dinner with Friends",
+      "date": "2026-09-07",
+      "note": "Split bill dinner",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.470Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02120",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 210,
+      "category": "stationery",
+      "description": "Spiral Notebooks & Gel Pen Set",
+      "date": "2026-09-08",
+      "note": "Project notes",
+      "paidUsing": "cash",
+      "createdAt": "2026-09-11T16:04:32.472Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02121",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 149,
+      "category": "entertainment",
+      "description": "Spotify Student Duo Premium",
+      "date": "2026-09-08",
+      "note": "Monthly music subscription",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.475Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02122",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 240,
+      "category": "transport",
+      "description": "Uber Ride - Hackathon Venue",
+      "date": "2026-09-09",
+      "note": "City tech hackathon",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.479Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02123",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 1450,
+      "category": "shopping",
+      "description": "Uniqlo - Casual Denim Overshirt",
+      "date": "2026-09-09",
+      "note": "Autumn wardrobe",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.482Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02124",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 350,
+      "category": "other",
+      "description": "High-Speed Hostel Wi-Fi Recharge",
+      "date": "2026-09-10",
+      "note": "Monthly internet fee",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.484Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02125",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 240,
+      "category": "food",
+      "description": "Blue Tokai Cold Brew & Sandwich",
+      "date": "2026-09-10",
+      "note": "Evening co-working space",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:04:32.487Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02126",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 120,
+      "category": "stationery",
+      "description": "Color Printing - Project Reports",
+      "date": "2026-09-11",
+      "note": "Engineering seminar prints",
+      "paidUsing": "cash",
+      "createdAt": "2026-09-11T16:04:32.489Z",
+      "__v": 0
+    }
+  ],
   "notifications": [
     {
-      "userId": "a67h63epr",
+      "_id": "6a4e9f04248e6a72d91107d4",
+      "userId": "6a4e9df4248e6a72d91107d2",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-07 has been initialized with ₹1000 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-07-08T19:03:32.810Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea2e553198013af2e7d97",
+      "userId": "6a4ea2cb53198013af2e7d95",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-07 has been initialized with ₹1000 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-07-08T19:20:05.900Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea749f19b3b4f78ec9bd4",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-07 has been initialized with ₹1000 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-07-08T19:38:49.143Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ea8a2f19b3b4f78ec9bd6",
+      "userId": "6a4ea6cdf19b3b4f78ec9bd1",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-07 has been initialized with ₹1000 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-07-08T19:44:34.871Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d919",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-04 has been initialized with ₹1000 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-07-09T17:49:49.573Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d91b",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-04 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-07-09T17:49:49.643Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d91c",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-05 has been initialized with ₹1000 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-07-09T17:49:49.677Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d91d",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-05 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-07-09T17:49:49.703Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d91e",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-06 has been initialized with ₹1000 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-07-09T17:49:49.716Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fdf3de0da968c7f84d91f",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-07-09T17:49:49.719Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe4ffe0da968c7f84d920",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "info",
+      "title": "Budget Updated Successfully",
+      "message": "Your budget allocation for 2026-07 has been updated.",
+      "read": false,
+      "createdAt": "2026-07-09T18:14:23.064Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe5eae0da968c7f84d921",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "info",
+      "title": "Budget Updated Successfully",
+      "message": "Your budget allocation for 2026-07 has been updated.",
+      "read": false,
+      "createdAt": "2026-07-09T18:18:18.074Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe711e0da968c7f84d922",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-04 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:23:13.893Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe711e0da968c7f84d923",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-05 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:23:13.908Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe711e0da968c7f84d924",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:23:13.928Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe8cde0da968c7f84d925",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-04 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:30:37.607Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe8cde0da968c7f84d926",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-05 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:30:37.619Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fe8cde0da968c7f84d927",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:30:37.703Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fea7ee0da968c7f84d928",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-04 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:37:50.799Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fea7ee0da968c7f84d929",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-05 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:37:50.849Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4fea7ee0da968c7f84d92a",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-07-09T18:37:50.882Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a4ff563e3420d549f5c1cae",
+      "userId": "arzxapry5",
       "type": "success",
       "title": "New Monthly Budget Created",
       "message": "A new budget for 2026-07 has been initialized with ₹0 pocket money allocation.",
       "read": false,
-      "_id": "hltp4k8ph",
-      "createdAt": "2026-07-09T18:27:25.925Z"
+      "createdAt": "2026-07-09T19:24:19.030Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f0dacf5948ce4cbe123b5",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-08 has been initialized with ₹5500 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-08-14T12:44:28.203Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f50bd5bee46444fd6228a",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹100 for \"Lunch\".",
+      "read": false,
+      "createdAt": "2026-08-14T17:30:37.856Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f512e5bee46444fd6228b",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "info",
+      "title": "Budget Updated Successfully",
+      "message": "Your budget allocation for 2026-08 has been updated.",
+      "read": false,
+      "createdAt": "2026-08-14T17:32:30.226Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd6228d",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.237Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd6228e",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-05 has been initialized with ₹5500 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.311Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd62290",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-05 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.356Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd62291",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "warning",
+      "title": "Budget Exceeded",
+      "message": "You've exceeded your Transport & Commute budget (₹700 / ₹700).",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.413Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd62292",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "warning",
+      "title": "Budget Exceeded",
+      "message": "You've exceeded your Shopping & Wardrobe budget (₹1030 / ₹600).",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.429Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd62293",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "warning",
+      "title": "Budget Exceeded",
+      "message": "You've exceeded your Stationery & Supplies budget (₹495 / ₹300).",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.442Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd62294",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-07 has been initialized with ₹5500 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.464Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a7f51555bee46444fd62295",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-08-14T17:33:09.472Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d0afe8022158a41478bc",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Successfully transferred ₹150 to Cash Savings.",
+      "read": false,
+      "createdAt": "2026-09-03T19:55:27.918Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d0afe8022158a41478be",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Returned to Available Balance",
+      "message": "Successfully transferred ₹50 from Cash Savings back to Available Balance.",
+      "read": false,
+      "createdAt": "2026-09-03T19:55:27.938Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d54cb42f28fd3536d213",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-09 has been initialized with ₹5500 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-09-03T20:15:08.389Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d5b5b42f28fd3536d215",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Successfully transferred ₹1000 to Cash Savings.",
+      "read": false,
+      "createdAt": "2026-09-03T20:16:53.087Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d6a9b42f28fd3536d219",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-09 has been initialized with ₹0 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-09-03T20:20:57.603Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d79eb42f28fd3536d21b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹1000 for \"LAPTOP\".",
+      "read": true,
+      "createdAt": "2026-09-03T20:25:02.997Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7bdb42f28fd3536d21c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Budget Updated Successfully",
+      "message": "Your budget allocation for 2026-09 has been updated.",
+      "read": true,
+      "createdAt": "2026-09-03T20:25:33.476Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7d2b42f28fd3536d21e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹1000 for \"daddy\".",
+      "read": true,
+      "createdAt": "2026-09-03T20:25:54.950Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7d2b42f28fd3536d21f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "warning",
+      "title": "Pocket Money High Usage",
+      "message": "Total monthly expenses are at 100% of your pocket money budget (₹1000).",
+      "read": true,
+      "createdAt": "2026-09-03T20:25:54.970Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7e7b42f28fd3536d221",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹800 for \"laptop\".",
+      "read": true,
+      "createdAt": "2026-09-03T20:26:15.058Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7e7b42f28fd3536d222",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "warning",
+      "title": "Pocket Money Exceeded",
+      "message": "Total monthly expenses (₹1800) have exceeded your pocket money budget (₹1000)!",
+      "read": true,
+      "createdAt": "2026-09-03T20:26:15.077Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d7f7b42f28fd3536d224",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹70 for \"snacks\".",
+      "read": true,
+      "createdAt": "2026-09-03T20:26:31.947Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d80ab42f28fd3536d226",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹100 for \"travel\".",
+      "read": true,
+      "createdAt": "2026-09-03T20:26:50.713Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d823b42f28fd3536d228",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹100 for \"cash took from savings\".",
+      "read": true,
+      "createdAt": "2026-09-03T20:27:15.948Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d848b42f28fd3536d22a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹30 for \"xerox\".",
+      "read": true,
+      "createdAt": "2026-09-03T20:27:52.123Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99dad4b42f28fd3536d22b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Transaction Deleted",
+      "message": "Deleted transaction \"LAPTOP\" of ₹1000.",
+      "read": true,
+      "createdAt": "2026-09-03T20:38:44.712Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a53525f307ef15933e476",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Previous Savings Recorded",
+      "message": "Recorded ₹1281 of previous/starting savings in GPay / UPI Savings. Future savings added in new months will build on top of this.",
+      "read": true,
+      "createdAt": "2026-09-04T05:12:50.794Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a53675f307ef15933e478",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Previous Savings Recorded",
+      "message": "Recorded ₹1000 of previous/starting savings in Cash Savings. Future savings added in new months will build on top of this.",
+      "read": true,
+      "createdAt": "2026-09-04T05:13:11.639Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9add6d5f307ef15933e47a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹101 for \"supermoney rewards\".",
+      "read": true,
+      "createdAt": "2026-09-04T15:02:05.224Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9add845f307ef15933e47c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹101 from Available Balance to GPay / UPI Savings.",
+      "read": true,
+      "createdAt": "2026-09-04T15:02:28.269Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9addb65f307ef15933e47e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹20 for \"auto \".",
+      "read": true,
+      "createdAt": "2026-09-04T15:03:18.885Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d41305f307ef15933e480",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Returned to Available Balance",
+      "message": "Returned ₹100 from GPay / UPI Savings to Available Balance.",
+      "read": true,
+      "createdAt": "2026-09-06T10:32:16.769Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d47a05f307ef15933e482",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹1700 for \"for E bill\".",
+      "read": true,
+      "createdAt": "2026-09-06T10:59:44.196Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d47db5f307ef15933e484",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹1180 for \"Ebill of May n June\".",
+      "read": true,
+      "createdAt": "2026-09-06T11:00:43.297Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d47fd5f307ef15933e486",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹520 from Available Balance to GPay / UPI Savings.",
+      "read": true,
+      "createdAt": "2026-09-06T11:01:17.633Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9dcd7c5f307ef15933e488",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹2 for \"one printing page \".",
+      "read": true,
+      "createdAt": "2026-09-06T20:30:52.498Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9dd525e336b56552c7a918",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Savings Goal Updated",
+      "message": "Your monthly savings target for 2026-09 has been updated to ₹1000.",
+      "read": false,
+      "createdAt": "2026-09-06T21:03:33.719Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a91c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-06 has been initialized with ₹0 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-09-07T05:56:04.733Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a91d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-07T05:56:04.772Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a91e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-07 has been initialized with ₹0 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-09-07T05:56:04.792Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a91f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-07T05:56:04.808Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a920",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-08 has been initialized with ₹0 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-09-07T05:56:04.812Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e51f4e336b56552c7a921",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-07T05:56:04.815Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ed1e3e336b56552c7a923",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹37 for \"milk and dahi \".",
+      "read": false,
+      "createdAt": "2026-09-07T15:01:55.687Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ed4cbe336b56552c7a925",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Previous Savings Recorded",
+      "message": "Recorded ₹130 of previous/starting savings in Cash Savings. Future savings added in new months will build on top of this.",
+      "read": false,
+      "createdAt": "2026-09-07T15:14:19.049Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1a46e955b41da9912eb9f",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-09 has been initialized with ₹5500 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-09-09T18:24:46.723Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa22e88d9ca38da429b7b20",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Category Added",
+      "message": "New category \"Gym and Fitness\" has been added to your budget workspace.",
+      "read": false,
+      "createdAt": "2026-09-10T04:14:00.987Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa22ea7d9ca38da429b7b22",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Category Added",
+      "message": "New category \"Gym and Fitness\" has been added to your budget workspace.",
+      "read": false,
+      "createdAt": "2026-09-10T04:14:31.378Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa22ebad9ca38da429b7b25",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹800 for \"Gym Membership\".",
+      "read": false,
+      "createdAt": "2026-09-10T04:14:50.643Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa22ebad9ca38da429b7b26",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "type": "info",
+      "title": "Category Removed",
+      "message": "Category \"gym_and_fitness_w5xm\" was removed from your active cards.",
+      "read": false,
+      "createdAt": "2026-09-10T04:14:50.677Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23e32d9ca38da429b7b28",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T05:20:50.915Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23e32d9ca38da429b7b29",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T05:20:50.933Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23e32d9ca38da429b7b2a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T05:20:50.953Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23f273d337a1bffa6ca88",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T05:24:55.926Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23f273d337a1bffa6ca89",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T05:24:55.956Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23f273d337a1bffa6ca8a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T05:24:55.974Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2426cf33bf425e47f297d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Moved to Online Money",
+      "message": "Moved ₹100 from Online Savings to Online Money.",
+      "read": false,
+      "createdAt": "2026-09-10T05:38:52.086Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2eef559fc2dbf978f8f83",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹500 for \"for grocery \".",
+      "read": false,
+      "createdAt": "2026-09-10T17:55:01.574Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2ef0a59fc2dbf978f8f85",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹500 from Online Money to Online Savings.",
+      "read": false,
+      "createdAt": "2026-09-10T17:55:22.475Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2fa5959fc2dbf978f8f86",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T18:43:37.344Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2fa5959fc2dbf978f8f87",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T18:43:37.376Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2fa5959fc2dbf978f8f88",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-09-10T18:43:37.410Z",
+      "__v": 0
     }
   ],
-  "savingsMovements": []
+  "otps": [
+    {
+      "_id": "6a513d603aa9665f6219e98c",
+      "email": "trishlaprajapati07@gmail.com",
+      "otp": "448477",
+      "type": "login",
+      "expiresAt": "2026-07-10T18:53:44.143Z",
+      "createdAt": "2026-07-10T18:43:44.150Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a513df73aa9665f6219e98d",
+      "email": "sampathsriboddajob@gmail.com",
+      "otp": "805768",
+      "type": "signup",
+      "expiresAt": "2026-07-10T18:56:15.866Z",
+      "tempData": {
+        "name": "sampath",
+        "phone": "9032858539"
+      },
+      "createdAt": "2026-07-10T18:46:15.870Z",
+      "__v": 0
+    }
+  ],
+  "savingsMovements": [
+    {
+      "_id": "6a99d0afe8022158a41478bb",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 150,
+      "direction": "to_savings",
+      "source": "cash",
+      "date": "2026-09-04",
+      "note": "Live test transfer",
+      "createdAt": "2026-09-03T19:55:27.907Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d0afe8022158a41478bd",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 50,
+      "direction": "from_savings",
+      "source": "cash",
+      "date": "2026-09-04",
+      "note": "Live test return",
+      "createdAt": "2026-09-03T19:55:27.923Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a99d5b5b42f28fd3536d214",
+      "userId": "6a99d52bb42f28fd3536d1d3",
+      "amount": 1000,
+      "direction": "to_savings",
+      "source": "cash",
+      "date": "2026-09-04",
+      "note": "",
+      "createdAt": "2026-09-03T20:16:53.077Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a53525f307ef15933e475",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1281,
+      "direction": "to_savings",
+      "source": "gpay_upi",
+      "fundingSource": "previous_savings",
+      "date": "2026-08-30",
+      "note": "",
+      "createdAt": "2026-09-04T05:12:50.781Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a53675f307ef15933e477",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1000,
+      "direction": "to_savings",
+      "source": "cash",
+      "fundingSource": "previous_savings",
+      "date": "2026-08-30",
+      "note": "",
+      "createdAt": "2026-09-04T05:13:11.630Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9add845f307ef15933e47b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 101,
+      "direction": "to_savings",
+      "source": "gpay_upi",
+      "fundingSource": "current_balance",
+      "date": "2026-09-04",
+      "note": "",
+      "createdAt": "2026-09-04T15:02:28.261Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d41305f307ef15933e47f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 100,
+      "direction": "from_savings",
+      "source": "gpay_upi",
+      "fundingSource": "current_balance",
+      "date": "2026-09-05",
+      "note": "for medicine",
+      "createdAt": "2026-09-06T10:32:16.709Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9d47fd5f307ef15933e485",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 520,
+      "direction": "to_savings",
+      "source": "gpay_upi",
+      "fundingSource": "current_balance",
+      "date": "2026-09-06",
+      "note": "extra money from e bill",
+      "createdAt": "2026-09-06T11:01:17.624Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ed4cbe336b56552c7a924",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 130,
+      "direction": "to_savings",
+      "source": "previous_savings",
+      "destination": "cash_savings",
+      "fundingSource": "previous_savings",
+      "date": "2026-08-29",
+      "note": "",
+      "createdAt": "2026-09-07T15:14:19.036Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2426cf33bf425e47f297c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 100,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "online_money",
+      "fundingSource": "current_balance",
+      "date": "2026-09-09",
+      "note": "",
+      "createdAt": "2026-09-10T05:38:52.038Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2ef0a59fc2dbf978f8f84",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 500,
+      "direction": "to_savings",
+      "source": "online_money",
+      "destination": "online_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-09-10",
+      "note": "",
+      "createdAt": "2026-09-10T17:55:22.469Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02127",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 2500,
+      "direction": "to_savings",
+      "source": "online_money",
+      "destination": "online_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-09-02",
+      "note": "Allocated to Tech Gadgets Fund",
+      "createdAt": "2026-09-11T16:04:32.492Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42690e188736503a02128",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 1000,
+      "direction": "to_savings",
+      "source": "cash",
+      "destination": "cash_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-09-05",
+      "note": "Emergency cash stash",
+      "createdAt": "2026-09-11T16:04:32.515Z",
+      "__v": 0
+    }
+  ]
 }

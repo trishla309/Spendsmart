@@ -12,6 +12,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { api } from "../lib/api";
+import { FennoLogoMark } from "../components/FennoLogo";
 
 interface LandingPageProps {
   isAuthenticated?: boolean;
@@ -145,16 +146,16 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
   };
 
   const handleDemoLogin = async () => {
-    setEmail("student@example.com");
+    setEmail("demo@spendsmart.com");
     setAuthError(null);
     setAuthLoading(true);
     try {
-      await api.post("/auth/request-otp", { email: "student@example.com" });
+      await api.post("/auth/request-otp", { email: "demo@spendsmart.com" });
       setAuthType("login");
       setStep("otp");
       setOtp("123456");
     } catch (err: any) {
-      // If demo account setup directly
+      // Fallback
       setAuthType("login");
       setStep("otp");
       setOtp("123456");
@@ -170,8 +171,8 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${
           scrolled
-            ? "bg-cream/90 backdrop-blur-md border-b border-sand-border/80 py-3.5 shadow-xs"
-            : "bg-cream py-5 border-b border-sand-border/50"
+            ? "bg-cream/92 backdrop-blur-md border-b border-sand-border/80 py-3 shadow-xs"
+            : "bg-cream py-4.5 border-b border-sand-border/60"
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 lg:px-8 flex items-center justify-between">
@@ -186,36 +187,34 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
             className="flex items-center gap-2.5 hover:opacity-90 transition-opacity focus:outline-none"
             id="fenno-logo-link"
           >
-            <div className="h-8 w-8 rounded-lg bg-navy text-white flex items-center justify-center font-display font-bold text-lg shadow-xs">
-              F
-            </div>
-            <span className="font-display font-semibold tracking-tight text-nearblack text-xl">
+            <FennoLogoMark className="h-8 w-8 shrink-0 shadow-xs" />
+            <span className="font-display font-semibold tracking-tight text-nearblack text-xl leading-none">
               Fenno
             </span>
           </Link>
 
           {/* Nav Links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-nearblack/70">
+          <nav className="hidden md:flex items-center gap-8 text-[13.5px] font-medium text-nearblack/70">
             <a href="#how-it-works" className="hover:text-navy transition-colors">
               How it works
             </a>
             <a href="#philosophy" className="hover:text-navy transition-colors">
-              Philosophy
+              Why Fenno
             </a>
           </nav>
 
           {/* Right Action CTAs */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             <button
               onClick={openLoginModal}
-              className="text-sm font-medium text-nearblack/80 hover:text-navy px-3 py-2 transition-colors cursor-pointer"
+              className="text-[13.5px] font-medium text-nearblack/75 hover:text-navy px-3 py-1.5 transition-colors cursor-pointer"
               id="nav-login-btn"
             >
               Log in
             </button>
             <button
               onClick={openSignupModal}
-              className="inline-flex items-center justify-center px-4.5 py-2 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-lg transition-all shadow-xs cursor-pointer"
+              className="inline-flex items-center justify-center px-4.5 py-2 text-[13.5px] font-medium text-white bg-navy hover:bg-navy-hover rounded-lg transition-all shadow-xs cursor-pointer"
               id="nav-get-started-btn"
             >
               Get Started
@@ -255,7 +254,7 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
               onClick={() => setMobileMenuOpen(false)}
               className="text-sm text-nearblack/80 py-2 border-b border-sand-border/40 font-medium"
             >
-              Philosophy
+              Why Fenno
             </a>
             <div className="flex flex-col gap-2.5 pt-3">
               <button
@@ -276,41 +275,41 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
       </header>
 
       {/* SECTION 1: HERO */}
-      <section className="pt-16 pb-24 md:pt-28 md:pb-36 border-b border-sand-border bg-cream">
+      <section className="pt-10 pb-20 md:pt-16 md:pb-28 border-b border-sand-border bg-cream">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center flex flex-col items-center">
           
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy/5 border border-navy/10 text-navy text-xs font-medium mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-navy"></span>
-            <span>Student Money Management</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy/5 border border-navy/10 text-navy text-xs font-medium mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-navy/80"></span>
+            <span>Your Pocket Money Buddy</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-semibold text-nearblack tracking-tight leading-[1.08] mb-8 max-w-3xl">
+          <h1 className="text-4xl sm:text-5xl lg:text-[62px] xl:text-[66px] font-display font-semibold text-nearblack tracking-tight leading-[1.12] mb-6 max-w-3xl">
             Make your money last till the month does.
           </h1>
 
-          <p className="text-lg sm:text-xl text-graytext leading-relaxed font-normal max-w-2xl mb-10">
-            Fenno helps students balance everyday spending with intentional savings. Understand your true daily limit, manage your allowance with confidence, and make clear choices without stress.
+          <p className="text-base sm:text-lg lg:text-[19px] text-graytext leading-relaxed font-normal max-w-2xl mb-8 text-balance">
+            See where your money is going, know what you can spend, and make it through the month without the usual guesswork.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 w-full sm:w-auto">
             <button
               onClick={openSignupModal}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-xl transition-all shadow-xs cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer group"
               id="hero-get-started-btn"
             >
-              Get Started
-              <ArrowRight className="ml-2 h-4 w-4 text-white/80" />
+              <span>Get Started</span>
+              <ArrowRight className="ml-2 h-4 w-4 text-white/80 group-hover:translate-x-0.5 transition-transform" />
             </button>
             <button
               onClick={openLoginModal}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-nearblack bg-white border border-sand-border hover:border-nearblack/30 rounded-xl transition-all shadow-xs cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-nearblack/85 hover:text-nearblack bg-white/90 hover:bg-white border border-sand-border hover:border-nearblack/25 rounded-xl transition-all shadow-xs cursor-pointer"
               id="hero-login-btn"
             >
               Log in
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mt-14 pt-8 border-t border-sand-border/70 text-xs text-graytext">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mt-10 pt-6 border-t border-sand-border/60 text-xs text-graytext">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-navy/70" />
               <span>Private &amp; Local</span>
@@ -549,10 +548,8 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
             {/* Header & Mode Switch */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
-                <div className="h-7 w-7 rounded-md bg-navy text-white flex items-center justify-center font-display font-bold text-sm">
-                  F
-                </div>
-                <span className="font-display font-semibold text-nearblack text-lg">Fenno</span>
+                <FennoLogoMark className="h-7 w-7 shrink-0 shadow-xs" />
+                <span className="font-display font-semibold text-nearblack text-lg leading-none">Fenno</span>
               </div>
 
               <div className="flex border-b border-sand-border mt-4">
@@ -695,9 +692,9 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
               <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
                 <div className="text-xs text-graytext leading-relaxed">
                   We've sent a 6-digit verification code to <strong className="text-nearblack font-semibold">{email}</strong>.
-                  {email === "student@example.com" ? (
+                  {email === "demo@spendsmart.com" || email === "student@example.com" || email === "trishtha97@gmail.com" || email === "trishth97@gmail.com" || email === "tristha97@gmail.com" ? (
                     <div className="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg font-medium text-xs">
-                      Demo Mode: Enter OTP <strong className="font-mono text-sm">123456</strong>
+                      Quick Access: Enter OTP <strong className="font-mono text-sm">123456</strong> (Auto-filled)
                     </div>
                   ) : devOtp ? (
                     <div className="mt-2 p-2.5 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg font-medium text-xs">

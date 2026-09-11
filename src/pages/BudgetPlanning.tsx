@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../lib/api";
-import { Budget } from "../types";
-import { Wallet, AlertTriangle, Check, Lock, Info, PlusCircle, Landmark } from "lucide-react";
+import { Budget, CategoryItem } from "../types";
+import { Wallet, AlertTriangle, Check, Lock, Info, PlusCircle, Landmark, Plus, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { getSettings } from "../lib/settings";
 import { backupData } from "../lib/sync";
@@ -46,10 +46,42 @@ export const BudgetPlanning: React.FC = () => {
     other: 0,
   });
 
+  const [categories, setCategories] = useState<CategoryItem[]>([
+    { key: "food", label: "Food & Dining", color: "bg-orange-500", emoji: "🍔", isDefault: true },
+    { key: "transport", label: "Transport & Commute", color: "bg-sky-500", emoji: "🚌", isDefault: true },
+    { key: "shopping", label: "Shopping & Wardrobe", color: "bg-indigo-500", emoji: "🛍️", isDefault: true },
+    { key: "entertainment", label: "Entertainment & Fun", color: "bg-rose-500", emoji: "🎬", isDefault: true },
+    { key: "emergency", label: "Emergency Reserve", color: "bg-red-500", emoji: "🚨", isDefault: true },
+    { key: "stationery", label: "Stationery & Supplies", color: "bg-emerald-500", emoji: "📝", isDefault: true },
+    { key: "other", label: "Miscellaneous (Other)", color: "bg-amber-500", emoji: "📦", isDefault: true },
+  ]);
+
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+  const [newCatLabel, setNewCatLabel] = useState("");
+  const [newCatEmoji, setNewCatEmoji] = useState("🏷️");
+  const [newCatColor, setNewCatColor] = useState("bg-violet-500");
+  const [newCatBudget, setNewCatBudget] = useState("");
+  const [catLoading, setCatLoading] = useState(false);
+  const [catError, setCatError] = useState<string | null>(null);
+
+  const [categoryToRemove, setCategoryToRemove] = useState<CategoryItem | null>(null);
+  const [removeCatLoading, setRemoveCatLoading] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isPreFilled, setIsPreFilled] = useState(false);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/categories");
+      if (res.data?.categories && Array.isArray(res.data.categories) && res.data.categories.length > 0) {
+        setCategories(res.data.categories);
+      }
+    } catch (err) {
+      console.error("Error loading categories:", err);
+    }
+  };
 
   // Load budget for selectedMonth
   const fetchBudget = async (month: string) => {
@@ -57,22 +89,16 @@ export const BudgetPlanning: React.FC = () => {
     setError(null);
     setIsPreFilled(false);
     try {
-      const response = await api.get(`/budget?month=${month}`);
+      const [response] = await Promise.all([
+        api.get(`/budget?month=${month}`),
+        fetchCategories(),
+      ]);
       const data = response.data;
       if (data) {
         setPocketMoney(data.pocketMoney || 0);
         setSavingsGoal(data.savingsGoal || 0);
         setIsPreFilled(data.isPreFilled || false);
-        setAllocated({
-          food: data.allocated?.food || 0,
-          transport: data.allocated?.transport || 0,
-          shopping: data.allocated?.shopping || 0,
-          entertainment: data.allocated?.entertainment || 0,
-          emergency: data.allocated?.emergency || 0,
-          stationery: data.allocated?.stationery || 0,
-          savings: data.allocated?.savings || 0,
-          other: data.allocated?.other || 0,
-        });
+        setAllocated(data.allocated || {});
       }
     } catch (err: any) {
       console.error("Error loading budget:", err);
@@ -88,26 +114,75 @@ export const BudgetPlanning: React.FC = () => {
 
   const isCurrentMonth = selectedMonth === currentMonthStr;
 
-  // Calculate live allocations from the 7 category input fields
-  const allocatedSum =
-    Number(allocated.food || 0) +
-    Number(allocated.transport || 0) +
-    Number(allocated.shopping || 0) +
-    Number(allocated.entertainment || 0) +
-    Number(allocated.emergency || 0) +
-    Number(allocated.stationery || 0) +
-    Number(allocated.other || 0);
+  // Calculate live allocations dynamically across all categories
+  const allocatedSum = Object.entries(allocated).reduce((sum, [cat, amt]) => {
+    if (cat === "savings") return sum;
+    return sum + (Number(amt) || 0);
+  }, 0);
 
   const remainingPocketMoney = pocketMoney - allocatedSum;
   const isExceeded = allocatedSum > pocketMoney;
 
-  const handleCategoryChange = (category: keyof Budget["allocated"], val: string) => {
+  const handleCategoryChange = (category: string, val: string) => {
     if (!isCurrentMonth) return; // Read-only
     const num = Math.max(0, Number(val));
     setAllocated((prev) => ({
       ...prev,
       [category]: num,
     }));
+  };
+
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCatLabel.trim()) {
+      setCatError("Please enter a category name");
+      return;
+    }
+    setCatLoading(true);
+    setCatError(null);
+    try {
+      const res = await api.post("/categories", {
+        label: newCatLabel.trim(),
+        emoji: newCatEmoji,
+        color: newCatColor,
+        initialBudget: newCatBudget ? Number(newCatBudget) : 0,
+        month: selectedMonth,
+      });
+      if (res.data?.categories) {
+        setCategories(res.data.categories);
+      }
+      if (newCatBudget && Number(newCatBudget) > 0 && res.data?.category?.key) {
+        setAllocated((prev) => ({
+          ...prev,
+          [res.data.category.key]: Number(newCatBudget),
+        }));
+      }
+      setIsAddCategoryOpen(false);
+      setNewCatLabel("");
+      setNewCatBudget("");
+      setNewCatEmoji("🏷️");
+      setNewCatColor("bg-violet-500");
+    } catch (err: any) {
+      setCatError(err.response?.data?.error || "Failed to add category");
+    } finally {
+      setCatLoading(false);
+    }
+  };
+
+  const handleRemoveCategory = async () => {
+    if (!categoryToRemove) return;
+    setRemoveCatLoading(true);
+    try {
+      const res = await api.delete(`/categories/${categoryToRemove.key}`);
+      if (res.data?.categories) {
+        setCategories(res.data.categories);
+      }
+      setCategoryToRemove(null);
+    } catch (err) {
+      console.error("Failed to remove category:", err);
+    } finally {
+      setRemoveCatLoading(false);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -276,37 +351,60 @@ export const BudgetPlanning: React.FC = () => {
             )}
 
             <div className="flex flex-col gap-4">
-              {[
-                { key: "food", label: "Food & Dining", color: "border-l-orange-500" },
-                { key: "transport", label: "Transport & Commute", color: "border-l-sky-500" },
-                { key: "shopping", label: "Shopping & Wardrobe", color: "border-l-indigo-500" },
-                { key: "entertainment", label: "Entertainment & Fun", color: "border-l-rose-500" },
-                { key: "emergency", label: "Emergency Reserve", color: "border-l-red-500" },
-                { key: "stationery", label: "Stationery & Supplies", color: "border-l-emerald-500" },
-                { key: "other", label: "Miscellaneous (Other)", color: "border-l-amber-500" },
-              ].map((cat) => (
-                <div
-                  key={cat.key}
-                  className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-gray-950/40 border border-gray-800 rounded-xl border-l-4 ${cat.color} gap-3`}
+              {categories.map((cat) => {
+                const borderClass = cat.color ? cat.color.replace("bg-", "border-l-") : "border-l-violet-500";
+                return (
+                  <div
+                    key={cat.key}
+                    className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-gray-950/40 border border-gray-800 rounded-xl border-l-4 ${borderClass} gap-3`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-xl shrink-0">{cat.emoji || "🏷️"}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-semibold text-gray-200 truncate">{cat.label}</span>
+                        <span className="text-[11px] text-gray-500 capitalize">{cat.key} Allocation</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 w-full sm:w-auto self-end sm:self-auto">
+                      <div className="relative w-full sm:w-36">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-600">{currency}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          disabled={!isCurrentMonth}
+                          value={allocated[cat.key] || ""}
+                          onChange={(e) => handleCategoryChange(cat.key, e.target.value)}
+                          className="w-full pl-7 pr-3 py-1.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-right text-gray-100 rounded-lg outline-none disabled:opacity-50 disabled:cursor-not-allowed font-semibold font-mono"
+                          placeholder="0"
+                        />
+                      </div>
+                      {isCurrentMonth && (
+                        <button
+                          type="button"
+                          onClick={() => setCategoryToRemove(cat)}
+                          className="p-2 text-gray-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-all cursor-pointer shrink-0"
+                          title={`Remove ${cat.label}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* + Add Custom Category button */}
+              {isCurrentMonth && (
+                <button
+                  type="button"
+                  onClick={() => setIsAddCategoryOpen(true)}
+                  className="p-3.5 border-2 border-dashed border-gray-800 hover:border-emerald-500/50 hover:bg-emerald-500/5 text-gray-400 hover:text-emerald-400 rounded-xl flex items-center justify-center gap-2 text-xs font-extrabold transition-all cursor-pointer"
+                  id="add-category-planning-btn"
                 >
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-gray-200">{cat.label}</span>
-                    <span className="text-[11px] text-gray-500 capitalize">{cat.key} Allocation</span>
-                  </div>
-                  <div className="relative w-full sm:w-36">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-600">{currency}</span>
-                    <input
-                      type="number"
-                      min="0"
-                      disabled={!isCurrentMonth}
-                      value={allocated[cat.key as keyof Budget["allocated"]] || ""}
-                      onChange={(e) => handleCategoryChange(cat.key as keyof Budget["allocated"], e.target.value)}
-                      className="w-full pl-7 pr-3 py-1.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-right text-gray-100 rounded-lg outline-none disabled:opacity-50 disabled:cursor-not-allowed font-semibold font-mono"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-              ))}
+                  <Plus className="h-4 w-4" />
+                  <span>Add Custom Category</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -360,17 +458,19 @@ export const BudgetPlanning: React.FC = () => {
                   id="budget-exceeded-alert"
                 >
                   <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="font-bold block">Allocation Limit Exceeded!</strong>
-                    The total allocated amount across all categories exceeds your monthly pocket money limit by {currency}{formatIndianNumber(Math.abs(remainingPocketMoney))}. Please decrease some category budgets.
-                  </div>
+                  <span className="leading-tight block font-semibold">
+                    Category allocations exceed your Monthly Pocket Money by {currency}{formatIndianNumber(allocatedSum - pocketMoney)}. Reduce some allocations before saving.
+                  </span>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Info notice about savings goal */}
-            <div className="p-3.5 bg-gray-950/40 border border-gray-800 rounded-xl text-xs text-gray-400 flex gap-2.5 items-start">
-              <Info className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+            {/* General Guidelines Note */}
+            <div className="flex flex-col gap-3 pt-3 border-t border-gray-800 text-xs text-gray-500 leading-relaxed font-sans">
+              <div>
+                <strong className="text-gray-300 font-semibold block mb-0.5">Budget Lock Policy:</strong>
+                Budget can be planned or adjusted only during the active calendar month. Historical months are view-only.
+              </div>
               <div>
                 <strong className="text-gray-300 font-semibold block mb-0.5">Goal Matching:</strong>
                 Your Savings Goal is <strong className="text-emerald-400 font-bold">{currency}{formatIndianNumber(savingsGoal)}</strong>. Ensure your General Savings and Emergency Reserve allocations are configured to match this goal.
@@ -409,6 +509,192 @@ export const BudgetPlanning: React.FC = () => {
           </div>
         </div>
       </form>
+
+      {/* Add Custom Category Modal */}
+      <AnimatePresence>
+        {isAddCategoryOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-gray-900 border border-gray-800 rounded-3xl p-6 md:p-7 max-w-md w-full shadow-2xl relative"
+              id="add-category-planning-modal"
+            >
+              <button
+                type="button"
+                onClick={() => setIsAddCategoryOpen(false)}
+                className="absolute top-5 right-5 text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-3 border-b border-gray-800 pb-4 mb-5">
+                <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <Plus className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-white">Add Custom Category</h3>
+                  <p className="text-xs text-gray-500 font-medium">Create a new budget allocation bucket</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleAddCategory} className="flex flex-col gap-4">
+                {catError && (
+                  <p className="text-xs text-rose-500 font-semibold bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl">
+                    {catError}
+                  </p>
+                )}
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Category Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newCatLabel}
+                    onChange={(e) => setNewCatLabel(e.target.value)}
+                    placeholder="e.g. Gym & Fitness, Books, Gaming, Rent"
+                    className="px-4 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none font-semibold"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Category Icon</label>
+                  <div className="flex flex-wrap gap-2 p-2 bg-gray-950/60 border border-gray-800 rounded-xl max-h-28 overflow-y-auto">
+                    {["🏋️", "📚", "☕", "🎮", "🎨", "✈️", "🐾", "💊", "🚗", "💻", "💡", "🎵", "👗", "🍕", "🏷️"].map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => setNewCatEmoji(emoji)}
+                        className={`h-9 w-9 text-base rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                          newCatEmoji === emoji
+                            ? "bg-emerald-500/20 border-2 border-emerald-500 scale-110 shadow-md shadow-emerald-500/10"
+                            : "bg-gray-900 border border-gray-800 hover:bg-gray-800 hover:scale-105"
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Color Accent</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      { label: "Emerald", value: "bg-emerald-500" },
+                      { label: "Violet", value: "bg-violet-500" },
+                      { label: "Sky", value: "bg-sky-500" },
+                      { label: "Rose", value: "bg-rose-500" },
+                      { label: "Amber", value: "bg-amber-500" },
+                      { label: "Indigo", value: "bg-indigo-500" },
+                      { label: "Pink", value: "bg-pink-500" },
+                      { label: "Teal", value: "bg-teal-500" },
+                    ].map((col) => (
+                      <button
+                        key={col.value}
+                        type="button"
+                        onClick={() => setNewCatColor(col.value)}
+                        className={`py-1.5 px-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          newCatColor === col.value
+                            ? "border-emerald-500/80 bg-gray-950 text-white shadow-sm"
+                            : "border-gray-800/80 bg-gray-950/40 text-gray-400 hover:text-gray-200"
+                        }`}
+                      >
+                        <span className={`w-2.5 h-2.5 rounded-full ${col.value} shrink-0`} />
+                        <span className="truncate">{col.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400">Monthly Budget Allocation</label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500 font-mono">{currency}</span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={newCatBudget}
+                      onChange={(e) => setNewCatBudget(e.target.value)}
+                      placeholder="0"
+                      className="w-full pl-8 pr-4 py-2.5 bg-gray-950 border border-gray-800 focus:border-emerald-500/50 text-sm text-gray-100 rounded-xl outline-none font-mono font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 justify-end mt-2 pt-3 border-t border-gray-800">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddCategoryOpen(false)}
+                    className="px-4.5 py-2.5 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={catLoading}
+                    className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-gray-950 text-xs font-extrabold rounded-xl shadow-lg shadow-emerald-500/25 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    {catLoading ? "Adding..." : "Add Category"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Remove Category Confirmation Modal */}
+      <AnimatePresence>
+        {categoryToRemove && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-gray-900 border border-gray-800 rounded-3xl p-6 md:p-7 max-w-md w-full shadow-2xl relative"
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl shrink-0">
+                  <Trash2 className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-extrabold text-white">
+                    Remove {categoryToRemove.label}?
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                    This category will be removed from your active budgets and planning views.
+                  </p>
+                  <div className="mt-3 p-3 bg-gray-950/60 rounded-xl border border-gray-800 text-[11px] text-gray-400 flex items-start gap-2">
+                    <Info className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Any past expenses you recorded under this category will remain completely safe in your transaction history.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 justify-end mt-6 pt-4 border-t border-gray-800">
+                <button
+                  type="button"
+                  onClick={() => setCategoryToRemove(null)}
+                  disabled={removeCatLoading}
+                  className="px-4.5 py-2.5 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemoveCategory}
+                  disabled={removeCatLoading}
+                  className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-rose-600/25 transition-all cursor-pointer flex items-center gap-2"
+                >
+                  {removeCatLoading ? "Removing..." : "Yes, Remove Category"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
