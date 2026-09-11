@@ -137,31 +137,43 @@ export async function seedDemoDataForUser(userId: string) {
   console.log("Seeding completed successfully! Rahul Sharma's June and April 2026 transactions are ready.");
 }
 
-export async function seedShowcaseDataForUser(userId: string) {
+export async function seedShowcaseDataForUser(userId: string, forceReset = false) {
   const currentMonth = "2026-09";
-  const existingBudgets = await Budget.find({ userId, month: currentMonth });
-  if (existingBudgets.length > 0) {
-    console.log(`Showcase data already seeded for user ${userId} in ${currentMonth}.`);
+  const existingBudget = await Budget.findOne({ userId, month: currentMonth });
+  if (existingBudget && existingBudget.pocketMoney === 8000 && !forceReset) {
     return;
   }
 
-  console.log(`Seeding pristine showcase data for user ${userId} in ${currentMonth}...`);
+  // If budget already exists (e.g. was 18000), update it to 8000 and reset September 2026 demo data
+  if (existingBudget) {
+    await Budget.deleteMany({ userId, month: currentMonth });
+    await Expense.deleteMany({
+      userId,
+      date: { $gte: "2026-09-01", $lte: "2026-09-30" } as any,
+    });
+    await SavingsMovement.deleteMany({
+      userId,
+      date: { $gte: "2026-09-01", $lte: "2026-09-30" } as any,
+    });
+  }
 
-  // 1. Current Month Budget (September 2026)
+  console.log(`Seeding pristine ₹8,000 showcase data for user ${userId} in ${currentMonth}...`);
+
+  // 1. Current Month Budget (September 2026) - Total 8,000
   await Budget.create({
     userId,
     month: currentMonth,
-    pocketMoney: 18000,
-    savingsGoal: 3500,
+    pocketMoney: 8000,
+    savingsGoal: 1500,
     allocated: {
-      food: 5500,
-      transport: 2200,
-      shopping: 3000,
-      entertainment: 2000,
-      emergency: 1500,
-      stationery: 1200,
-      other: 1000,
-      savings: 0,
+      food: 2800,
+      transport: 1200,
+      shopping: 1100,
+      entertainment: 900,
+      emergency: 800,
+      stationery: 500,
+      other: 500,
+      savings: 200,
     } as any,
     thresholdsFired: {
       food: { p80: false, p100: false },
@@ -174,23 +186,23 @@ export async function seedShowcaseDataForUser(userId: string) {
     }
   });
 
-  // 2. Realistic September 2026 Expenses
+  // 2. Realistic September 2026 Expenses tailored to ₹8,000 budget (Total spent: ₹3,758)
   const showcaseExpenses = [
-    { description: "Campus Cafeteria - Lunch & Smoothie", amount: 185, category: "food", date: "2026-09-01", paidUsing: "online", note: "Healthy lunch meal" },
-    { description: "Monthly Metro Transit SmartCard", amount: 850, category: "transport", date: "2026-09-01", paidUsing: "online", note: "Pass for commute to college" },
-    { description: "Algorithms & Data Structures Textbook", amount: 620, category: "stationery", date: "2026-09-02", paidUsing: "online", note: "Sem 5 reference textbook" },
-    { description: "Starbucks Hazelnut Latte & Bagel", amount: 380, category: "food", date: "2026-09-03", paidUsing: "online", note: "Study session cafe" },
-    { description: "Ergonomic Laptop Stand & Mousepad", amount: 899, category: "shopping", date: "2026-09-04", paidUsing: "online", note: "Desk setup upgrade" },
-    { description: "Campus Pharmacy - First Aid & Vitamins", amount: 340, category: "emergency", date: "2026-09-05", paidUsing: "cash", note: "Medical essentials" },
-    { description: "PVR Cinemas - IMAX Ticket & Popcorn", amount: 650, category: "entertainment", date: "2026-09-06", paidUsing: "online", note: "Weekend movie outing" },
-    { description: "Zomato - Weekend Dinner with Friends", amount: 720, category: "food", date: "2026-09-07", paidUsing: "online", note: "Split bill dinner" },
-    { description: "Spiral Notebooks & Gel Pen Set", amount: 210, category: "stationery", date: "2026-09-08", paidUsing: "cash", note: "Project notes" },
-    { description: "Spotify Student Duo Premium", amount: 149, category: "entertainment", date: "2026-09-08", paidUsing: "online", note: "Monthly music subscription" },
-    { description: "Uber Ride - Hackathon Venue", amount: 240, category: "transport", date: "2026-09-09", paidUsing: "online", note: "City tech hackathon" },
-    { description: "Uniqlo - Casual Denim Overshirt", amount: 1450, category: "shopping", date: "2026-09-09", paidUsing: "online", note: "Autumn wardrobe" },
-    { description: "High-Speed Hostel Wi-Fi Recharge", amount: 350, category: "other", date: "2026-09-10", paidUsing: "online", note: "Monthly internet fee" },
-    { description: "Blue Tokai Cold Brew & Sandwich", amount: 240, category: "food", date: "2026-09-10", paidUsing: "online", note: "Evening co-working space" },
-    { description: "Color Printing - Project Reports", amount: 120, category: "stationery", date: "2026-09-11", paidUsing: "cash", note: "Engineering seminar prints" },
+    { description: "Campus Cafeteria - Lunch & Smoothie", amount: 120, category: "food", date: "2026-09-01", paidUsing: "online", note: "Healthy lunch meal" },
+    { description: "Monthly Metro Transit SmartCard", amount: 450, category: "transport", date: "2026-09-01", paidUsing: "online", note: "Pass for commute to college" },
+    { description: "Algorithms & Data Structures Textbook", amount: 280, category: "stationery", date: "2026-09-02", paidUsing: "online", note: "Sem 5 reference textbook" },
+    { description: "Starbucks Hazelnut Latte & Bagel", amount: 210, category: "food", date: "2026-09-03", paidUsing: "online", note: "Study session cafe" },
+    { description: "Ergonomic Laptop Stand & Mousepad", amount: 399, category: "shopping", date: "2026-09-04", paidUsing: "online", note: "Desk setup upgrade" },
+    { description: "Campus Pharmacy - First Aid & Cold Care", amount: 180, category: "emergency", date: "2026-09-05", paidUsing: "cash", note: "Medical essentials" },
+    { description: "PVR Cinemas - Movie Ticket & Popcorn", amount: 320, category: "entertainment", date: "2026-09-06", paidUsing: "online", note: "Weekend movie outing" },
+    { description: "Zomato - Weekend Dinner with Friends", amount: 380, category: "food", date: "2026-09-07", paidUsing: "online", note: "Split bill dinner" },
+    { description: "Spiral Notebooks & Gel Pen Set", amount: 110, category: "stationery", date: "2026-09-08", paidUsing: "cash", note: "Project notes" },
+    { description: "Spotify Student Premium", amount: 119, category: "entertainment", date: "2026-09-08", paidUsing: "online", note: "Monthly music subscription" },
+    { description: "Uber Ride - Hackathon Venue", amount: 160, category: "transport", date: "2026-09-09", paidUsing: "online", note: "City tech hackathon" },
+    { description: "Uniqlo - Casual Graphic Tee", amount: 550, category: "shopping", date: "2026-09-09", paidUsing: "online", note: "Autumn wardrobe" },
+    { description: "High-Speed Hostel Wi-Fi Recharge", amount: 250, category: "other", date: "2026-09-10", paidUsing: "online", note: "Monthly internet fee" },
+    { description: "Cold Brew & Sandwich at Cafe", amount: 160, category: "food", date: "2026-09-10", paidUsing: "online", note: "Evening co-working space" },
+    { description: "Color Printing - Project Reports", amount: 70, category: "stationery", date: "2026-09-11", paidUsing: "cash", note: "Engineering seminar prints" },
   ];
 
   for (const exp of showcaseExpenses) {
@@ -208,18 +220,18 @@ export async function seedShowcaseDataForUser(userId: string) {
   // 3. Savings Movements (Separated Online & Cash Savings)
   await SavingsMovement.create({
     userId,
-    amount: 2500,
+    amount: 900,
     direction: "to_savings",
     source: "online_money",
     destination: "online_savings",
     fundingSource: "current_balance",
     date: "2026-09-02",
-    note: "Allocated to Tech Gadgets Fund",
+    note: "Tech Gadgets Fund",
   });
 
   await SavingsMovement.create({
     userId,
-    amount: 1000,
+    amount: 400,
     direction: "to_savings",
     source: "cash",
     destination: "cash_savings",
@@ -228,5 +240,5 @@ export async function seedShowcaseDataForUser(userId: string) {
     note: "Emergency cash stash",
   });
 
-  console.log(`Showcase September 2026 data successfully seeded for user ${userId}!`);
+  console.log(`Showcase ₹8,000 September 2026 data successfully seeded for user ${userId}!`);
 }

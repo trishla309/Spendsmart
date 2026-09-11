@@ -15,19 +15,19 @@
   --color-graytext: #6B7280;
   --color-sand-border: #E8E1D3;
 
-  /* Premium soft dark blue/gray theme grays */
-  --color-gray-950: #0a0d16; /* Deepest background */
-  --color-gray-900: #111625; /* Card background */
-  --color-gray-850: #171f34; /* Slightly lighter card/section */
-  --color-gray-800: #1e253c; /* Low-contrast thin border */
-  --color-gray-700: #2b3554; /* Focus border & hover state */
-  --color-gray-600: #3f4d75; /* Secondary elements */
-  --color-gray-500: #5c6c94; /* Slate/gray description / secondary labels */
-  --color-gray-400: #8897bd; /* Light slate text */
-  --color-gray-300: #b0bfde; /* Soft light text */
-  --color-gray-200: #d6e0f5; /* High contrast text */
-  --color-gray-100: #f1f5f9; /* Near-white headings */
-  --color-gray-50: #f8fafc;  /* Full white */
+  /* True Dark Black (OLED Obsidian / Neutral Dark, zero bluish tint) */
+  --color-gray-950: #080809; /* Deepest pure black background */
+  --color-gray-900: #121214; /* Crisp dark card background */
+  --color-gray-850: #18181b; /* Raised card / section surface */
+  --color-gray-800: #27272a; /* Low-contrast thin neutral border */
+  --color-gray-700: #3f3f46; /* Focus border & hover state */
+  --color-gray-600: #52525b; /* Neutral secondary elements / icons */
+  --color-gray-500: #71717a; /* Neutral description & secondary labels */
+  --color-gray-400: #a1a1aa; /* Crisp neutral subtext */
+  --color-gray-300: #d4d4d8; /* Soft light text */
+  --color-gray-200: #e4e4e7; /* High contrast text */
+  --color-gray-100: #f4f4f5; /* Near-white headings */
+  --color-gray-50: #fafafa;  /* Full white */
 }
 
 /* Light mode theme mappings to perfectly match our new vars */

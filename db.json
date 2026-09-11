@@ -577,31 +577,9 @@
       "__v": 0
     },
     {
-      "_id": "6aa1a46e955b41da9912eb9e",
-      "userId": "6a4e97b4248e6a72d9110792",
-      "month": "2026-09",
-      "pocketMoney": 5500,
-      "savingsGoal": 800,
-      "allocated": {
-        "food": 2200,
-        "transport": 700,
-        "shopping": 600,
-        "entertainment": 600,
-        "emergency": 400,
-        "stationery": 400,
-        "savings": 0,
-        "other": 500,
-        "gym_and_fitness": 1500,
-        "gym_and_fitness_5x69": 1500,
-        "gym_and_fitness_w5xm": 1500
-      },
-      "createdAt": "2026-09-09T18:24:46.702Z",
-      "__v": 0
-    },
-    {
-      "_id": "6aa42690e188736503a02117",
+      "_id": "6aa42859f03b54599e4055d5",
       "userId": "6aa42690e188736503a02116",
-      "month": "2026-09",
+      "month": "2026-07",
       "pocketMoney": 18000,
       "savingsGoal": 3500,
       "allocated": {
@@ -611,8 +589,65 @@
         "entertainment": 2000,
         "emergency": 1500,
         "stationery": 1200,
-        "other": 1000,
-        "savings": 0
+        "savings": 0,
+        "other": 1000
+      },
+      "createdAt": "2026-09-11T16:12:09.050Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055d8",
+      "userId": "6aa42690e188736503a02116",
+      "month": "2026-06",
+      "pocketMoney": 18000,
+      "savingsGoal": 3500,
+      "allocated": {
+        "food": 5500,
+        "transport": 2200,
+        "shopping": 3000,
+        "entertainment": 2000,
+        "emergency": 1500,
+        "stationery": 1200,
+        "savings": 0,
+        "other": 1000
+      },
+      "createdAt": "2026-09-11T16:12:09.124Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055d9",
+      "userId": "6aa42690e188736503a02116",
+      "month": "2026-08",
+      "pocketMoney": 18000,
+      "savingsGoal": 3500,
+      "allocated": {
+        "food": 5500,
+        "transport": 2200,
+        "shopping": 3000,
+        "entertainment": 2000,
+        "emergency": 1500,
+        "stationery": 1200,
+        "savings": 0,
+        "other": 1000
+      },
+      "createdAt": "2026-09-11T16:12:09.127Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbdd",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "month": "2026-09",
+      "pocketMoney": 8000,
+      "savingsGoal": 1500,
+      "allocated": {
+        "food": 2800,
+        "transport": 1200,
+        "shopping": 1100,
+        "entertainment": 900,
+        "emergency": 800,
+        "stationery": 500,
+        "other": 500,
+        "savings": 200
       },
       "thresholdsFired": {
         "food": {
@@ -644,7 +679,56 @@
           "p100": false
         }
       },
-      "createdAt": "2026-09-11T16:04:32.400Z",
+      "createdAt": "2026-09-11T16:25:45.413Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbef",
+      "userId": "6aa42690e188736503a02116",
+      "month": "2026-09",
+      "pocketMoney": 8000,
+      "savingsGoal": 1500,
+      "allocated": {
+        "food": 2800,
+        "transport": 1200,
+        "shopping": 1100,
+        "entertainment": 900,
+        "emergency": 800,
+        "stationery": 500,
+        "other": 500,
+        "savings": 200
+      },
+      "thresholdsFired": {
+        "food": {
+          "p80": false,
+          "p100": false
+        },
+        "transport": {
+          "p80": false,
+          "p100": false
+        },
+        "shopping": {
+          "p80": true,
+          "p100": false
+        },
+        "entertainment": {
+          "p80": false,
+          "p100": false
+        },
+        "emergency": {
+          "p80": false,
+          "p100": false
+        },
+        "stationery": {
+          "p80": true,
+          "p100": false
+        },
+        "other": {
+          "p80": false,
+          "p100": false
+        }
+      },
+      "createdAt": "2026-09-11T16:25:45.452Z",
       "__v": 0
     }
   ],
@@ -2126,18 +2210,6 @@
       "__v": 0
     },
     {
-      "_id": "6aa22ebad9ca38da429b7b24",
-      "userId": "6a4e97b4248e6a72d9110792",
-      "amount": 800,
-      "category": "gym_and_fitness_w5xm",
-      "description": "Gym Membership",
-      "date": "2026-09-10",
-      "note": "",
-      "paidUsing": "online",
-      "createdAt": "2026-09-10T04:14:50.623Z",
-      "__v": 0
-    },
-    {
       "_id": "6aa2eef559fc2dbf978f8f82",
       "userId": "6a99d6a9b42f28fd3536d217",
       "amount": 500,
@@ -2150,183 +2222,363 @@
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02118",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 185,
+      "_id": "6aa42b89b6d6bce01dbacbde",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 120,
       "category": "food",
       "description": "Campus Cafeteria - Lunch & Smoothie",
       "date": "2026-09-01",
       "note": "Healthy lunch meal",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.427Z",
+      "createdAt": "2026-09-11T16:25:45.424Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02119",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 850,
+      "_id": "6aa42b89b6d6bce01dbacbdf",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 450,
       "category": "transport",
       "description": "Monthly Metro Transit SmartCard",
       "date": "2026-09-01",
       "note": "Pass for commute to college",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.449Z",
+      "createdAt": "2026-09-11T16:25:45.426Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a0211a",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 620,
+      "_id": "6aa42b89b6d6bce01dbacbe0",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 280,
       "category": "stationery",
       "description": "Algorithms & Data Structures Textbook",
       "date": "2026-09-02",
       "note": "Sem 5 reference textbook",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.453Z",
+      "createdAt": "2026-09-11T16:25:45.428Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a0211b",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 380,
+      "_id": "6aa42b89b6d6bce01dbacbe1",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 210,
       "category": "food",
       "description": "Starbucks Hazelnut Latte & Bagel",
       "date": "2026-09-03",
       "note": "Study session cafe",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.456Z",
+      "createdAt": "2026-09-11T16:25:45.429Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a0211c",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 899,
+      "_id": "6aa42b89b6d6bce01dbacbe2",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 399,
       "category": "shopping",
       "description": "Ergonomic Laptop Stand & Mousepad",
       "date": "2026-09-04",
       "note": "Desk setup upgrade",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.460Z",
+      "createdAt": "2026-09-11T16:25:45.430Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a0211d",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 340,
+      "_id": "6aa42b89b6d6bce01dbacbe3",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 180,
       "category": "emergency",
-      "description": "Campus Pharmacy - First Aid & Vitamins",
+      "description": "Campus Pharmacy - First Aid & Cold Care",
       "date": "2026-09-05",
       "note": "Medical essentials",
       "paidUsing": "cash",
-      "createdAt": "2026-09-11T16:04:32.464Z",
+      "createdAt": "2026-09-11T16:25:45.431Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a0211e",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 650,
+      "_id": "6aa42b89b6d6bce01dbacbe4",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 320,
       "category": "entertainment",
-      "description": "PVR Cinemas - IMAX Ticket & Popcorn",
+      "description": "PVR Cinemas - Movie Ticket & Popcorn",
       "date": "2026-09-06",
       "note": "Weekend movie outing",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.467Z",
+      "createdAt": "2026-09-11T16:25:45.432Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a0211f",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 720,
+      "_id": "6aa42b89b6d6bce01dbacbe5",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 380,
       "category": "food",
       "description": "Zomato - Weekend Dinner with Friends",
       "date": "2026-09-07",
       "note": "Split bill dinner",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.470Z",
+      "createdAt": "2026-09-11T16:25:45.433Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02120",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 210,
+      "_id": "6aa42b89b6d6bce01dbacbe6",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 110,
       "category": "stationery",
       "description": "Spiral Notebooks & Gel Pen Set",
       "date": "2026-09-08",
       "note": "Project notes",
       "paidUsing": "cash",
-      "createdAt": "2026-09-11T16:04:32.472Z",
+      "createdAt": "2026-09-11T16:25:45.434Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02121",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 149,
+      "_id": "6aa42b89b6d6bce01dbacbe7",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 119,
       "category": "entertainment",
-      "description": "Spotify Student Duo Premium",
+      "description": "Spotify Student Premium",
       "date": "2026-09-08",
       "note": "Monthly music subscription",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.475Z",
+      "createdAt": "2026-09-11T16:25:45.435Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02122",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 240,
+      "_id": "6aa42b89b6d6bce01dbacbe8",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 160,
       "category": "transport",
       "description": "Uber Ride - Hackathon Venue",
       "date": "2026-09-09",
       "note": "City tech hackathon",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.479Z",
+      "createdAt": "2026-09-11T16:25:45.436Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02123",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 1450,
+      "_id": "6aa42b89b6d6bce01dbacbe9",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 550,
       "category": "shopping",
-      "description": "Uniqlo - Casual Denim Overshirt",
+      "description": "Uniqlo - Casual Graphic Tee",
       "date": "2026-09-09",
       "note": "Autumn wardrobe",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.482Z",
+      "createdAt": "2026-09-11T16:25:45.437Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02124",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 350,
+      "_id": "6aa42b89b6d6bce01dbacbea",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 250,
       "category": "other",
       "description": "High-Speed Hostel Wi-Fi Recharge",
       "date": "2026-09-10",
       "note": "Monthly internet fee",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.484Z",
+      "createdAt": "2026-09-11T16:25:45.438Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02125",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 240,
+      "_id": "6aa42b89b6d6bce01dbacbeb",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 160,
       "category": "food",
-      "description": "Blue Tokai Cold Brew & Sandwich",
+      "description": "Cold Brew & Sandwich at Cafe",
       "date": "2026-09-10",
       "note": "Evening co-working space",
       "paidUsing": "online",
-      "createdAt": "2026-09-11T16:04:32.487Z",
+      "createdAt": "2026-09-11T16:25:45.439Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02126",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 120,
+      "_id": "6aa42b89b6d6bce01dbacbec",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 70,
       "category": "stationery",
       "description": "Color Printing - Project Reports",
       "date": "2026-09-11",
       "note": "Engineering seminar prints",
       "paidUsing": "cash",
-      "createdAt": "2026-09-11T16:04:32.489Z",
+      "createdAt": "2026-09-11T16:25:45.440Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf0",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 120,
+      "category": "food",
+      "description": "Campus Cafeteria - Lunch & Smoothie",
+      "date": "2026-09-01",
+      "note": "Healthy lunch meal",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.454Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf1",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 450,
+      "category": "transport",
+      "description": "Monthly Metro Transit SmartCard",
+      "date": "2026-09-01",
+      "note": "Pass for commute to college",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.455Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf2",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 280,
+      "category": "stationery",
+      "description": "Algorithms & Data Structures Textbook",
+      "date": "2026-09-02",
+      "note": "Sem 5 reference textbook",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.456Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf3",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 210,
+      "category": "food",
+      "description": "Starbucks Hazelnut Latte & Bagel",
+      "date": "2026-09-03",
+      "note": "Study session cafe",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.457Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf4",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 399,
+      "category": "shopping",
+      "description": "Ergonomic Laptop Stand & Mousepad",
+      "date": "2026-09-04",
+      "note": "Desk setup upgrade",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.458Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf5",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 180,
+      "category": "emergency",
+      "description": "Campus Pharmacy - First Aid & Cold Care",
+      "date": "2026-09-05",
+      "note": "Medical essentials",
+      "paidUsing": "cash",
+      "createdAt": "2026-09-11T16:25:45.459Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf6",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 320,
+      "category": "entertainment",
+      "description": "PVR Cinemas - Movie Ticket & Popcorn",
+      "date": "2026-09-06",
+      "note": "Weekend movie outing",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.459Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf7",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 380,
+      "category": "food",
+      "description": "Zomato - Weekend Dinner with Friends",
+      "date": "2026-09-07",
+      "note": "Split bill dinner",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.461Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf8",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 110,
+      "category": "stationery",
+      "description": "Spiral Notebooks & Gel Pen Set",
+      "date": "2026-09-08",
+      "note": "Project notes",
+      "paidUsing": "cash",
+      "createdAt": "2026-09-11T16:25:45.461Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbf9",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 119,
+      "category": "entertainment",
+      "description": "Spotify Student Premium",
+      "date": "2026-09-08",
+      "note": "Monthly music subscription",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.462Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbfa",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 160,
+      "category": "transport",
+      "description": "Uber Ride - Hackathon Venue",
+      "date": "2026-09-09",
+      "note": "City tech hackathon",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.463Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbfb",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 550,
+      "category": "shopping",
+      "description": "Uniqlo - Casual Graphic Tee",
+      "date": "2026-09-09",
+      "note": "Autumn wardrobe",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.464Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbfc",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 250,
+      "category": "other",
+      "description": "High-Speed Hostel Wi-Fi Recharge",
+      "date": "2026-09-10",
+      "note": "Monthly internet fee",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.465Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbfd",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 160,
+      "category": "food",
+      "description": "Cold Brew & Sandwich at Cafe",
+      "date": "2026-09-10",
+      "note": "Evening co-working space",
+      "paidUsing": "online",
+      "createdAt": "2026-09-11T16:25:45.466Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbfe",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 70,
+      "category": "stationery",
+      "description": "Color Printing - Project Reports",
+      "date": "2026-09-11",
+      "note": "Engineering seminar prints",
+      "paidUsing": "cash",
+      "createdAt": "2026-09-11T16:25:45.467Z",
       "__v": 0
     }
   ],
@@ -3180,6 +3432,86 @@
       "read": false,
       "createdAt": "2026-09-10T18:43:37.410Z",
       "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055d6",
+      "userId": "6aa42690e188736503a02116",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-07 has been initialized with ₹18000 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-09-11T16:12:09.077Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055d7",
+      "userId": "6aa42690e188736503a02116",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-11T16:12:09.107Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055da",
+      "userId": "6aa42690e188736503a02116",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-06 has been initialized with ₹18000 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-09-11T16:12:09.136Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055db",
+      "userId": "6aa42690e188736503a02116",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-11T16:12:09.171Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055dc",
+      "userId": "6aa42690e188736503a02116",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-08 has been initialized with ₹18000 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-09-11T16:12:09.186Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42859f03b54599e4055dd",
+      "userId": "6aa42690e188736503a02116",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-11T16:12:09.191Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b94b6d6bce01dbacc01",
+      "userId": "6aa42690e188736503a02116",
+      "type": "warning",
+      "title": "Budget Warning Threshold",
+      "message": "You've used 86% of your Shopping & Wardrobe budget (₹949 / ₹1100).",
+      "read": false,
+      "createdAt": "2026-09-11T16:25:56.693Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b94b6d6bce01dbacc02",
+      "userId": "6aa42690e188736503a02116",
+      "type": "warning",
+      "title": "Budget Warning Threshold",
+      "message": "You've used 92% of your Stationery & Supplies budget (₹460 / ₹500).",
+      "read": false,
+      "createdAt": "2026-09-11T16:25:56.703Z",
+      "__v": 0
     }
   ],
   "otps": [
@@ -3207,28 +3539,6 @@
     }
   ],
   "savingsMovements": [
-    {
-      "_id": "6a99d0afe8022158a41478bb",
-      "userId": "6a4e97b4248e6a72d9110792",
-      "amount": 150,
-      "direction": "to_savings",
-      "source": "cash",
-      "date": "2026-09-04",
-      "note": "Live test transfer",
-      "createdAt": "2026-09-03T19:55:27.907Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a99d0afe8022158a41478bd",
-      "userId": "6a4e97b4248e6a72d9110792",
-      "amount": 50,
-      "direction": "from_savings",
-      "source": "cash",
-      "date": "2026-09-04",
-      "note": "Live test return",
-      "createdAt": "2026-09-03T19:55:27.923Z",
-      "__v": 0
-    },
     {
       "_id": "6a99d5b5b42f28fd3536d214",
       "userId": "6a99d52bb42f28fd3536d1d3",
@@ -3340,29 +3650,55 @@
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02127",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 2500,
+      "_id": "6aa42b89b6d6bce01dbacbed",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 900,
       "direction": "to_savings",
       "source": "online_money",
       "destination": "online_savings",
       "fundingSource": "current_balance",
       "date": "2026-09-02",
-      "note": "Allocated to Tech Gadgets Fund",
-      "createdAt": "2026-09-11T16:04:32.492Z",
+      "note": "Tech Gadgets Fund",
+      "createdAt": "2026-09-11T16:25:45.441Z",
       "__v": 0
     },
     {
-      "_id": "6aa42690e188736503a02128",
-      "userId": "6aa42690e188736503a02116",
-      "amount": 1000,
+      "_id": "6aa42b89b6d6bce01dbacbee",
+      "userId": "6a4e97b4248e6a72d9110792",
+      "amount": 400,
       "direction": "to_savings",
       "source": "cash",
       "destination": "cash_savings",
       "fundingSource": "current_balance",
       "date": "2026-09-05",
       "note": "Emergency cash stash",
-      "createdAt": "2026-09-11T16:04:32.515Z",
+      "createdAt": "2026-09-11T16:25:45.442Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacbff",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 900,
+      "direction": "to_savings",
+      "source": "online_money",
+      "destination": "online_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-09-02",
+      "note": "Tech Gadgets Fund",
+      "createdAt": "2026-09-11T16:25:45.469Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa42b89b6d6bce01dbacc00",
+      "userId": "6aa42690e188736503a02116",
+      "amount": 400,
+      "direction": "to_savings",
+      "source": "cash",
+      "destination": "cash_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-09-05",
+      "note": "Emergency cash stash",
+      "createdAt": "2026-09-11T16:25:45.470Z",
       "__v": 0
     }
   ]
