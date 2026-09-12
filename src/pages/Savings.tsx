@@ -408,9 +408,6 @@ export const SavingsPage: React.FC = () => {
                 </span>
               </div>
             </div>
-            <span className="text-[11px] text-gray-500 font-medium block mt-3 pt-2.5 border-t border-gray-850/60">
-              Money stored safely in envelope, wallet, or physical cash reserve
-            </span>
           </div>
 
           {/* Online Savings Small Section */}
@@ -438,9 +435,6 @@ export const SavingsPage: React.FC = () => {
                 </span>
               </div>
             </div>
-            <span className="text-[11px] text-gray-500 font-medium block mt-3 pt-2.5 border-t border-gray-850/60">
-              Money kept aside digitally in bank account, digital pot, or wallet
-            </span>
           </div>
         </div>
       </div>
@@ -455,9 +449,6 @@ export const SavingsPage: React.FC = () => {
                 Savings Flow for {getMonthLabel(selectedMonth)}
               </h2>
             </div>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Detailed tracking of where savings came from and where savings amounts were spent or returned during {getMonthLabel(selectedMonth)}.
-            </p>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -641,9 +632,6 @@ export const SavingsPage: React.FC = () => {
                   <h2 className="text-base font-extrabold text-white tracking-tight flex items-center gap-2">
                     Savings Activity & Movements
                   </h2>
-                  <span className="text-[11px] text-gray-400 font-medium block mt-0.5">
-                    Track where savings came from and where savings were returned during your journey
-                  </span>
                 </div>
 
                 {/* Filter Toggle: Selected Month vs All-Time */}
