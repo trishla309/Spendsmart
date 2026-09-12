@@ -875,15 +875,6 @@ export const DashboardHome: React.FC = () => {
           </div>
         ) : (
           <div className="flex items-center gap-4 flex-wrap md:flex-nowrap w-full md:w-auto justify-end" id="editable-success-container">
-            <div className="flex items-start gap-3.5 px-5 py-4 bg-emerald-500/5 border border-emerald-500/15 text-emerald-400 rounded-2xl text-xs shadow-lg shadow-emerald-500/2" id="editable-success-banner">
-              <Unlock className="h-4.5 w-4.5 shrink-0 text-emerald-400 animate-pulse mt-0.5" />
-              <div>
-                <span className="font-extrabold block text-emerald-300 mb-0.5">Editable Active Period</span>
-                <p className="text-gray-400 leading-relaxed font-semibold text-[11px]">
-                  You can fully manage transactions and edit category budgets.
-                </p>
-              </div>
-            </div>
 
             <button
               onClick={() => {

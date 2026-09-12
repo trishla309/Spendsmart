@@ -322,23 +322,13 @@ export const Analytics: React.FC = () => {
         </div>
 
         {/* Lock indicator state */}
-        {selectedMonth !== currentMonthStr ? (
+        {selectedMonth !== currentMonthStr && (
           <div className="flex items-start gap-3.5 px-5 py-4 bg-amber-500/5 border border-amber-500/15 text-amber-400 rounded-2xl text-xs max-w-md shadow-lg shadow-amber-500/2" id="readonly-warning-banner">
             <Lock className="h-4.5 w-4.5 shrink-0 text-amber-500 mt-0.5" />
             <div>
               <span className="font-extrabold block text-amber-300 mb-0.5">Monthly Archive Read-Only</span>
               <p className="text-gray-400 leading-relaxed font-semibold">
                 This is a historical archive. Previous months can be viewed but remain non-editable. Select the current month ({formatMonthName(currentMonthStr)}) to edit.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-start gap-3.5 px-5 py-4 bg-emerald-500/5 border border-emerald-500/15 text-emerald-400 rounded-2xl text-xs max-w-md shadow-lg shadow-emerald-500/2" id="active-warning-banner">
-            <TrendingUp className="h-4.5 w-4.5 shrink-0 text-emerald-400 mt-0.5" />
-            <div>
-              <span className="font-extrabold block text-emerald-300 mb-0.5">Editable Active Period</span>
-              <p className="text-gray-400 leading-relaxed font-semibold">
-                You can fully manage transactions and edit category budgets for the current active period.
               </p>
             </div>
           </div>
