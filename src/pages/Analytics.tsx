@@ -370,7 +370,6 @@ export const Analytics: React.FC = () => {
               <TrendingDown className="h-5 w-5" />
             </div>
           </div>
-          <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">All expenditures this month</span>
         </div>
 
         {/* Savings Rate */}

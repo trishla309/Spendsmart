@@ -953,7 +953,6 @@ export const DashboardHome: React.FC = () => {
               <TrendingDown className="h-5 w-5" />
             </div>
           </div>
-          <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">All expenditures this month</span>
         </div>
 
         {/* Metric 3: Online Money */}
@@ -971,9 +970,11 @@ export const DashboardHome: React.FC = () => {
               <TrendingDown className="h-5 w-5 rotate-180" />
             </div>
           </div>
-          <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">
-            {availableBalance < 0 ? "Overspent balance!" : "Spendable for daily needs"}
-          </span>
+          {availableBalance < 0 && (
+            <span className="text-[10px] text-rose-400 font-sans font-semibold block mt-4.5">
+              Overspent balance!
+            </span>
+          )}
         </div>
 
         {/* Metric 4: Monthly Savings Goal */}
