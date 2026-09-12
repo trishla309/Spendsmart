@@ -262,18 +262,11 @@ export const BudgetPlanning: React.FC = () => {
         </div>
 
         {/* Edit lock indicator */}
-        {!isCurrentMonth ? (
+        {!isCurrentMonth && (
           <div className="flex items-center gap-2.5 px-4 py-2.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-xl text-xs" id="read-only-badge">
             <Lock className="h-4 w-4 shrink-0" />
             <span className="font-semibold leading-relaxed">
               Read-Only: Budgets can only be created or modified for the current month ({formatMonthName(currentMonthStr)}).
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-xs" id="editable-badge">
-            <Check className="h-4 w-4 shrink-0" />
-            <span className="font-semibold leading-relaxed">
-              Active Month: You are editing the current month's budget.
             </span>
           </div>
         )}
