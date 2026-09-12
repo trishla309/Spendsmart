@@ -276,8 +276,6 @@ export const DashboardHome: React.FC = () => {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
-  const [txViewMode, setTxViewMode] = useState<"recent" | "today">("recent");
-
   const isCurrentMonthEditable = selectedMonth === currentMonthStr;
 
   // Custom Category States
@@ -1362,150 +1360,110 @@ export const DashboardHome: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. Transactions Ledger Redesign: Google Pay-inspired Transaction History */}
+      {/* 5. Compact Recent Transactions Preview */}
       {(() => {
+        const recentTransactions = expenses
+          .slice()
+          .sort((a, b) => {
+            const dateCmp = b.date.localeCompare(a.date);
+            if (dateCmp !== 0) return dateCmp;
+            return (b.createdAt || "").localeCompare(a.createdAt || "");
+          })
+          .slice(0, 5);
+
         return (
-          <div className="flex flex-col gap-6" id="transaction-history-section">
-            {/* Recent & Today Transactions Summary Card */}
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col gap-6 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300">
-              <div className="border-b border-gray-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col gap-4 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300" id="recent-transactions-section">
+            <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl">
+                  <History className="h-4.5 w-4.5" />
+                </div>
                 <div>
-                  <h3 className="text-lg font-black text-white flex items-center gap-2.5 tracking-tight" id="todays-transactions-title">
-                    <History className="h-5 w-5 text-emerald-400" />
-                    {txViewMode === "recent" ? "Recent Transactions" : "Today's Transactions"}
+                  <h3 className="text-base font-black text-white tracking-tight" id="recent-transactions-title">
+                    Recent Transactions
                   </h3>
-                  <span className="text-xs text-gray-500 mt-1 block font-semibold">
-                    {txViewMode === "recent"
-                      ? "Recent spending and income recorded this month"
-                      : "A quick summary of your spending for today"}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 self-start sm:self-auto">
-                  {/* View Mode Toggle */}
-                  <div className="flex items-center gap-1 bg-gray-950 p-1 rounded-2xl border border-gray-800">
-                    <button
-                      type="button"
-                      onClick={() => setTxViewMode("recent")}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                        txViewMode === "recent"
-                          ? "bg-emerald-500 text-gray-950 shadow-md"
-                          : "text-gray-400 hover:text-gray-200"
-                      }`}
-                      id="dashboard-tx-tab-recent"
-                    >
-                      Recent ({expenses.filter((e) => e.date.startsWith(selectedMonth)).length})
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setTxViewMode("today")}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                        txViewMode === "today"
-                          ? "bg-emerald-500 text-gray-950 shadow-md"
-                          : "text-gray-400 hover:text-gray-200"
-                      }`}
-                      id="dashboard-tx-tab-today"
-                    >
-                      Today ({expenses.filter((e) => e.date === getTodayDateStr()).length})
-                    </button>
-                  </div>
+                  <span className="text-[11px] text-gray-500 font-medium">Quick overview of recent activity</span>
                 </div>
               </div>
 
-              {/* Transactions list */}
-              {(() => {
-                const todayStr = getTodayDateStr();
-                const monthTransactions = expenses
-                  .filter((exp) => exp.date.startsWith(selectedMonth))
-                  .sort((a, b) => {
-                    const dateCmp = b.date.localeCompare(a.date);
-                    if (dateCmp !== 0) return dateCmp;
-                    return (b.createdAt || "").localeCompare(a.createdAt || "");
-                  });
+              <Link
+                to="/history"
+                className="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5 py-1.5 px-3 rounded-xl hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
+                id="view-all-transactions-top-link"
+              >
+                <span>View all transactions →</span>
+              </Link>
+            </div>
 
-                const todayTransactions = expenses.filter((exp) => exp.date === todayStr);
-                const displayList = txViewMode === "recent" ? monthTransactions : todayTransactions;
-
-                if (displayList.length > 0) {
+            {recentTransactions.length > 0 ? (
+              <div className="flex flex-col divide-y divide-gray-800/60" id="recent-transactions-preview-list">
+                {recentTransactions.map((exp) => {
+                  const isIncome = exp.category === "income";
+                  const emoji = getEmojiForTransaction(exp.description, exp.category);
                   return (
-                    <div className="flex flex-col gap-3.5" id="todays-transactions-list">
-                      {displayList.map((exp) => {
-                        const isIncome = exp.category === "income";
-                        const emoji = getEmojiForTransaction(exp.description, exp.category);
-                        return (
-                          <div
-                            key={exp._id}
-                            className="flex items-center justify-between p-4 bg-gray-950/30 hover:bg-gray-850/40 rounded-2xl border border-gray-800/30 hover:border-gray-800/60 shadow-sm hover:shadow-md hover:shadow-gray-950/10 transition-all duration-300 group"
-                          >
-                            <div className="flex items-center gap-4 min-w-0">
-                              <span className="text-2xl shrink-0 select-none bg-gray-900/60 p-2.5 border border-gray-800/60 rounded-xl group-hover:scale-105 transition-all duration-300 shadow-inner">{emoji}</span>
-                              <div className="flex flex-col min-w-0">
-                                <span className="text-sm font-extrabold text-gray-100 group-hover:text-white transition-colors truncate">
-                                  {getCategoryLabel(exp.category)}
-                                </span>
-                                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                                  <span className="text-xs text-gray-400 font-semibold truncate">{exp.description}</span>
-                                  <span className="text-[10px] text-gray-500 font-mono font-medium">• {formatDateGPay(exp.date)}</span>
-                                  {!isIncome && (
-                                    <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded border ${
-                                      (exp.paidUsing || "online").toLowerCase() === "cash"
-                                        ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
-                                        : "bg-blue-500/10 border-blue-500/25 text-blue-300"
-                                    }`}>
-                                      {(exp.paidUsing || "online").toLowerCase() === "cash" ? "Cash" : "Online"}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 shrink-0">
-                              <div className="text-right">
-                                <span className={`text-base font-black tracking-tight ${isIncome ? "text-emerald-400" : "text-white"}`}>
-                                  {isIncome ? "+" : "-"}{currency}{exp.amount}
-                                </span>
-                              </div>
-                              {isCurrentMonthEditable && (
-                                <button
-                                  onClick={() => openEditModal(exp)}
-                                  className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all cursor-pointer"
-                                  title="Edit transaction"
-                                  id={`edit-today-expense-${exp._id}`}
-                                >
-                                  <Edit className="h-3.5 w-3.5" />
-                                </button>
-                              )}
-                            </div>
+                    <div
+                      key={exp._id}
+                      className="py-3 px-2 flex items-center justify-between gap-3 hover:bg-gray-950/40 rounded-xl transition-colors duration-150 group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-xl shrink-0 select-none p-2 bg-gray-950/80 border border-gray-800/60 rounded-xl group-hover:scale-105 transition-all duration-300 shadow-inner">
+                          {emoji}
+                        </span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-bold text-gray-100 group-hover:text-white transition-colors truncate">
+                            {exp.description}
+                          </span>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            <span className="text-[11px] text-gray-400 font-semibold truncate">
+                              {getCategoryLabel(exp.category)}
+                            </span>
+                            <span className="text-[10px] text-gray-500 font-mono font-medium">• {formatDateGPay(exp.date)}</span>
+                            {!isIncome && (
+                              <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded border ${
+                                (exp.paidUsing || "online").toLowerCase() === "cash"
+                                  ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
+                                  : "bg-blue-500/10 border-blue-500/25 text-blue-300"
+                              }`}>
+                                {(exp.paidUsing || "online").toLowerCase() === "cash" ? "Cash" : "Online"}
+                              </span>
+                            )}
                           </div>
-                        );
-                      })}
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div className="py-16 text-center text-gray-500 border border-dashed border-gray-800/80 rounded-3xl bg-gray-950/20 px-6 flex flex-col items-center justify-center gap-4">
-                      <div className="p-4 bg-gray-950/40 border border-gray-800/50 rounded-2xl text-gray-600 shadow-inner">
-                        <FileText className="h-8 w-8 text-gray-500" />
+                        </div>
                       </div>
-                      <span className="text-sm font-extrabold text-gray-400">
-                        {txViewMode === "recent"
-                          ? "No transactions recorded in this month."
-                          : "No transactions recorded today."}
-                      </span>
+
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className={`text-sm font-black font-mono tracking-tight ${isIncome ? "text-emerald-400" : "text-white"}`}>
+                          {isIncome ? "+" : "-"}{currency}{formatIndianNumber(exp.amount)}
+                        </span>
+                        {isCurrentMonthEditable && (
+                          <button
+                            onClick={() => openEditModal(exp)}
+                            className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all cursor-pointer opacity-0 group-hover:opacity-100"
+                            title="Edit transaction"
+                            id={`edit-recent-expense-${exp._id}`}
+                          >
+                            <Edit className="h-3 w-3" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
-                }
-              })()}
-
-              <div className="flex justify-center pt-4 border-t border-gray-800/60">
-                <Link
-                  to="/history"
-                  className="text-xs text-emerald-400 hover:text-emerald-300 font-extrabold transition-all flex items-center gap-1.5 py-2 px-5 bg-emerald-500/5 border border-emerald-500/10 hover:bg-emerald-500/10 hover:border-emerald-500/20 rounded-xl"
-                  id="view-full-history-link"
-                >
-                  <span>View Full History →</span>
-                </Link>
+                })}
               </div>
+            ) : (
+              <div className="py-10 text-center text-gray-500 border border-dashed border-gray-800/80 rounded-2xl bg-gray-950/20 px-4">
+                <span className="text-xs font-semibold text-gray-400">No recent transactions recorded.</span>
+              </div>
+            )}
+
+            <div className="flex justify-center pt-2 border-t border-gray-800/60">
+              <Link
+                to="/history"
+                className="text-xs text-emerald-400 hover:text-emerald-300 font-bold transition-all flex items-center gap-1.5 py-1.5 px-4 rounded-xl hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
+                id="view-all-transactions-bottom-link"
+              >
+                <span>View all transactions →</span>
+              </Link>
             </div>
           </div>
         );
