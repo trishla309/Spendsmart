@@ -1,4 +1,4 @@
-import { Budget, Expense, SavingsMovement } from "./db";
+import { User, Budget, Expense, SavingsMovement } from "./db";
 
 export async function seedDemoDataForUser(userId: string) {
   // Check if user already has budgets or expenses
@@ -138,6 +138,19 @@ export async function seedDemoDataForUser(userId: string) {
 }
 
 export async function seedShowcaseDataForUser(userId: string, forceReset = true) {
+  // Strictly protect personal accounts - only dedicated demo accounts can ever be seeded
+  const targetUser = await User.findOne({ _id: userId });
+  if (!targetUser) return;
+  const userEmail = (targetUser.email || "").toLowerCase();
+  const isDedicatedDemoAccount =
+    userEmail === "student@example.com" ||
+    userEmail === "demo@spendsmart.com" ||
+    userEmail === "showcase@spendsmart.com";
+
+  if (!isDedicatedDemoAccount) {
+    return;
+  }
+
   const currentMonth = "2026-09";
   const existingBudget = await Budget.findOne({ userId, month: currentMonth });
   const existingExpenses = await Expense.find({ userId, date: { $gte: "2026-09-01", $lte: "2026-09-30" } as any });
@@ -147,7 +160,7 @@ export async function seedShowcaseDataForUser(userId: string, forceReset = true)
     return;
   }
 
-  // Reset all data for this user to ensure pristine and 100% reconciled calculations
+  // Reset all data for this demo user to ensure pristine and 100% reconciled calculations
   await Budget.deleteMany({ userId });
   await Expense.deleteMany({ userId });
   await SavingsMovement.deleteMany({ userId });

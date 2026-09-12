@@ -53,14 +53,7 @@ export async function seedDemoUser() {
       });
       console.log("Showcase user seeded successfully (demo@spendsmart.com / Demo@123 / OTP 123456)");
     }
-
-    // 3. Synchronize ALL accounts across Fenno with the identical clean September dataset
-    const allUsers = await User.find({});
-    console.log(`[Fenno] Synchronizing clean September 2026 showcase dataset across all ${allUsers.length} accounts...`);
-    for (const u of allUsers) {
-      await seedShowcaseDataForUser(u._id);
-    }
-    console.log(`[Fenno] All ${allUsers.length} user accounts successfully synchronized!`);
+    await seedShowcaseDataForUser(showcaseUser._id);
   } catch (error) {
     console.error("Error seeding demo/showcase user:", error);
   }
@@ -267,9 +260,6 @@ router.post("/verify-otp", async (req: Request, res: Response): Promise<void> =>
         email: canonicalEmail,
         phone,
       });
-
-      // Automatically seed clean showcase data so new accounts start with full experience
-      await seedShowcaseDataForUser(user._id);
       
       // Send welcome email in background
       sendWelcomeEmail(canonicalEmail, name).catch(err => console.error("Welcome email error:", err));
