@@ -9,7 +9,6 @@ import {
   Percent,
   Calendar,
   Award,
-  DollarSign,
   Layers,
   CheckCircle,
   Lock,
@@ -342,9 +341,6 @@ export const Analytics: React.FC = () => {
               <span className="text-3xl font-black tracking-tight text-white mt-1 block">
                 {currency}{monthlyIncome}
               </span>
-            </div>
-            <div className="p-3.5 bg-emerald-500/5 border border-emerald-500/15 rounded-2xl text-emerald-400 group-hover:bg-emerald-500/10 group-hover:text-emerald-300 transition-colors duration-300 shadow-inner">
-              <DollarSign className="h-5 w-5" />
             </div>
           </div>
           <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">Starting pocket money</span>
