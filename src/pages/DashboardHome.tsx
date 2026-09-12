@@ -1095,9 +1095,6 @@ export const DashboardHome: React.FC = () => {
               <RefreshCw className="h-3 w-3" />
               <span>Reset Defaults</span>
             </button>
-            <span className="text-[10px] text-gray-500 font-mono uppercase font-bold tracking-wider hidden sm:inline">
-              Budget vs Spent Realization
-            </span>
           </div>
         </div>
 

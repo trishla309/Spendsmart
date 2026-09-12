@@ -377,16 +377,6 @@ export const SavingsPage: React.FC = () => {
               <span className="text-4xl md:text-5xl font-black text-white tracking-tight">
                 {currency}{formatAmount(totalSavings)}
               </span>
-              <span className="text-xs text-gray-400 font-medium">
-                (Whatever you currently have saved across Cash & Online Savings)
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-2 rounded-xl">
-              <span className="text-[10px] text-emerald-400 uppercase font-bold block">Savings</span>
-              <span className="text-xs font-extrabold text-emerald-300">Cash & Online Savings</span>
             </div>
           </div>
         </div>

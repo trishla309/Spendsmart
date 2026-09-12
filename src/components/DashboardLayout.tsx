@@ -144,9 +144,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <h1 className="text-lg font-black tracking-tight text-white flex items-center gap-1">
                 Fenno
               </h1>
-              <span className="text-[10px] text-gray-500 font-mono font-extrabold tracking-wider uppercase block mt-0.5">
-                Student Edition
-              </span>
             </div>
           </Link>
         </div>
@@ -347,12 +344,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   </div>
                 </div>
               )}
-            </div>
-
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-[10px] font-black tracking-wider uppercase text-emerald-400 bg-emerald-500/5 px-3 py-1.5 border border-emerald-500/15 rounded-full shadow-sm">
-                Active Student
-              </span>
             </div>
           </div>
         </header>
