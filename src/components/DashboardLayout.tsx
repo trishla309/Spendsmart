@@ -128,17 +128,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col md:flex-row font-sans" id="app-container">
       {/* Sidebar */}
-      <aside className="w-full md:w-72 bg-gray-900/40 backdrop-blur-xl border-b md:border-b-0 md:border-r border-gray-800/80 flex flex-col shrink-0" id="sidebar-panel">
+      <aside className="w-full md:w-72 md:h-screen md:sticky md:top-0 bg-gray-900/40 backdrop-blur-xl border-b md:border-b-0 md:border-r border-gray-800/80 flex flex-col shrink-0 z-30" id="sidebar-panel">
         {/* Sidebar Header Brand */}
-        <div className="p-6 border-b border-gray-800/60 flex items-center justify-between">
+        <div className="p-5 border-b border-gray-800/60 flex items-center justify-between shrink-0">
           <Link 
             to="/" 
             className="flex items-center gap-3 hover:opacity-95 transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 rounded-xl p-1"
             title="Back to Landing Page"
             id="sidebar-brand-link"
           >
-            <div className="p-2.5 bg-emerald-500/5 text-emerald-400 rounded-xl border border-emerald-500/15 shadow-lg shadow-emerald-500/5 group-hover:scale-105 transition-transform">
-              <Award className="h-5.5 w-5.5 animate-pulse" />
+            <div className="p-2 bg-emerald-500/5 text-emerald-400 rounded-xl border border-emerald-500/15 shadow-lg shadow-emerald-500/5 group-hover:scale-105 transition-transform">
+              <Award className="h-5 w-5 animate-pulse" />
             </div>
             <div>
               <h1 className="text-lg font-black tracking-tight text-white flex items-center gap-1">
@@ -148,41 +148,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </Link>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="flex-1 px-4.5 py-6 flex flex-col gap-2">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                id={`sidebar-link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
-                className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all duration-300 group ${
-                  isActive
-                    ? "bg-emerald-500/5 border-emerald-500/15 text-emerald-300 shadow-lg shadow-emerald-500/5"
-                    : "bg-transparent border-transparent hover:bg-gray-850/50 hover:border-gray-800/50 text-gray-400 hover:text-gray-100"
-                }`}
-              >
-                <div className="flex items-center gap-3.5">
-                  <Icon className={`h-4.5 w-4.5 shrink-0 transition-transform duration-300 group-hover:scale-105 ${isActive ? "text-emerald-400" : "text-gray-400 group-hover:text-gray-300"}`} />
-                  <div>
-                    <span className="text-xs font-bold block">{item.name}</span>
-                    <span className="text-[10px] text-gray-500 font-semibold leading-none block mt-1 transition-colors group-hover:text-gray-400">{item.desc}</span>
-                  </div>
-                </div>
-                <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-all duration-300 ${
-                  isActive ? "text-emerald-400 translate-x-0.5" : "text-gray-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5"
-                }`} />
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User Card & Logout Footer */}
-        <div className="p-4 border-t border-gray-800 bg-gray-900/30 flex flex-col gap-3">
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-gray-950/40 border border-gray-800/80 shadow-inner">
-            <div className="p-2 bg-emerald-500/5 border border-emerald-500/15 rounded-xl text-emerald-400">
+        {/* User Account & Sign Out - Positioned First */}
+        <div className="p-4 border-b border-gray-800/60 bg-gray-900/20 flex flex-col gap-2.5 shrink-0" id="sidebar-account-section">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-gray-950/50 border border-gray-800/80 shadow-inner">
+            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 shrink-0">
               <UserIcon className="h-4 w-4" />
             </div>
             <div className="min-w-0 flex-1">
@@ -193,13 +162,44 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
           <button
             onClick={onLogout}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold bg-gray-950/40 hover:bg-rose-500/5 border border-gray-800/80 hover:border-rose-500/15 text-gray-400 hover:text-rose-400 transition-all duration-300 group cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-gray-950/40 hover:bg-rose-500/10 border border-gray-800/80 hover:border-rose-500/20 text-gray-400 hover:text-rose-400 transition-all duration-300 group cursor-pointer"
             id="logout-button"
           >
             <LogOut className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             <span>Sign Out</span>
           </button>
         </div>
+
+        {/* Navigation Items */}
+        <nav className="flex-1 px-3.5 py-4 flex flex-col gap-1.5 overflow-y-auto" id="sidebar-nav">
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                id={`sidebar-link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl border transition-all duration-300 group ${
+                  isActive
+                    ? "bg-emerald-500/5 border-emerald-500/15 text-emerald-300 shadow-lg shadow-emerald-500/5"
+                    : "bg-transparent border-transparent hover:bg-gray-850/50 hover:border-gray-800/50 text-gray-400 hover:text-gray-100"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={`h-4.5 w-4.5 shrink-0 transition-transform duration-300 group-hover:scale-105 ${isActive ? "text-emerald-400" : "text-gray-400 group-hover:text-gray-300"}`} />
+                  <div>
+                    <span className="text-xs font-bold block">{item.name}</span>
+                    <span className="text-[10px] text-gray-500 font-semibold leading-none block mt-0.5 transition-colors group-hover:text-gray-400">{item.desc}</span>
+                  </div>
+                </div>
+                <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-all duration-300 ${
+                  isActive ? "text-emerald-400 translate-x-0.5" : "text-gray-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5"
+                }`} />
+              </Link>
+            );
+          })}
+        </nav>
       </aside>
 
       {/* Main Panel */}
