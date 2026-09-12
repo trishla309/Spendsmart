@@ -711,7 +711,7 @@ export const TransactionHistory: React.FC = () => {
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-gray-400 flex items-center gap-1">
               <Search className="h-3.5 w-3.5 text-emerald-400" />
-              Trie Instant Search
+              Search
             </label>
             <input
               type="text"
