@@ -106,14 +106,14 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
   const onlineSavings = Math.max(0, Math.round((totalOnlineSavingsIn - totalOnlineSavingsOut) * 100) / 100);
   const gpaySavings = onlineSavings; // backward compatibility
 
-  // 2. Cash Savings (Physical cash kept aside; cash expenses deduct from here)
-  const cashSavings = Math.max(0, Math.round((totalCashSavingsIn - totalCashSavingsOut - allCashExpenses) * 100) / 100);
+  // 2. Cash Savings (Physical cash kept aside in cash savings pot)
+  const cashSavings = Math.max(0, Math.round((totalCashSavingsIn - totalCashSavingsOut) * 100) / 100);
 
   // Total Savings = Online Savings + Cash Savings
   const totalSavings = Math.round((onlineSavings + cashSavings) * 100) / 100;
 
   // 3. Online Money (Spendable funds for online expenses and savings deposits)
-  const onlineMoney = Math.round((allIncome - allOnlineExpenses - totalMovedFromOnlineMoney + totalReturnedToOnlineMoney) * 100) / 100;
+  const onlineMoney = Math.max(0, Math.round((allIncome - totalSpendingExpenses) * 100) / 100);
   const availableBalance = onlineMoney; // backward compatibility
 
   // Total Money (Reference: Online Money + Total Savings == Total Income - All Expenses)

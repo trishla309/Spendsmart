@@ -114,9 +114,8 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
     const financials = await getUserCumulativeFinancials(userId, month);
 
     // Compute month spendable balance strictly tied to the selected month's received funds:
-    // Monthly Spendable = Total Money Received - Total Month Expenses - Money Moved to Savings
-    const monthMovedFromCurrent = financials.monthMovedFromCurrentBalance || 0;
-    const monthSpendableMoney = Math.max(0, Math.round((totalMoneyReceived - totalExpenses - monthMovedFromCurrent) * 100) / 100);
+    // Monthly Spendable = Total Money Received - Total Month Expenses
+    const monthSpendableMoney = Math.max(0, Math.round((totalMoneyReceived - totalExpenses) * 100) / 100);
 
     const availableBalance = monthSpendableMoney;
     const onlineMoney = monthSpendableMoney;

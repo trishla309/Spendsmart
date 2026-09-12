@@ -143,11 +143,11 @@ export async function seedShowcaseDataForUser(userId: string, forceReset = true)
   const existingExpenses = await Expense.find({ userId, date: { $gte: "2026-09-01", $lte: "2026-09-30" } as any });
   const totalExisting = existingExpenses.reduce((sum, e) => sum + e.amount, 0);
 
-  if (existingBudget && existingBudget.pocketMoney === 8000 && totalExisting === 2748 && !forceReset) {
+  if (existingBudget && existingBudget.pocketMoney === 8000 && totalExisting === 2800 && !forceReset) {
     return;
   }
 
-  // Reset September 2026 data for this demo user to exact 2nd week (Day 11) data
+  // Reset September 2026 data for this demo user to exact daily data
   await Budget.deleteMany({ userId, month: currentMonth });
   await Expense.deleteMany({
     userId,
@@ -164,7 +164,7 @@ export async function seedShowcaseDataForUser(userId: string, forceReset = true)
     month: { $in: ["2026-06", "2026-07", "2026-08"] } as any,
   });
 
-  console.log(`Seeding Day 11 (2nd week) showcase data for user ${userId} in ${currentMonth}...`);
+  console.log(`Seeding clean September daily showcase data for user ${userId} in ${currentMonth}...`);
 
   // 1. Current Month Budget (September 2026) - Total ₹8,000
   await Budget.create({
@@ -193,22 +193,23 @@ export async function seedShowcaseDataForUser(userId: string, forceReset = true)
     }
   });
 
-  // 2. Realistic September 2026 Expenses strictly up to Day 11 (Total spent: ₹2,748)
+  // 2. Realistic September 2026 Daily Expenses (Total spent: exactly ₹2,800)
   const showcaseExpenses = [
-    { description: "Campus Cafeteria - Lunch & Smoothie", amount: 120, category: "food", date: "2026-09-01", paidUsing: "online", note: "Healthy lunch meal" },
-    { description: "Metro Transit SmartCard Monthly Recharge", amount: 350, category: "transport", date: "2026-09-01", paidUsing: "online", note: "Monthly commute pass" },
-    { description: "Data Structures & Algorithms Reference Book", amount: 190, category: "stationery", date: "2026-09-02", paidUsing: "online", note: "Course textbook" },
-    { description: "Starbucks Hazelnut Latte & Bagel", amount: 180, category: "food", date: "2026-09-03", paidUsing: "online", note: "Study cafe session" },
-    { description: "Amazon - Ergonomic Laptop Stand", amount: 399, category: "shopping", date: "2026-09-04", paidUsing: "online", note: "Desk setup upgrade" },
-    { description: "Campus Pharmacy - First Aid & Cold Care", amount: 150, category: "emergency", date: "2026-09-05", paidUsing: "cash", note: "Medical essentials" },
-    { description: "Hostel Mess Snacks & Cold Coffee", amount: 110, category: "food", date: "2026-09-05", paidUsing: "online", note: "Evening canteen snacks" },
-    { description: "PVR Cinemas - Weekend Movie Ticket", amount: 200, category: "entertainment", date: "2026-09-06", paidUsing: "online", note: "Movie with friends" },
-    { description: "Zomato - Weekend Dinner with Friends", amount: 360, category: "food", date: "2026-09-07", paidUsing: "online", note: "Split weekend dinner" },
-    { description: "Auto Rickshaw to City Campus Library", amount: 120, category: "transport", date: "2026-09-08", paidUsing: "cash", note: "Library trip" },
-    { description: "Spotify Student Duo Monthly", amount: 119, category: "entertainment", date: "2026-09-08", paidUsing: "online", note: "Monthly music subscription" },
-    { description: "Spiral Notebooks & Gel Pen Set", amount: 80, category: "stationery", date: "2026-09-09", paidUsing: "cash", note: "Project notes" },
-    { description: "Hostel High-Speed Wi-Fi Contribution", amount: 180, category: "other", date: "2026-09-10", paidUsing: "online", note: "Monthly Wi-Fi split" },
-    { description: "Blue Tokai Cold Brew & Sandwich", amount: 190, category: "food", date: "2026-09-10", paidUsing: "online", note: "Co-working space cafe" },
+    { description: "Campus Cafeteria - Welcome Lunch", amount: 120, category: "food", date: "2026-09-01", paidUsing: "online", note: "Welcome lunch meal" },
+    { description: "Metro SmartCard Monthly Pass", amount: 350, category: "transport", date: "2026-09-01", paidUsing: "online", note: "Monthly transit recharge" },
+    { description: "DSA & System Design Reference Book", amount: 170, category: "stationery", date: "2026-09-02", paidUsing: "online", note: "Engineering textbook" },
+    { description: "Starbucks Iced Caramel Macchiato", amount: 180, category: "food", date: "2026-09-03", paidUsing: "online", note: "Study cafe session" },
+    { description: "Amazon - Aluminium Laptop Stand", amount: 400, category: "shopping", date: "2026-09-04", paidUsing: "online", note: "Desk setup upgrade" },
+    { description: "Campus Medical Store - Cold Medicine", amount: 180, category: "emergency", date: "2026-09-05", paidUsing: "cash", note: "Medical essentials" },
+    { description: "Canteen Evening Tea & Samosa", amount: 60, category: "food", date: "2026-09-05", paidUsing: "cash", note: "Campus tea break" },
+    { description: "PVR Cinemas - Weekend Movie Ticket", amount: 210, category: "entertainment", date: "2026-09-06", paidUsing: "online", note: "Weekend movie" },
+    { description: "Zomato - Sunday Dinner with Roommates", amount: 380, category: "food", date: "2026-09-07", paidUsing: "online", note: "Split Sunday dinner" },
+    { description: "Spotify Student Duo Subscription", amount: 120, category: "entertainment", date: "2026-09-08", paidUsing: "online", note: "Monthly music subscription" },
+    { description: "Auto Rickshaw to Central Library", amount: 110, category: "transport", date: "2026-09-08", paidUsing: "cash", note: "Library auto ride" },
+    { description: "Classmate Spiral Notebooks & Pens", amount: 80, category: "stationery", date: "2026-09-09", paidUsing: "cash", note: "Project stationery" },
+    { description: "Hostel High-Speed Wi-Fi Split", amount: 200, category: "other", date: "2026-09-10", paidUsing: "online", note: "Monthly Wi-Fi contribution" },
+    { description: "Blue Tokai Cold Brew & Sandwich", amount: 140, category: "food", date: "2026-09-11", paidUsing: "online", note: "Co-working space snack" },
+    { description: "Campus Cafe - Morning Coffee & Muffin", amount: 100, category: "food", date: "2026-09-12", paidUsing: "online", note: "Quick morning breakfast" },
   ];
 
   for (const exp of showcaseExpenses) {
@@ -223,7 +224,7 @@ export async function seedShowcaseDataForUser(userId: string, forceReset = true)
     });
   }
 
-  // 3. Day 11 (2nd Week) Savings Movements (Total ₹600 = 40% progress on ₹1,500 goal)
+  // 3. Savings Movements (Total ₹600: Online ₹400 + Cash ₹200)
   await SavingsMovement.create({
     userId,
     amount: 400,
@@ -246,5 +247,5 @@ export async function seedShowcaseDataForUser(userId: string, forceReset = true)
     note: "Emergency cash envelope",
   });
 
-  console.log(`Day 11 (2nd week) showcase data successfully seeded for user ${userId}! Total spent: ₹2,748 / ₹8,000 (34.35%), Savings: ₹600 / ₹1,500 (40%).`);
+  console.log(`Clean September showcase data successfully seeded for user ${userId}! Spent: ₹2,800 / ₹8,000 (35%), Spendable: ₹5,200, Savings: ₹600 / ₹1,500 (40%).`);
 }
