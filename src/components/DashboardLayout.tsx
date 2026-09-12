@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check, PiggyBank } from "lucide-react";
+import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check, PiggyBank, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { motion } from "motion/react";
 import { api } from "../lib/api";
 
@@ -23,6 +23,23 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [notifications, setNotifications] = React.useState<any[]>([]);
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
   const [isNotifOpen, setIsNotifOpen] = React.useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = React.useState<boolean>(() => {
+    try {
+      return localStorage.getItem("spendsmart_sidebar_collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleSidebar = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("spendsmart_sidebar_collapsed", String(next));
+      } catch {}
+      return next;
+    });
+  };
 
   const fetchNotifications = React.useCallback(async () => {
     try {
@@ -128,29 +145,51 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col md:flex-row font-sans" id="app-container">
       {/* Sidebar */}
-      <aside className="w-full md:w-72 md:h-screen md:sticky md:top-0 bg-gray-900/40 backdrop-blur-xl border-b md:border-b-0 md:border-r border-gray-800/80 flex flex-col justify-between shrink-0 z-30 overflow-y-auto" id="sidebar-panel">
-        <div>
-          {/* Sidebar Header Brand */}
-          <div className="p-5 border-b border-gray-800/60 flex items-center justify-between shrink-0">
+      <aside
+        className={`w-full md:h-screen md:sticky md:top-0 bg-gray-900/40 backdrop-blur-xl border-b md:border-b-0 md:border-r border-gray-800/80 flex flex-col justify-between shrink-0 z-30 transition-all duration-300 ease-in-out ${
+          isCollapsed ? "md:w-20" : "md:w-72"
+        }`}
+        id="sidebar-panel"
+      >
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Sidebar Header Brand & Toggle Button */}
+          <div className={`p-4 border-b border-gray-800/60 flex items-center shrink-0 ${isCollapsed ? "justify-center flex-col gap-3" : "justify-between"}`}>
             <Link 
               to="/" 
-              className="flex items-center gap-3 hover:opacity-95 transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 rounded-xl p-1"
-              title="Back to Landing Page"
+              className={`flex items-center gap-2.5 hover:opacity-95 transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1 ${isCollapsed ? "justify-center" : ""}`}
+              title={isCollapsed ? "Fenno" : "Back to Landing Page"}
               id="sidebar-brand-link"
             >
-              <div className="p-2 bg-emerald-500/5 text-emerald-400 rounded-xl border border-emerald-500/15 shadow-lg shadow-emerald-500/5 group-hover:scale-105 transition-transform">
+              <div className="p-2 bg-emerald-500/5 text-emerald-400 rounded-xl border border-emerald-500/15 shadow-lg shadow-emerald-500/5 group-hover:scale-105 transition-transform shrink-0">
                 <Award className="h-5 w-5 animate-pulse" />
               </div>
-              <div>
-                <h1 className="text-lg font-black tracking-tight text-white flex items-center gap-1">
-                  Fenno
-                </h1>
-              </div>
+              {!isCollapsed && (
+                <div className="overflow-hidden">
+                  <h1 className="text-lg font-black tracking-tight text-white">
+                    Fenno
+                  </h1>
+                </div>
+              )}
             </Link>
+
+            {/* Sidebar Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="p-2 rounded-xl border border-gray-800/80 text-gray-400 hover:text-white bg-gray-950/60 hover:bg-gray-900 transition-colors cursor-pointer hidden md:flex items-center justify-center shrink-0 shadow-sm"
+              title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              id="sidebar-toggle-btn"
+            >
+              {isCollapsed ? (
+                <PanelLeftOpen className="h-4 w-4 text-emerald-400" />
+              ) : (
+                <PanelLeftClose className="h-4 w-4" />
+              )}
+            </button>
           </div>
 
-          {/* Navigation Items */}
-          <nav className="px-3.5 py-4 flex flex-col gap-1.5" id="sidebar-nav">
+          {/* Navigation Items (Independently Scrollable Middle Navigation) */}
+          <nav className="flex-1 overflow-y-auto px-2.5 py-3 flex flex-col gap-1.5 scrollbar-thin" id="sidebar-nav">
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path;
               const Icon = item.icon;
@@ -159,48 +198,78 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   key={item.path}
                   to={item.path}
                   id={`sidebar-link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl border transition-all duration-300 group ${
+                  title={isCollapsed ? item.name : undefined}
+                  className={`flex items-center rounded-2xl border transition-all duration-200 group ${
+                    isCollapsed
+                      ? "justify-center p-3"
+                      : "justify-between px-3.5 py-2.5"
+                  } ${
                     isActive
                       ? "bg-emerald-500/5 border-emerald-500/15 text-emerald-300 shadow-lg shadow-emerald-500/5"
                       : "bg-transparent border-transparent hover:bg-gray-850/50 hover:border-gray-800/50 text-gray-400 hover:text-gray-100"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`h-4.5 w-4.5 shrink-0 transition-transform duration-300 group-hover:scale-105 ${isActive ? "text-emerald-400" : "text-gray-400 group-hover:text-gray-300"}`} />
-                    <div>
-                      <span className="text-xs font-bold block">{item.name}</span>
-                      <span className="text-[10px] text-gray-500 font-semibold leading-none block mt-0.5 transition-colors group-hover:text-gray-400">{item.desc}</span>
-                    </div>
+                  <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
+                    <Icon className={`h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 ${isActive ? "text-emerald-400" : "text-gray-400 group-hover:text-gray-300"}`} />
+                    {!isCollapsed && (
+                      <div className="overflow-hidden">
+                        <span className="text-xs font-bold block truncate">{item.name}</span>
+                        <span className="text-[10px] text-gray-500 font-semibold leading-none block mt-0.5 transition-colors group-hover:text-gray-400 truncate">{item.desc}</span>
+                      </div>
+                    )}
                   </div>
-                  <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-all duration-300 ${
-                    isActive ? "text-emerald-400 translate-x-0.5" : "text-gray-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5"
-                  }`} />
+                  {!isCollapsed && (
+                    <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-all duration-200 ${
+                      isActive ? "text-emerald-400 translate-x-0.5" : "text-gray-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5"
+                    }`} />
+                  )}
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        {/* User Account & Sign Out - Below Profile & Settings with dedicated space */}
-        <div className="p-4 border-t border-gray-800/70 bg-gray-900/30 flex flex-col gap-2.5 shrink-0" id="sidebar-account-section">
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-gray-950/50 border border-gray-800/80 shadow-inner">
-            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 shrink-0">
-              <UserIcon className="h-4 w-4" />
+        {/* User Account & Sign Out Footer - Fixed at bottom, below Profile & Settings with space */}
+        <div className="p-3 border-t border-gray-800/70 bg-gray-900/30 flex flex-col gap-2 shrink-0 mt-auto" id="sidebar-account-section">
+          {isCollapsed ? (
+            <div className="flex flex-col items-center gap-2">
+              <div
+                className="p-2.5 bg-gray-950/60 border border-gray-800/80 rounded-xl text-emerald-400 flex items-center justify-center cursor-default shadow-inner"
+                title={`${userName} (${userEmail})`}
+              >
+                <UserIcon className="h-4 w-4" />
+              </div>
+              <button
+                onClick={onLogout}
+                className="p-2.5 rounded-xl text-gray-400 hover:text-rose-400 bg-gray-950/40 hover:bg-rose-500/10 border border-gray-800/80 hover:border-rose-500/20 transition-all cursor-pointer flex items-center justify-center shadow-sm"
+                title="Sign Out"
+                id="logout-button-collapsed"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
             </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-xs font-extrabold text-gray-200 block truncate">{userName}</span>
-              <span className="text-[10px] text-gray-500 font-semibold block truncate mt-0.5">{userEmail}</span>
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-gray-950/50 border border-gray-800/80 shadow-inner">
+                <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 shrink-0">
+                  <UserIcon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-xs font-extrabold text-gray-200 block truncate">{userName}</span>
+                  <span className="text-[10px] text-gray-500 font-semibold block truncate mt-0.5">{userEmail}</span>
+                </div>
+              </div>
 
-          <button
-            onClick={onLogout}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-gray-950/40 hover:bg-rose-500/10 border border-gray-800/80 hover:border-rose-500/20 text-gray-400 hover:text-rose-400 transition-all duration-300 group cursor-pointer"
-            id="logout-button"
-          >
-            <LogOut className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            <span>Sign Out</span>
-          </button>
+              <button
+                onClick={onLogout}
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold bg-gray-950/40 hover:bg-rose-500/10 border border-gray-800/80 hover:border-rose-500/20 text-gray-400 hover:text-rose-400 transition-all duration-200 group cursor-pointer"
+                id="logout-button"
+              >
+                <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                <span>Sign Out</span>
+              </button>
+            </>
+          )}
         </div>
       </aside>
 
