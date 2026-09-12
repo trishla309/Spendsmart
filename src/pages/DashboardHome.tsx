@@ -847,19 +847,14 @@ export const DashboardHome: React.FC = () => {
 
       {/* 1. Header with Month Selection and Read-only lock notice */}
       <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300" id="dashboard-header-container">
-        <div className="flex flex-col gap-1.5 self-stretch md:self-auto">
-          <span className="text-[10px] text-gray-500 font-mono font-extrabold tracking-wider uppercase">
-            Selected Fiscal Month
-          </span>
-          <div className="flex items-center gap-3">
-            <input
-              type="month"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-4.5 py-3 bg-gray-950/60 border border-gray-800 hover:border-emerald-500/30 focus:border-emerald-500/70 focus:ring-4 focus:ring-emerald-500/10 text-sm text-gray-100 rounded-2xl outline-none font-bold transition-all shadow-inner"
-              id="dashboard-month-select"
-            />
-          </div>
+        <div className="flex items-center gap-3 self-stretch md:self-auto">
+          <input
+            type="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="px-4.5 py-3 bg-gray-950/60 border border-gray-800 hover:border-emerald-500/30 focus:border-emerald-500/70 focus:ring-4 focus:ring-emerald-500/10 text-sm text-gray-100 rounded-2xl outline-none font-bold transition-all shadow-inner"
+            id="dashboard-month-select"
+          />
         </div>
 
         {/* Lock indicator state */}
