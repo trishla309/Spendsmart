@@ -147,22 +147,10 @@ export async function seedShowcaseDataForUser(userId: string, forceReset = true)
     return;
   }
 
-  // Reset September 2026 data for this demo user to exact daily data
-  await Budget.deleteMany({ userId, month: currentMonth });
-  await Expense.deleteMany({
-    userId,
-    date: { $gte: "2026-09-01", $lte: "2026-09-30" } as any,
-  });
-  await SavingsMovement.deleteMany({
-    userId,
-    date: { $gte: "2026-09-01", $lte: "2026-09-30" } as any,
-  });
-
-  // Also clean up any unspent historical placeholder budgets that artificially inflate balances
-  await Budget.deleteMany({
-    userId,
-    month: { $in: ["2026-06", "2026-07", "2026-08"] } as any,
-  });
+  // Reset all data for this user to ensure pristine and 100% reconciled calculations
+  await Budget.deleteMany({ userId });
+  await Expense.deleteMany({ userId });
+  await SavingsMovement.deleteMany({ userId });
 
   console.log(`Seeding clean September daily showcase data for user ${userId} in ${currentMonth}...`);
 
