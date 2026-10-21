@@ -102,6 +102,10 @@ export const LendingAndDues: React.FC = () => {
   const [isLentHistoryOpen, setIsLentHistoryOpen] = useState(false);
   const [selectedLentForHistory, setSelectedLentForHistory] = useState<MoneyLentRecord | null>(null);
 
+  // Modal for Settled/Completed History
+  const [isSettledHistoryOpen, setIsSettledHistoryOpen] = useState(false);
+  const [settledHistoryTab, setSettledHistoryTab] = useState<"lent" | "pay">("lent");
+
   // Modals for Money to Pay
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [editingPayRecord, setEditingPayRecord] = useState<MoneyToPayRecord | null>(null);
@@ -211,9 +215,28 @@ export const LendingAndDues: React.FC = () => {
   const lentPercent = totalVolume > 0 ? Math.round((totalOwedToMe / totalVolume) * 100) : 50;
   const owePercent = totalVolume > 0 ? 100 - lentPercent : 50;
 
-  // Filtered Money Lent Records
+  // Active vs Settled partitioning
+  const activeLentRecords = useMemo(
+    () => lentRecords.filter((r) => Number(r.remainingAmount) > 0 && r.status !== "Received"),
+    [lentRecords]
+  );
+  const settledLentRecords = useMemo(
+    () => lentRecords.filter((r) => Number(r.remainingAmount) <= 0 || r.status === "Received"),
+    [lentRecords]
+  );
+
+  const activePayRecords = useMemo(
+    () => payRecords.filter((r) => Number(r.remainingAmount) > 0 && r.status !== "Paid"),
+    [payRecords]
+  );
+  const settledPayRecords = useMemo(
+    () => payRecords.filter((r) => Number(r.remainingAmount) <= 0 || r.status === "Paid"),
+    [payRecords]
+  );
+
+  // Filtered Active Money Lent Records
   const filteredLentRecords = useMemo(() => {
-    return lentRecords.filter((r) => {
+    return activeLentRecords.filter((r) => {
       const matchesSearch =
         r.personName.toLowerCase().includes(lentSearch.toLowerCase()) ||
         (r.note || "").toLowerCase().includes(lentSearch.toLowerCase());
@@ -222,7 +245,7 @@ export const LendingAndDues: React.FC = () => {
         r.status.toLowerCase().replace(/\s+/g, "") === lentStatusFilter.toLowerCase().replace(/\s+/g, "");
       return matchesSearch && matchesStatus;
     });
-  }, [lentRecords, lentSearch, lentStatusFilter]);
+  }, [activeLentRecords, lentSearch, lentStatusFilter]);
 
   // Grouped Money Lent by Person
   const groupedLentPersons = useMemo(() => {
@@ -293,9 +316,9 @@ export const LendingAndDues: React.FC = () => {
     return result.sort((a, b) => b.remainingOwed - a.remainingOwed || a.personName.localeCompare(b.personName));
   }, [filteredLentRecords]);
 
-  // Filtered Money to Pay Records
+  // Filtered Active Money to Pay Records
   const filteredPayRecords = useMemo(() => {
-    return payRecords.filter((r) => {
+    return activePayRecords.filter((r) => {
       const matchesSearch =
         r.payeeName.toLowerCase().includes(paySearch.toLowerCase()) ||
         (r.note || "").toLowerCase().includes(paySearch.toLowerCase());
@@ -306,7 +329,7 @@ export const LendingAndDues: React.FC = () => {
         r.status.toLowerCase().replace(/\s+/g, "") === payStatusFilter.toLowerCase().replace(/\s+/g, "");
       return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [payRecords, paySearch, payCategoryFilter, payStatusFilter]);
+  }, [activePayRecords, paySearch, payCategoryFilter, payStatusFilter]);
 
   // Grouped Money to Pay by Payee
   const groupedPayees = useMemo(() => {
@@ -639,6 +662,25 @@ export const LendingAndDues: React.FC = () => {
 
         {/* Quick Actions */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* History Archive Icon Button */}
+          <button
+            onClick={() => {
+              setSettledHistoryTab(activeTab === "pay" ? "pay" : "lent");
+              setIsSettledHistoryOpen(true);
+            }}
+            title="View completed loans & cleared dues"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white border border-gray-700/80 font-semibold text-xs rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
+            id="btn-settled-history"
+          >
+            <History className="w-3.5 h-3.5 text-purple-400" />
+            <span>History</span>
+            {(settledLentRecords.length + settledPayRecords.length) > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-purple-500/20 text-purple-300 font-mono font-bold">
+                {settledLentRecords.length + settledPayRecords.length}
+              </span>
+            )}
+          </button>
+
           <button
             onClick={() => {
               setEditingLentRecord(null);
@@ -670,7 +712,7 @@ export const LendingAndDues: React.FC = () => {
                 amount: "",
                 dateAdded: new Date().toISOString().split("T")[0],
                 dueDate: "",
-                category: "Bills",
+                category: "Shopping",
                 note: "",
                 paidUsing: "online",
               });
@@ -828,7 +870,7 @@ export const LendingAndDues: React.FC = () => {
                 activeTab === "lent" ? "bg-white/20 text-white" : "bg-gray-800 text-gray-400"
               }`}
             >
-              {lentRecords.length}
+              {activeLentRecords.length}
             </span>
           </button>
 
@@ -852,7 +894,7 @@ export const LendingAndDues: React.FC = () => {
                 activeTab === "pay" ? "bg-white/20 text-white" : "bg-gray-800 text-gray-400"
               }`}
             >
-              {payRecords.length}
+              {activePayRecords.length}
             </span>
           </button>
 
@@ -958,10 +1000,9 @@ export const LendingAndDues: React.FC = () => {
 
             <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
               {[
-                { key: "all", label: "All" },
+                { key: "all", label: "All Active" },
                 { key: "pending", label: "Pending" },
                 { key: "partiallyreceived", label: "Partially Received" },
-                { key: "received", label: "Received" },
               ].map((s) => (
                 <button
                   key={s.key}
@@ -982,14 +1023,26 @@ export const LendingAndDues: React.FC = () => {
           {lentLoading ? (
             <div className="text-center py-8 text-gray-500 text-xs">Loading Money Lent records...</div>
           ) : filteredLentRecords.length === 0 ? (
-            <div className="text-center py-8 bg-gray-900/30 border border-gray-800/60 rounded-2xl p-6">
-              <HandCoins className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-              <h3 className="text-sm font-bold text-white">No Money Lent Records</h3>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {lentSearch || lentStatusFilter !== "all"
-                  ? "No loans match your search filter."
-                  : "You haven't recorded lending money to anyone yet."}
+            <div className="text-center py-10 bg-gray-900/30 border border-gray-800/60 rounded-2xl p-6">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2">
+                <CheckCircle className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-bold text-white">All Loans Settled!</h3>
+              <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
+                You have no pending money owed to you. All completed loans have moved to History.
               </p>
+              {settledLentRecords.length > 0 && (
+                <button
+                  onClick={() => {
+                    setSettledHistoryTab("lent");
+                    setIsSettledHistoryOpen(true);
+                  }}
+                  className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                >
+                  <History className="w-3.5 h-3.5 text-purple-400" />
+                  <span>View Settled Loans ({settledLentRecords.length})</span>
+                </button>
+              )}
             </div>
           ) : lentViewMode === "grouped" ? (
             /* ========================================================================= */
@@ -1438,11 +1491,10 @@ export const LendingAndDues: React.FC = () => {
 
               <div className="flex items-center gap-1 bg-gray-950/60 border border-gray-800 p-0.5 rounded-xl overflow-x-auto">
                 {[
-                  { key: "all", label: "All" },
+                  { key: "all", label: "All Active" },
                   { key: "pending", label: "Pending" },
                   { key: "duesoon", label: "Due Soon" },
                   { key: "overdue", label: "Overdue" },
-                  { key: "paid", label: "Paid" },
                 ].map((s) => (
                   <button
                     key={s.key}
@@ -1464,14 +1516,26 @@ export const LendingAndDues: React.FC = () => {
           {payLoading ? (
             <div className="text-center py-8 text-gray-500 text-xs">Loading obligations...</div>
           ) : filteredPayRecords.length === 0 ? (
-            <div className="text-center py-8 bg-gray-900/30 border border-gray-800/60 rounded-2xl p-6">
-              <Receipt className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-              <h3 className="text-sm font-bold text-white">No Payment Obligations Found</h3>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {paySearch || payStatusFilter !== "all" || payCategoryFilter !== "all"
-                  ? "No obligations match your search filter."
-                  : "You don't have any unpaid obligations or bills logged right now."}
+            <div className="text-center py-10 bg-gray-900/30 border border-gray-800/60 rounded-2xl p-6">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2">
+                <CheckCircle className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-bold text-white">All Dues Cleared!</h3>
+              <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
+                You have no outstanding bills or obligations pending. All cleared dues have moved to History.
               </p>
+              {settledPayRecords.length > 0 && (
+                <button
+                  onClick={() => {
+                    setSettledHistoryTab("pay");
+                    setIsSettledHistoryOpen(true);
+                  }}
+                  className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                >
+                  <History className="w-3.5 h-3.5 text-rose-400" />
+                  <span>View Cleared Dues ({settledPayRecords.length})</span>
+                </button>
+              )}
             </div>
           ) : payViewMode === "grouped" ? (
             /* ========================================================================= */
@@ -2823,6 +2887,139 @@ export const LendingAndDues: React.FC = () => {
                 >
                   {isDeleting ? "Deleting..." : "Delete"}
                 </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ========================================================================= */}
+      {/* MODAL: SETTLED HISTORY (ARCHIVE FOR COMPLETED LOANS & DUES)               */}
+      {/* ========================================================================= */}
+      <AnimatePresence>
+        {isSettledHistoryOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-xl bg-gray-900 border border-gray-800 rounded-3xl p-5 shadow-2xl text-white relative max-h-[85vh] flex flex-col"
+            >
+              <button
+                onClick={() => setIsSettledHistoryOpen(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                  <History className="w-4.5 h-4.5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Settled History</h3>
+                  <p className="text-[11px] text-gray-400">Archived completed loans and fully paid obligations</p>
+                </div>
+              </div>
+
+              {/* Sub-tabs: Settled Loans vs Cleared Dues */}
+              <div className="flex items-center gap-1.5 p-1 bg-gray-950/60 border border-gray-800 rounded-xl mb-3">
+                <button
+                  onClick={() => setSettledHistoryTab("lent")}
+                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    settledHistoryTab === "lent"
+                      ? "bg-purple-600 text-white"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Settled Loans ({settledLentRecords.length})
+                </button>
+                <button
+                  onClick={() => setSettledHistoryTab("pay")}
+                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    settledHistoryTab === "pay"
+                      ? "bg-rose-600 text-white"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Cleared Dues ({settledPayRecords.length})
+                </button>
+              </div>
+
+              {/* Records scroll area */}
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                {settledHistoryTab === "lent" ? (
+                  settledLentRecords.length === 0 ? (
+                    <div className="text-center py-10 text-gray-500 text-xs">
+                      No settled loans yet.
+                    </div>
+                  ) : (
+                    settledLentRecords.map((r) => (
+                      <div key={r._id} className="p-3 bg-gray-950/60 border border-gray-800/80 rounded-xl flex items-center justify-between gap-3 text-xs">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white capitalize">{r.personName}</span>
+                            <span className="px-1.5 py-0.2 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold">
+                              ✓ Fully Returned
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-gray-400 mt-0.5">
+                            Lent: {currency}{r.amount.toLocaleString("en-IN")} • Date: {r.date} {r.note ? `• "${r.note}"` : ""}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => {
+                              setSelectedLentForHistory(r);
+                              setIsLentHistoryOpen(true);
+                            }}
+                            className="p-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-[11px] font-semibold flex items-center gap-1 cursor-pointer"
+                            title="View repayment details"
+                          >
+                            <History className="w-3 h-3 text-purple-400" />
+                            <span>Details</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )
+                ) : (
+                  settledPayRecords.length === 0 ? (
+                    <div className="text-center py-10 text-gray-500 text-xs">
+                      No cleared obligations yet.
+                    </div>
+                  ) : (
+                    settledPayRecords.map((r) => (
+                      <div key={r._id} className="p-3 bg-gray-950/60 border border-gray-800/80 rounded-xl flex items-center justify-between gap-3 text-xs">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white capitalize">{r.payeeName}</span>
+                            <span className="px-1.5 py-0.2 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold">
+                              ✓ Paid
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-mono">({r.category})</span>
+                          </div>
+                          <div className="text-[10px] text-gray-400 mt-0.5">
+                            Amount: {currency}{r.amount.toLocaleString("en-IN")} • Due: {r.dueDate}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => {
+                              setSelectedPayForHistory(r);
+                              setIsPayHistoryOpen(true);
+                            }}
+                            className="p-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-[11px] font-semibold flex items-center gap-1 cursor-pointer"
+                            title="View payment details"
+                          >
+                            <History className="w-3 h-3 text-rose-400" />
+                            <span>Details</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )
+                )}
               </div>
             </motion.div>
           </div>
