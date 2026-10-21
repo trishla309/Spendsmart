@@ -96,12 +96,67 @@ export interface ISavingsMovement {
   userId: string;
   amount: number;
   direction: "to_savings" | "from_savings";
-  source: string; // "online_money" | "online_savings" | "cash_savings" | "cash" | "gpay_upi"
-  destination?: string; // "online_money" | "online_savings" | "cash_savings"
-  fundingSource?: "current_balance" | "previous_savings";
+  source: string; // "online_money" | "online_savings" | "cash_savings" | "cash" | "gpay_upi" | "external" | "previous_savings" | "lent"
+  destination?: string; // "online_money" | "online_savings" | "cash_savings" | "lent"
+  fundingSource?: "current_balance" | "previous_savings" | "loan_repayment" | "external" | "spendable" | string;
+  countsTowardGoal?: boolean;
   date: string; // "YYYY-MM-DD"
   note?: string;
   createdAt: string;
+}
+
+export interface IRepaymentHistory {
+  _id: string;
+  amount: number;
+  date: string; // "YYYY-MM-DD"
+  note?: string;
+  paidUsing?: "online" | "cash";
+  createdAt: string;
+}
+
+export interface IMoneyLent {
+  _id: string;
+  userId: string;
+  personName: string;
+  amount: number;
+  date: string; // "YYYY-MM-DD"
+  expectedReturnDate?: string; // "YYYY-MM-DD"
+  note?: string;
+  paidUsing?: "online" | "cash";
+  lentFrom?: "online_savings" | "cash_savings" | "online_money" | "cash" | string;
+  amountReceived: number;
+  remainingAmount: number;
+  status: "Pending" | "Partially Received" | "Received";
+  repayments: IRepaymentHistory[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface IPaymentHistory {
+  _id: string;
+  amount: number;
+  date: string; // "YYYY-MM-DD"
+  note?: string;
+  paidUsing?: "online" | "cash";
+  expenseId?: string;
+  createdAt: string;
+}
+
+export interface IMoneyToPay {
+  _id: string;
+  userId: string;
+  payeeName: string;
+  amount: number;
+  dateAdded: string; // "YYYY-MM-DD"
+  dueDate: string; // "YYYY-MM-DD"
+  category: "Hostel" | "Fees" | "Bills" | "Borrowed Money" | "Shopping" | "Other" | string;
+  note?: string;
+  amountPaid: number;
+  remainingAmount: number;
+  status: "Pending" | "Partially Paid" | "Paid" | "Overdue";
+  payments: IPaymentHistory[];
+  createdAt: string;
+  updatedAt?: string;
 }
 
 interface IDatabaseSchema {
@@ -111,6 +166,8 @@ interface IDatabaseSchema {
   notifications: INotification[];
   otps: IOtp[];
   savingsMovements: ISavingsMovement[];
+  moneyLent: IMoneyLent[];
+  moneyToPay: IMoneyToPay[];
 }
 
 // Check MongoDB connection availability
@@ -174,9 +231,62 @@ const SavingsMovementMongoSchema = new Schema({
   source: { type: String, required: true }, // "cash" | "gpay_upi" | "online_money" | "online_savings" | "cash_savings"
   destination: { type: String, default: "" }, // "online_money" | "online_savings" | "cash_savings"
   fundingSource: { type: String, default: "current_balance" }, // "current_balance" | "previous_savings"
+  countsTowardGoal: { type: Boolean, default: false },
   date: { type: String, required: true },
   note: { type: String, default: "" },
   createdAt: { type: String, default: () => new Date().toISOString() },
+});
+
+const RepaymentMongoSchema = new Schema({
+  _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() },
+  amount: { type: Number, required: true },
+  date: { type: String, required: true },
+  note: { type: String, default: "" },
+  paidUsing: { type: String, default: "online" },
+  createdAt: { type: String, default: () => new Date().toISOString() },
+});
+
+const MoneyLentMongoSchema = new Schema({
+  userId: { type: String, required: true },
+  personName: { type: String, required: true },
+  amount: { type: Number, required: true },
+  date: { type: String, required: true },
+  expectedReturnDate: { type: String, default: "" },
+  note: { type: String, default: "" },
+  paidUsing: { type: String, default: "online" },
+  lentFrom: { type: String, default: "online_money" },
+  amountReceived: { type: Number, default: 0 },
+  remainingAmount: { type: Number, required: true },
+  status: { type: String, default: "Pending" },
+  repayments: { type: [RepaymentMongoSchema], default: [] },
+  createdAt: { type: String, default: () => new Date().toISOString() },
+  updatedAt: { type: String, default: () => new Date().toISOString() },
+});
+
+const PaymentMongoSchema = new Schema({
+  _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() },
+  amount: { type: Number, required: true },
+  date: { type: String, required: true },
+  note: { type: String, default: "" },
+  paidUsing: { type: String, default: "online" },
+  expenseId: { type: String },
+  createdAt: { type: String, default: () => new Date().toISOString() },
+});
+
+const MoneyToPayMongoSchema = new Schema({
+  userId: { type: String, required: true },
+  payeeName: { type: String, required: true },
+  amount: { type: Number, required: true },
+  dateAdded: { type: String, required: true },
+  dueDate: { type: String, required: true },
+  category: { type: String, required: true },
+  note: { type: String, default: "" },
+  amountPaid: { type: Number, default: 0 },
+  remainingAmount: { type: Number, required: true },
+  status: { type: String, default: "Pending" },
+  payments: { type: [PaymentMongoSchema], default: [] },
+  createdAt: { type: String, default: () => new Date().toISOString() },
+  updatedAt: { type: String, default: () => new Date().toISOString() },
 });
 
 const UserM = mongoose.models.User || mongoose.model("User", UserMongoSchema);
@@ -185,6 +295,8 @@ const ExpenseM = mongoose.models.Expense || mongoose.model("Expense", ExpenseMon
 const NotificationM = mongoose.models.Notification || mongoose.model("Notification", NotificationMongoSchema);
 const OtpM = mongoose.models.OTP || mongoose.model("OTP", OTPMongoSchema);
 const SavingsMovementM = mongoose.models.SavingsMovement || mongoose.model("SavingsMovement", SavingsMovementMongoSchema);
+const MoneyLentM = mongoose.models.MoneyLent || mongoose.model("MoneyLent", MoneyLentMongoSchema);
+const MoneyToPayM = mongoose.models.MoneyToPay || mongoose.model("MoneyToPay", MoneyToPayMongoSchema);
 
 // Try connecting to MongoDB. If it fails, fall back to JSON database.
 export async function initDatabaseConnection(): Promise<boolean> {
@@ -198,21 +310,21 @@ export async function initDatabaseConnection(): Promise<boolean> {
       throw new Error(msg);
     }
     console.warn("\n======================================================\n" +
-                 "WARNING: No MONGODB_URI configured. Defaulting to local JSON database.\n" +
-                 "======================================================\n");
+      "WARNING: No MONGODB_URI configured. Defaulting to local JSON database.\n" +
+      "======================================================\n");
     isMongoConnected = false;
     return false;
   }
   try {
     const maskedUri = MONGODB_URI.replace(/:([^@]+)@/, ":****@");
     console.log(`Connecting to MongoDB Atlas at: ${maskedUri}`);
-    
+
     // Disable command buffering so queries fail fast if connection drops/fails
     mongoose.set("bufferCommands", false);
 
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 15000, // 15 seconds timeout to prevent false timeout fallbacks
-      connectTimeoutMS: 15000,
+      serverSelectionTimeoutMS: 5000, // 5 seconds timeout for fast startup and seamless fallback
+      connectTimeoutMS: 5000,
     });
     isMongoConnected = true;
     console.log("Connected to MongoDB Atlas successfully!");
@@ -228,9 +340,9 @@ export async function initDatabaseConnection(): Promise<boolean> {
       throw new Error(msg);
     }
     console.error("\n======================================================\n" +
-                  `WARNING: MongoDB Atlas connection failed. Falling back to local JSON database.\n` +
-                  `Error: ${error.message || error}\n` +
-                  "======================================================\n");
+      `WARNING: MongoDB Atlas connection failed. Falling back to local JSON database.\n` +
+      `Error: ${error.message || error}\n` +
+      "======================================================\n");
     isMongoConnected = false;
     return false;
   }
@@ -282,13 +394,15 @@ let backupDebounceTimer: NodeJS.Timeout | null = null;
 export async function backupMongoToJsonFile(): Promise<void> {
   if (!isMongoConnected) return;
   try {
-    const [users, budgets, expenses, notifications, otps, savingsMovements] = await Promise.all([
+    const [users, budgets, expenses, notifications, otps, savingsMovements, moneyLent, moneyToPay] = await Promise.all([
       UserM.find().lean(),
       BudgetM.find().lean(),
       ExpenseM.find().lean(),
       NotificationM.find().lean(),
       OtpM.find().lean(),
       SavingsMovementM.find().lean(),
+      MoneyLentM.find().lean(),
+      MoneyToPayM.find().lean(),
     ]);
 
     const backupData: IDatabaseSchema = {
@@ -298,6 +412,8 @@ export async function backupMongoToJsonFile(): Promise<void> {
       notifications: notifications.map(transformDoc),
       otps: otps.map(transformDoc),
       savingsMovements: savingsMovements.map(transformDoc),
+      moneyLent: (moneyLent || []).map(transformDoc),
+      moneyToPay: (moneyToPay || []).map(transformDoc),
     };
 
     const jsonStr = JSON.stringify(backupData, null, 2);
@@ -313,7 +429,7 @@ export async function backupMongoToJsonFile(): Promise<void> {
 export function triggerDebouncedBackup() {
   if (backupDebounceTimer) clearTimeout(backupDebounceTimer);
   backupDebounceTimer = setTimeout(() => {
-    backupMongoToJsonFile().catch(() => {});
+    backupMongoToJsonFile().catch(() => { });
   }, 2000);
 }
 
@@ -356,6 +472,12 @@ export async function restoreDiskBackupToMongoIfNeeded(): Promise<void> {
         if (localData.savingsMovements && localData.savingsMovements.length > 0) {
           await SavingsMovementM.insertMany(localData.savingsMovements.map(toMongoDoc));
         }
+        if (localData.moneyLent && localData.moneyLent.length > 0) {
+          await MoneyLentM.insertMany(localData.moneyLent.map(toMongoDoc));
+        }
+        if (localData.moneyToPay && localData.moneyToPay.length > 0) {
+          await MoneyToPayM.insertMany(localData.moneyToPay.map(toMongoDoc));
+        }
         console.log("[RESTORE] All account data restored into MongoDB successfully!");
       }
     } else {
@@ -380,6 +502,12 @@ class JsonDatabase {
       if (!parsed.savingsMovements) {
         parsed.savingsMovements = [];
       }
+      if (!parsed.moneyLent) {
+        parsed.moneyLent = [];
+      }
+      if (!parsed.moneyToPay) {
+        parsed.moneyToPay = [];
+      }
       return parsed;
     } catch (error) {
       const initialSchema: IDatabaseSchema = {
@@ -389,6 +517,8 @@ class JsonDatabase {
         notifications: [],
         otps: [],
         savingsMovements: [],
+        moneyLent: [],
+        moneyToPay: [],
       };
       await fs.writeFile(DB_FILE, JSON.stringify(initialSchema, null, 2), "utf-8");
       return initialSchema;
@@ -412,6 +542,8 @@ class JsonDatabase {
       if (collectionName === "notifications") return NotificationM;
       if (collectionName === "otps") return OtpM;
       if (collectionName === "savingsMovements") return SavingsMovementM;
+      if (collectionName === "moneyLent") return MoneyLentM;
+      if (collectionName === "moneyToPay") return MoneyToPayM;
       return ExpenseM;
     };
 
@@ -568,6 +700,8 @@ export const Expense = db.getModel("expenses");
 export const Notification = db.getModel("notifications");
 export const OTP = db.getModel("otps");
 export const SavingsMovement = db.getModel("savingsMovements");
+export const MoneyLent = db.getModel("moneyLent");
+export const MoneyToPay = db.getModel("moneyToPay");
 
 export async function getUserCategories(userId: string): Promise<IUserCategory[]> {
   try {

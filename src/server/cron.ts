@@ -117,5 +117,68 @@ export function initCronJobs() {
     }
   });
 
+  // Run every morning at 9:00 AM (server time) to check upcoming and overdue payment obligations
+  cron.schedule("0 9 * * *", async () => {
+    console.log("[CRON] Starting payment obligation reminder job...");
+    try {
+      const todayStr = new Date().toISOString().split("T")[0];
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const { MoneyToPay, Notification } = await import("./db");
+      const { NotificationQueueManager } = await import("./notificationQueue");
+      const { computeObligationStatus } = await import("./moneyToPay");
+
+      const allObligations = await MoneyToPay.find();
+
+      for (const item of allObligations) {
+        const amt = Number(item.amount) || 0;
+        const paid = Number(item.amountPaid) || 0;
+        const remaining = Math.max(0, Math.round((amt - paid) * 100) / 100);
+
+        if (remaining <= 0) continue;
+
+        const { status, isDueSoon, daysDifference } = computeObligationStatus(
+          amt,
+          paid,
+          item.dueDate || todayStr,
+          todayStr
+        );
+
+        if (status === "Overdue" || isDueSoon) {
+          const notifTitle =
+            status === "Overdue"
+              ? `Payment Overdue: ${item.payeeName}`
+              : `Payment Due Soon: ${item.payeeName}`;
+
+          const existing = await Notification.findOne({
+            userId: item.userId,
+            title: notifTitle,
+            createdAt: { $gte: startOfDay.toISOString() } as any,
+          });
+
+          if (!existing) {
+            const msg =
+              status === "Overdue"
+                ? `Reminder: Payment of ₹${remaining} to "${item.payeeName}" is overdue since ${item.dueDate}.`
+                : daysDifference === 0
+                ? `Urgent: Payment of ₹${remaining} to "${item.payeeName}" is due TODAY!`
+                : `Reminder: Payment of ₹${remaining} to "${item.payeeName}" is due in ${daysDifference} day${daysDifference > 1 ? "s" : ""} (${item.dueDate}).`;
+
+            NotificationQueueManager.enqueueNotification(
+              item.userId,
+              status === "Overdue" ? "warning" : "info",
+              notifTitle,
+              msg
+            );
+          }
+        }
+      }
+      console.log("[CRON] Payment obligation reminder job completed.");
+    } catch (error) {
+      console.error("[CRON] Error checking payment obligation reminders:", error);
+    }
+  });
+
   console.log("Initialized background CRON jobs.");
 }

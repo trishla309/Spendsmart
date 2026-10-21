@@ -22,13 +22,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // If unauthorized, clear token and trigger a reload/redirect
+    const url = error.config?.url || "";
+    const isAuthEndpoint = url.includes("/auth/verify-otp") || 
+                           url.includes("/auth/request-otp") || 
+                           url.includes("/auth/signup");
+
+    if (error.response && error.response.status === 401 && !isAuthEndpoint) {
+      // If unauthorized on protected resource, clear invalid token and redirect to root
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // Check if we are already on login or signup to prevent loop
-      if (!window.location.pathname.includes("/login") && !window.location.pathname.includes("/signup")) {
-        window.location.href = "/login?expired=true";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
       }
     }
     return Promise.reject(error);

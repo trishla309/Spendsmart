@@ -49,9 +49,10 @@ export interface SavingsMovement {
   userId: string;
   amount: number;
   direction: "to_savings" | "from_savings";
-  source: string; // "online_money" | "online_savings" | "cash_savings" | "cash" | "gpay_upi"
-  destination?: string; // "online_money" | "online_savings" | "cash_savings"
-  fundingSource?: "current_balance" | "previous_savings";
+  source: string; // "online_money" | "online_savings" | "cash_savings" | "cash" | "gpay_upi" | "external" | "previous_savings" | "lent"
+  destination?: string; // "online_money" | "online_savings" | "cash_savings" | "lent"
+  fundingSource?: "current_balance" | "previous_savings" | "loan_repayment" | "external" | "spendable" | string;
+  countsTowardGoal?: boolean;
   date: string;
   note?: string;
   createdAt: string;
@@ -75,6 +76,8 @@ export interface SavingsSummary {
   monthReturnedFromCash?: number;
   monthReturnedFromOnline?: number;
   monthReturnedFromGpay?: number;
+  monthMovedFromSpendable?: number;
+  monthExternalSavingsAdded?: number;
   previousSavingsRecorded?: number;
   netMonthSavings: number;
   monthSavingsProgress: number;
@@ -82,5 +85,88 @@ export interface SavingsSummary {
   monthCashExpenses?: number;
   monthSpentFromSavings?: number;
   remainingSavingsRequired: number;
+  totalLentOut?: number;
+  totalLentReceived?: number;
+  totalLentOwed?: number;
+  totalObligationsDue?: number;
+  totalObligationsPaid?: number;
+  totalObligationsRemaining?: number;
+  totalObligationsOverdue?: number;
   movements: SavingsMovement[];
+}
+
+export interface RepaymentHistory {
+  _id: string;
+  amount: number;
+  date: string;
+  note?: string;
+  paidUsing?: "online" | "cash";
+  createdAt: string;
+}
+
+export interface MoneyLentRecord {
+  _id: string;
+  userId: string;
+  personName: string;
+  amount: number;
+  date: string;
+  expectedReturnDate?: string;
+  note?: string;
+  paidUsing?: "online" | "cash";
+  lentFrom?: "online_savings" | "cash_savings" | "online_money" | "cash" | string;
+  amountReceived: number;
+  remainingAmount: number;
+  status: "Pending" | "Partially Received" | "Received";
+  repayments: RepaymentHistory[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface MoneyLentSummary {
+  totalLent: number;
+  totalReceived: number;
+  totalOwed: number;
+  pendingCount: number;
+  receivedCount: number;
+  totalCount: number;
+}
+
+export interface PaymentHistory {
+  _id: string;
+  amount: number;
+  date: string;
+  note?: string;
+  paidUsing?: "online" | "cash";
+  createdAt: string;
+}
+
+export interface MoneyToPayRecord {
+  _id: string;
+  userId: string;
+  payeeName: string;
+  amount: number;
+  dateAdded: string;
+  dueDate: string;
+  category: "Hostel" | "Fees" | "Bills" | "Borrowed Money" | "Shopping" | "Other" | string;
+  note?: string;
+  amountPaid: number;
+  remainingAmount: number;
+  status: "Pending" | "Partially Paid" | "Paid" | "Overdue";
+  isDueSoon?: boolean;
+  daysDifference?: number;
+  payments: PaymentHistory[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface MoneyToPaySummary {
+  totalDue: number;
+  totalPaid: number;
+  totalRemaining: number;
+  totalOverdue: number;
+  overdueCount: number;
+  dueSoonCount: number;
+  paidCount: number;
+  pendingCount: number;
+  totalCount: number;
 }

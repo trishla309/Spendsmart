@@ -8,10 +8,12 @@ import expensesRouter from "./src/server/expenses";
 import notificationsRouter from "./src/server/notifications";
 import savingsRouter from "./src/server/savings";
 import categoriesRouter from "./src/server/categories";
+import moneyLentRouter from "./src/server/moneyLent";
+import moneyToPayRouter from "./src/server/moneyToPay";
 import { initCronJobs } from "./src/server/cron";
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   // Midldlewares
   app.use(express.json());
@@ -35,6 +37,8 @@ async function startServer() {
   app.use("/api/notifications", notificationsRouter);
   app.use("/api/savings", savingsRouter);
   app.use("/api/categories", categoriesRouter);
+  app.use("/api/money-lent", moneyLentRouter);
+  app.use("/api/money-to-pay", moneyToPayRouter);
 
   // Initialize Background Tasks
   initCronJobs();
@@ -67,8 +71,26 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`SpendSmart Server is live at http://0.0.0.0:${PORT}`);
+    console.log(`SpendSmart Server is live on port ${PORT}`);
   });
+
+  // Helper redirect: if port 5173 is visited in local development, automatically forward to port 3000
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      const redirectApp = express();
+      redirectApp.use((req, res) => {
+        res.redirect(`http://localhost:${PORT}${req.url}`);
+      });
+      const redirectServer = redirectApp.listen(5173, "0.0.0.0", () => {
+        console.log(`Port 5173 helper active: forwarding requests to http://localhost:${PORT}`);
+      });
+      redirectServer.on("error", () => {
+        // Ignore if port 5173 is already in use
+      });
+    } catch (e) {
+      // Ignore error if binding to 5173 fails
+    }
+  }
 }
 
 startServer().catch((err) => {

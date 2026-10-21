@@ -151,14 +151,49 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
     setAuthLoading(true);
     try {
       await api.post("/auth/request-otp", { email: "demo@spendsmart.com" });
-      setAuthType("login");
-      setStep("otp");
-      setOtp("123456");
+      const response = await api.post("/auth/verify-otp", {
+        email: "demo@spendsmart.com",
+        otp: "123456",
+        type: "login",
+      });
+      const { token, user } = response.data;
+      if (onLoginSuccess) {
+        onLoginSuccess(token, user);
+      }
+      closeModal();
+      navigate("/dashboard");
     } catch (err: any) {
-      // Fallback
       setAuthType("login");
       setStep("otp");
       setOtp("123456");
+      setAuthError(err.response?.data?.error || "Could not automatically sign in.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleTrishthaLogin = async () => {
+    setEmail("trishtha97@gmail.com");
+    setAuthError(null);
+    setAuthLoading(true);
+    try {
+      await api.post("/auth/request-otp", { email: "trishtha97@gmail.com" });
+      const response = await api.post("/auth/verify-otp", {
+        email: "trishtha97@gmail.com",
+        otp: "123456",
+        type: "login",
+      });
+      const { token, user } = response.data;
+      if (onLoginSuccess) {
+        onLoginSuccess(token, user);
+      }
+      closeModal();
+      navigate("/dashboard");
+    } catch (err: any) {
+      setAuthType("login");
+      setStep("otp");
+      setOtp("123456");
+      setAuthError(err.response?.data?.error || "Could not automatically sign in.");
     } finally {
       setAuthLoading(false);
     }
@@ -205,20 +240,33 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
 
           {/* Right Action CTAs */}
           <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={openLoginModal}
-              className="text-[13.5px] font-medium text-nearblack/75 hover:text-navy px-3 py-1.5 transition-colors cursor-pointer"
-              id="nav-login-btn"
-            >
-              Log in
-            </button>
-            <button
-              onClick={openSignupModal}
-              className="inline-flex items-center justify-center px-4.5 py-2 text-[13.5px] font-medium text-white bg-navy hover:bg-navy-hover rounded-lg transition-all shadow-xs cursor-pointer"
-              id="nav-get-started-btn"
-            >
-              Get Started
-            </button>
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center justify-center px-4.5 py-2 text-[13.5px] font-medium text-white bg-navy hover:bg-navy-hover rounded-lg transition-all shadow-xs cursor-pointer gap-2"
+                id="nav-go-dashboard-btn"
+              >
+                Go to Dashboard
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={openLoginModal}
+                  className="text-[13.5px] font-medium text-nearblack/75 hover:text-navy px-3 py-1.5 transition-colors cursor-pointer"
+                  id="nav-login-btn"
+                >
+                  Log in
+                </button>
+                <button
+                  onClick={openSignupModal}
+                  className="inline-flex items-center justify-center px-4.5 py-2 text-[13.5px] font-medium text-white bg-navy hover:bg-navy-hover rounded-lg transition-all shadow-xs cursor-pointer"
+                  id="nav-get-started-btn"
+                >
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -292,21 +340,43 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 w-full sm:w-auto">
-            <button
-              onClick={openSignupModal}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer group"
-              id="hero-get-started-btn"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="ml-2 h-4 w-4 text-white/80 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-            <button
-              onClick={openLoginModal}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-nearblack/85 hover:text-nearblack bg-white/90 hover:bg-white border border-sand-border hover:border-nearblack/25 rounded-xl transition-all shadow-xs cursor-pointer"
-              id="hero-login-btn"
-            >
-              Log in
-            </button>
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer group"
+                id="hero-go-dashboard-btn"
+              >
+                <span>Go to Your Dashboard</span>
+                <ArrowRight className="ml-2 h-4 w-4 text-white/80 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={handleTrishthaLogin}
+                  disabled={authLoading}
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-emerald-950 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer group"
+                  id="hero-my-data-btn"
+                >
+                  <span>✨ Open My Data (Trishtha)</span>
+                  <ArrowRight className="ml-2 h-4 w-4 text-emerald-800 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+                <button
+                  onClick={openSignupModal}
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-white bg-navy hover:bg-navy-hover rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer group"
+                  id="hero-get-started-btn"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="ml-2 h-4 w-4 text-white/80 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+                <button
+                  onClick={openLoginModal}
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-nearblack/85 hover:text-nearblack bg-white/90 hover:bg-white border border-sand-border hover:border-nearblack/25 rounded-xl transition-all shadow-xs cursor-pointer"
+                  id="hero-login-btn"
+                >
+                  Log in
+                </button>
+              </>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mt-10 pt-6 border-t border-sand-border/60 text-xs text-graytext">
@@ -622,13 +692,20 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
                   )}
                 </button>
 
-                <div className="mt-3 pt-3 border-t border-sand-border flex flex-col gap-2.5">
+                <div className="mt-3 pt-3 border-t border-sand-border flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={handleTrishthaLogin}
+                    className="w-full py-2.5 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors text-center cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    ✨ Log in with My Data (Trishtha)
+                  </button>
                   <button
                     type="button"
                     onClick={handleDemoLogin}
-                    className="w-full py-2.5 text-xs font-medium text-navy bg-navy/5 hover:bg-navy/10 border border-navy/15 rounded-lg transition-colors text-center cursor-pointer"
+                    className="w-full py-2 text-xs font-medium text-navy bg-navy/5 hover:bg-navy/10 border border-navy/15 rounded-lg transition-colors text-center cursor-pointer"
                   >
-                    ⚡ Try Instant Demo Account
+                    ⚡ Try Instant Demo Account (Aarav Patel)
                   </button>
                 </div>
               </form>
@@ -692,7 +769,7 @@ export function LandingPage({ isAuthenticated, onLoginSuccess }: LandingPageProp
               <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
                 <div className="text-xs text-graytext leading-relaxed">
                   We've sent a 6-digit verification code to <strong className="text-nearblack font-semibold">{email}</strong>.
-                  {email === "demo@spendsmart.com" || email === "student@example.com" || email === "trishtha97@gmail.com" || email === "trishth97@gmail.com" || email === "tristha97@gmail.com" ? (
+                  {email === "demo@spendsmart.com" || email === "student@example.com" || email === "trishtha97@gmail.com" || email === "trishth97@gmail.com" || email === "tristha97@gmail.com" || email === "trishlaprajapati07@gmail.com" || email === "trishla@gmail.com" ? (
                     <div className="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg font-medium text-xs">
                       Quick Access: Enter OTP <strong className="font-mono text-sm">123456</strong> (Auto-filled)
                     </div>

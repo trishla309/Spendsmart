@@ -1,5 +1,5 @@
 import { Router, Response } from "express";
-import { Budget, Expense, SavingsMovement } from "./db";
+import { Budget, Expense, SavingsMovement, MoneyLent, MoneyToPay } from "./db";
 import { authMiddleware, AuthenticatedRequest } from "./auth";
 import { NotificationQueueManager } from "./notificationQueue";
 
@@ -8,8 +8,9 @@ const router = Router();
 // Helper to classify movement source & destination
 export function getMovementInfo(m: any) {
   const isToSavings = m.direction === "to_savings";
-  const rawSource = (m.source || "").toLowerCase();
-  const rawDest = (m.destination || "").toLowerCase();
+  const rawSource = (m.source || "").toLowerCase().trim();
+  const rawDest = (m.destination || "").toLowerCase().trim();
+  const rawFunding = (m.fundingSource || "").toLowerCase().trim();
 
   let dest = rawDest;
   let src = rawSource;
@@ -20,14 +21,29 @@ export function getMovementInfo(m: any) {
     } else {
       dest = "online_savings";
     }
-    src = m.fundingSource === "previous_savings" ? "previous_savings" : "online_money";
+
+    if (rawSource === "lent" || rawSource === "repayment" || rawFunding === "loan_repayment") {
+      src = "lent";
+    } else if (rawFunding === "previous_savings" || rawSource === "previous_savings") {
+      src = "previous_savings";
+    } else if (rawFunding === "external" || rawSource === "external") {
+      // External funds (gifts, parents, side income) - does NOT deduct from spendable online money
+      src = "external";
+    } else {
+      // Explicit shift from spendable or historical balance movement
+      src = "online_money";
+    }
   } else {
     if (rawSource === "cash" || rawSource === "cash_savings") {
       src = "cash_savings";
     } else {
       src = "online_savings";
     }
-    dest = "online_money";
+    if (rawDest === "lent" || rawDest === "lent_to_friend" || rawDest === "money_lent") {
+      dest = "lent";
+    } else {
+      dest = "online_money";
+    }
   }
 
   return { src, dest, isToSavings };
@@ -74,7 +90,9 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
   let totalCashSavingsIn = 0;
   let totalCashSavingsOut = 0;
   let totalMovedFromOnlineMoney = 0;
+  let totalExternalSavingsAdded = 0;
   let totalPreviousSavingsRecorded = 0;
+  let totalReturnedToOnlineMoney = 0;
 
   movements.forEach((m) => {
     const amt = Number(m.amount) || 0;
@@ -96,27 +114,103 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
       totalMovedFromOnlineMoney += amt;
     } else if (info.src === "previous_savings") {
       totalPreviousSavingsRecorded += amt;
+    } else if (info.src === "external") {
+      totalExternalSavingsAdded += amt;
+    }
+
+    if (!info.isToSavings && info.dest === "online_money") {
+      totalReturnedToOnlineMoney += amt;
     }
   });
 
-  const totalReturnedToOnlineMoney = totalOnlineSavingsOut + totalCashSavingsOut;
+  // 4. Money Lent & Money to Pay impacts
+  const allMoneyLent = await MoneyLent.find({ userId });
+  const allMoneyToPay = await MoneyToPay.find({ userId });
+
+  let totalOnlineLentNet = 0;
+  let totalCashLentNet = 0;
+  let totalLentOut = 0;
+  let totalLentReceived = 0;
+
+  allMoneyLent.forEach((record: any) => {
+    const isOnline = (record.paidUsing || "online").toLowerCase() !== "cash";
+    const lentAmt = Number(record.amount) || 0;
+    totalLentOut += lentAmt;
+
+    if (isOnline) {
+      totalOnlineLentNet += lentAmt;
+    } else {
+      totalCashLentNet += lentAmt;
+    }
+
+    (record.repayments || []).forEach((rep: any) => {
+      const repAmt = Number(rep.amount) || 0;
+      totalLentReceived += repAmt;
+      const repIsOnline = (rep.paidUsing || "online").toLowerCase() !== "cash";
+      if (repIsOnline) {
+        totalOnlineLentNet -= repAmt;
+      } else {
+        totalCashLentNet -= repAmt;
+      }
+    });
+  });
+
+  const totalLentOwed = Math.max(0, Math.round((totalLentOut - totalLentReceived) * 100) / 100);
+
+  let totalOnlineObligationsPaid = 0;
+  let totalCashObligationsPaid = 0;
+  let totalObligationsDue = 0;
+  let totalObligationsPaid = 0;
+  let totalObligationsOverdue = 0;
+
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  allMoneyToPay.forEach((record: any) => {
+    const dueAmt = Number(record.amount) || 0;
+    totalObligationsDue += dueAmt;
+
+    let recPaid = 0;
+    (record.payments || []).forEach((pay: any) => {
+      const payAmt = Number(pay.amount) || 0;
+      recPaid += payAmt;
+      totalObligationsPaid += payAmt;
+      const payIsOnline = (pay.paidUsing || "online").toLowerCase() !== "cash";
+      if (payIsOnline) {
+        totalOnlineObligationsPaid += payAmt;
+      } else {
+        totalCashObligationsPaid += payAmt;
+      }
+    });
+
+    const rem = Math.max(0, dueAmt - recPaid);
+    if (rem > 0 && record.dueDate && record.dueDate < todayStr) {
+      totalObligationsOverdue += rem;
+    }
+  });
+
+  const totalObligationsRemaining = Math.max(0, Math.round((totalObligationsDue - totalObligationsPaid) * 100) / 100);
 
   // Cumulative Buckets
   // 1. Online Savings (Intentionally kept aside digitally)
   const onlineSavings = Math.max(0, Math.round((totalOnlineSavingsIn - totalOnlineSavingsOut) * 100) / 100);
   const gpaySavings = onlineSavings; // backward compatibility
 
-  // 2. Cash Savings (Physical cash kept aside in cash savings pot)
-  const cashSavings = Math.max(0, Math.round((totalCashSavingsIn - totalCashSavingsOut) * 100) / 100);
+  // 2. Cash Savings (Physical cash kept aside in cash savings pot, minus any cash expenses spent from cash)
+  const cashSavings = Math.max(0, Math.round((totalCashSavingsIn - totalCashSavingsOut - allCashExpenses) * 100) / 100);
 
   // Total Savings = Online Savings + Cash Savings
   const totalSavings = Math.round((onlineSavings + cashSavings) * 100) / 100;
 
-  // 3. Online Money (Spendable funds for online expenses and savings deposits)
-  const onlineMoney = Math.max(0, Math.round((allIncome - totalSpendingExpenses) * 100) / 100);
+  // Net savings transferred from current spendable balance into savings buckets
+  const netSavingsFromIncome = totalMovedFromOnlineMoney - totalReturnedToOnlineMoney;
+
+  // 3. Online Money (User's real-world Google Pay balance: Total Income - All Online Expenses - Net Savings shifted from spendable balance)
+  // Crucial: Physical cash spending does NOT deduct from the digital Google Pay balance!
+  // Crucial: External additions to savings (gifts, family, outside deposits) NEVER deduct from spendable online money!
+  const onlineMoney = Math.round((allIncome - allOnlineExpenses - netSavingsFromIncome) * 100) / 100;
   const availableBalance = onlineMoney; // backward compatibility
 
-  // Total Money (Reference: Online Money + Total Savings == Total Income - All Expenses)
+  // Total Money (Reference: Online Spendable Money + Total Savings Held)
   const totalMoney = Math.round((onlineMoney + totalSavings) * 100) / 100;
 
   // Month-specific calculations (for monthly goals and monthly movements)
@@ -129,7 +223,7 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
   const monthReturnedFromSavings = monthMovements
-    .filter((m) => m.direction === "from_savings")
+    .filter((m) => m.direction === "from_savings" && getMovementInfo(m).dest === "online_money")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
   const monthMovedToCash = monthMovements
@@ -145,15 +239,21 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
   const monthReturnedFromOnline = monthMovements
-    .filter((m) => m.direction === "from_savings" && getMovementInfo(m).src === "online_savings")
+    .filter((m) => m.direction === "from_savings" && getMovementInfo(m).src === "online_savings" && getMovementInfo(m).dest === "online_money")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
-  const monthMovedFromCurrentBalance = monthMovements
-    .filter((m) => m.direction === "to_savings" && m.fundingSource !== "previous_savings")
+  // Funds specifically shifted from spendable account this month
+  const monthMovedFromSpendable = monthMovements
+    .filter((m) => m.direction === "to_savings" && getMovementInfo(m).src === "online_money")
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  // External funds added to savings this month (gifts, parents, outside sources)
+  const monthExternalSavingsAdded = monthMovements
+    .filter((m) => m.direction === "to_savings" && getMovementInfo(m).src === "external")
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
   const monthPreviousSavingsRecorded = monthMovements
-    .filter((m) => m.direction === "to_savings" && m.fundingSource === "previous_savings")
+    .filter((m) => m.direction === "to_savings" && (m.fundingSource === "previous_savings" || getMovementInfo(m).src === "previous_savings"))
     .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
 
   // Cash expenses spent directly from cash savings in this month
@@ -164,9 +264,24 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
   // Total spent from savings this month (money moved back to main online account to spend + direct cash expenses)
   const monthSpentFromSavings = Math.round((monthReturnedFromSavings + monthCashExpenses) * 100) / 100;
 
-  // Net Savings for Selected Month = Money Moved from current income/pocket money - Money Returned
-  const netMonthSavings = monthMovedFromCurrentBalance - monthReturnedFromSavings;
-  const monthSavingsProgress = Math.max(0, netMonthSavings);
+  // Active savings progress toward monthly savings goal (total new money saved in the month)
+  const monthSavingsProgress = monthMovements
+    .filter((m) => {
+      if (m.direction !== "to_savings") return false;
+      const src = getMovementInfo(m).src;
+      if (src === "previous_savings") return false;
+      // If loan repayment, only count if explicitly saved toward goal
+      if (src === "lent" && !m.countsTowardGoal) return false;
+      return true;
+    })
+    .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+
+  // Net Spendable Shifted for Selected Month = Money shifted from spendable - Money returned from savings to spendable
+  const netMonthSpendableTransferred = monthMovedFromSpendable - monthReturnedFromSavings;
+
+  // Overall Net Savings Growth for Selected Month = Total new savings added - Savings returned/withdrawn
+  const netMonthSavings = Math.round((monthSavingsProgress - monthReturnedFromSavings) * 100) / 100;
+
   const savingsGoalPercentage =
     monthSavingsGoal > 0
       ? Math.min(100, Math.round((monthSavingsProgress / monthSavingsGoal) * 100))
@@ -181,6 +296,8 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     allCashExpenses,
     totalMovedToSavings: totalOnlineSavingsIn + totalCashSavingsIn,
     totalMovedFromCurrentBalance: totalMovedFromOnlineMoney,
+    totalMovedFromSpendable: totalMovedFromOnlineMoney,
+    totalExternalSavingsAdded,
     totalPreviousSavingsRecorded,
     totalReturnedFromSavings: totalReturnedToOnlineMoney,
     onlineMoney,
@@ -192,7 +309,9 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     totalMoney,
     monthSavingsGoal,
     monthMovedToSavings,
-    monthMovedFromCurrentBalance,
+    monthMovedFromSpendable,
+    monthExternalSavingsAdded,
+    monthMovedFromCurrentBalance: monthMovedFromSpendable,
     monthPreviousSavingsRecorded,
     monthReturnedFromSavings,
     monthMovedToCash,
@@ -201,12 +320,20 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
     monthReturnedFromCash,
     monthReturnedFromOnline,
     monthReturnedFromGpay: monthReturnedFromOnline,
+    netMonthSpendableTransferred,
     netMonthSavings,
     monthSavingsProgress,
     savingsGoalPercentage,
     monthCashExpenses,
     monthSpentFromSavings,
     remainingSavingsRequired,
+    totalLentOut,
+    totalLentReceived,
+    totalLentOwed,
+    totalObligationsDue,
+    totalObligationsPaid,
+    totalObligationsRemaining,
+    totalObligationsOverdue,
     movements,
   };
 }
@@ -242,6 +369,8 @@ router.get("/", authMiddleware, async (req: AuthenticatedRequest, res: Response)
       month: data.month,
       monthSavingsGoal: data.monthSavingsGoal,
       monthMovedToSavings: data.monthMovedToSavings,
+      monthMovedFromSpendable: data.monthMovedFromSpendable,
+      monthExternalSavingsAdded: data.monthExternalSavingsAdded,
       monthReturnedFromSavings: data.monthReturnedFromSavings,
       monthMovedToCash: data.monthMovedToCash,
       monthMovedToOnline: data.monthMovedToOnline,
@@ -251,12 +380,20 @@ router.get("/", authMiddleware, async (req: AuthenticatedRequest, res: Response)
       monthReturnedFromGpay: data.monthReturnedFromOnline,
       previousSavingsRecorded: data.totalPreviousSavingsRecorded,
       monthPreviousSavingsRecorded: data.monthPreviousSavingsRecorded,
+      netMonthSpendableTransferred: data.netMonthSpendableTransferred,
       netMonthSavings: data.netMonthSavings,
       monthSavingsProgress: data.monthSavingsProgress,
       savingsGoalPercentage: data.savingsGoalPercentage,
       monthCashExpenses: data.monthCashExpenses,
       monthSpentFromSavings: data.monthSpentFromSavings,
       remainingSavingsRequired: data.remainingSavingsRequired,
+      totalLentOut: data.totalLentOut,
+      totalLentReceived: data.totalLentReceived,
+      totalLentOwed: data.totalLentOwed,
+      totalObligationsDue: data.totalObligationsDue,
+      totalObligationsPaid: data.totalObligationsPaid,
+      totalObligationsRemaining: data.totalObligationsRemaining,
+      totalObligationsOverdue: data.totalObligationsOverdue,
       movements: sortedMovements,
     });
   } catch (error) {
@@ -273,7 +410,7 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
     return;
   }
 
-  const { amount, direction, source, destination, fundingSource = "current_balance", date, note } = req.body;
+  const { amount, direction, source, destination, fundingSource, date, note } = req.body;
 
   // 1. Validate Amount
   const numAmount = Number(amount);
@@ -290,13 +427,13 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
   }
 
   // 3. Resolve source and destination
-  let resolvedSource = (source || "").toLowerCase();
-  let resolvedDest = (destination || "").toLowerCase();
+  let resolvedSource = (source || "").toLowerCase().trim();
+  let resolvedDest = (destination || "").toLowerCase().trim();
+  let resolvedFundingSource = (fundingSource || "").toLowerCase().trim();
 
   if (direction === "to_savings") {
-    resolvedSource = fundingSource === "previous_savings" ? "previous_savings" : "online_money";
-    // Destination can be passed as destination or source (legacy frontend passes source="cash" or "gpay_upi")
-    const target = resolvedDest || (source || "").toLowerCase();
+    // Check destination pot
+    const target = resolvedDest || (source || "").toLowerCase().trim();
     if (target === "cash" || target === "cash_savings") {
       resolvedDest = "cash_savings";
     } else if (target === "online" || target === "online_savings" || target === "gpay_upi") {
@@ -305,9 +442,28 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
       res.status(400).json({ error: "Invalid savings destination. Must be 'Cash Savings' or 'Online Savings'." });
       return;
     }
+
+    // Check funding origin:
+    // Only if explicitly specified as "spendable" / "from_spendable" does it shift from spendable online money.
+    const isShiftingFromSpendable =
+      resolvedFundingSource === "spendable" ||
+      resolvedFundingSource === "from_spendable" ||
+      (resolvedSource === "online_money" && resolvedFundingSource !== "external");
+
+    if (resolvedFundingSource === "previous_savings" || resolvedSource === "previous_savings") {
+      resolvedSource = "previous_savings";
+      resolvedFundingSource = "previous_savings";
+    } else if (isShiftingFromSpendable) {
+      resolvedSource = "online_money";
+      resolvedFundingSource = "spendable";
+    } else {
+      // Default: External resources (Gifts, parents, side income, cash in hand, direct deposit, etc.)
+      resolvedSource = "external";
+      resolvedFundingSource = "external";
+    }
   } else {
     // from_savings: source is savings bucket, destination is online_money
-    const fromTarget = resolvedSource || (source || "").toLowerCase();
+    const fromTarget = resolvedSource || (source || "").toLowerCase().trim();
     if (fromTarget === "cash" || fromTarget === "cash_savings") {
       resolvedSource = "cash_savings";
     } else if (fromTarget === "online" || fromTarget === "online_savings" || fromTarget === "gpay_upi") {
@@ -323,7 +479,7 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
     // Check current cumulative balances
     const current = await getUserCumulativeFinancials(userId);
 
-    // Validate transfer limits for withdrawals
+    // Validate transfer limits:
     if (direction === "from_savings") {
       const isCash = resolvedSource === "cash_savings";
       const maxAvailable = isCash ? current.cashSavings : current.onlineSavings;
@@ -332,6 +488,14 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
       if (safeAmount > maxAvailable) {
         res.status(400).json({
           error: `Cannot withdraw ₹${safeAmount} from ${sourceName}. You only have ₹${maxAvailable} saved there.`,
+        });
+        return;
+      }
+    } else if (resolvedFundingSource === "spendable") {
+      // Shifting from spendable account: check available spendable online money
+      if (safeAmount > current.onlineMoney) {
+        res.status(400).json({
+          error: `Cannot shift ₹${safeAmount} from Spendable Online Money. Your available spendable balance is only ₹${current.onlineMoney}.`,
         });
         return;
       }
@@ -344,7 +508,8 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
       direction,
       source: resolvedSource,
       destination: resolvedDest,
-      fundingSource: direction === "to_savings" ? (fundingSource || "current_balance") : "current_balance",
+      fundingSource: direction === "to_savings" ? resolvedFundingSource : "spendable",
+      countsTowardGoal: resolvedFundingSource !== "previous_savings",
       date: date || new Date().toISOString().split("T")[0],
       note: note || "",
     });
@@ -356,19 +521,26 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
 
     // Enqueue notification
     if (direction === "to_savings") {
-      if (fundingSource === "previous_savings") {
+      if (resolvedFundingSource === "previous_savings") {
         NotificationQueueManager.enqueueNotification(
           userId,
           "success",
           "Previous Savings Recorded",
           `Recorded ₹${safeAmount} of previous/starting savings in ${destLabel}. Future savings added in new months will build on top of this.`
         );
+      } else if (resolvedFundingSource === "spendable") {
+        NotificationQueueManager.enqueueNotification(
+          userId,
+          "success",
+          "Shifted to Savings",
+          `Shifted ₹${safeAmount} from Spendable Online Money to ${destLabel}.`
+        );
       } else {
         NotificationQueueManager.enqueueNotification(
           userId,
           "success",
-          "Moved to Savings",
-          `Moved ₹${safeAmount} from Online Money to ${destLabel}.`
+          "Added to Savings",
+          `Added ₹${safeAmount} to ${destLabel} from external funds. Spendable balance remains untouched.`
         );
       }
     } else {
@@ -385,9 +557,11 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
     res.status(201).json({
       message:
         direction === "to_savings"
-          ? fundingSource === "previous_savings"
+          ? resolvedFundingSource === "previous_savings"
             ? `Recorded ₹${safeAmount} as previous savings in ${destLabel}.`
-            : `Moved ₹${safeAmount} from Online Money to ${destLabel}.`
+            : resolvedFundingSource === "spendable"
+            ? `Shifted ₹${safeAmount} from Spendable Online Money to ${destLabel}.`
+            : `Added ₹${safeAmount} to ${destLabel} (Spendable balance untouched).`
           : `Moved ₹${safeAmount} from ${srcLabel} to Online Money.`,
       movement: newMovement,
       cashSavings: updated.cashSavings,
@@ -398,6 +572,8 @@ router.post("/transfer", authMiddleware, async (req: AuthenticatedRequest, res: 
       availableBalance: updated.onlineMoney,
       totalMoney: updated.totalMoney,
       netMonthSavings: updated.netMonthSavings,
+      monthMovedFromSpendable: updated.monthMovedFromSpendable,
+      monthExternalSavingsAdded: updated.monthExternalSavingsAdded,
     });
   } catch (error) {
     console.error("Error executing savings transfer:", error);

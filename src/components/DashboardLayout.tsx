@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check, PiggyBank, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check, PiggyBank, PanelLeftClose, PanelLeftOpen, HandCoins, Receipt } from "lucide-react";
 import { motion } from "motion/react";
 import { api } from "../lib/api";
 
@@ -117,6 +117,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       desc: "Cash & UPI reserves",
     },
     {
+      name: "Lending & Dues",
+      path: "/lending-and-dues",
+      icon: HandCoins,
+      desc: "Loans, debts & dues",
+    },
+    {
       name: "Transaction History",
       path: "/history",
       icon: History,
@@ -190,40 +196,52 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
           {/* Navigation Items (Independently Scrollable Middle Navigation) */}
           <nav className="flex-1 overflow-y-auto px-2.5 py-3 flex flex-col gap-1.5 scrollbar-thin" id="sidebar-nav">
-            {menuItems.map((item) => {
+            {menuItems.map((item: any) => {
               const isActive = location.pathname === item.path;
               const Icon = item.icon;
               return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  id={`sidebar-link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
-                  title={isCollapsed ? item.name : undefined}
-                  className={`flex items-center rounded-2xl border transition-all duration-200 group ${
-                    isCollapsed
-                      ? "justify-center p-3"
-                      : "justify-between px-3.5 py-2.5"
-                  } ${
-                    isActive
-                      ? "bg-emerald-500/5 border-emerald-500/15 text-emerald-300 shadow-lg shadow-emerald-500/5"
-                      : "bg-transparent border-transparent hover:bg-gray-850/50 hover:border-gray-800/50 text-gray-400 hover:text-gray-100"
-                  }`}
-                >
-                  <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
-                    <Icon className={`h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 ${isActive ? "text-emerald-400" : "text-gray-400 group-hover:text-gray-300"}`} />
-                    {!isCollapsed && (
-                      <div className="overflow-hidden">
-                        <span className="text-xs font-bold block truncate">{item.name}</span>
-                        <span className="text-[10px] text-gray-500 font-semibold leading-none block mt-0.5 transition-colors group-hover:text-gray-400 truncate">{item.desc}</span>
-                      </div>
-                    )}
-                  </div>
-                  {!isCollapsed && (
-                    <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-all duration-200 ${
-                      isActive ? "text-emerald-400 translate-x-0.5" : "text-gray-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5"
-                    }`} />
+                <React.Fragment key={item.path}>
+                  {item.sectionHeader && !isCollapsed && (
+                    <div className="pt-3 pb-1 px-3 flex items-center gap-2">
+                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-purple-400">
+                        {item.sectionHeader}
+                      </span>
+                      <div className="h-px bg-gray-800/80 flex-1" />
+                    </div>
                   )}
-                </Link>
+                  {item.sectionHeader && isCollapsed && (
+                    <div className="w-6 h-px bg-gray-800 mx-auto my-1" />
+                  )}
+                  <Link
+                    to={item.path}
+                    id={`sidebar-link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+                    title={isCollapsed ? item.name : undefined}
+                    className={`flex items-center rounded-2xl border transition-all duration-200 group ${
+                      isCollapsed
+                        ? "justify-center p-3"
+                        : "justify-between px-3.5 py-2.5"
+                    } ${
+                      isActive
+                        ? "bg-emerald-500/5 border-emerald-500/15 text-emerald-300 shadow-lg shadow-emerald-500/5"
+                        : "bg-transparent border-transparent hover:bg-gray-850/50 hover:border-gray-800/50 text-gray-400 hover:text-gray-100"
+                    }`}
+                  >
+                    <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
+                      <Icon className={`h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 ${isActive ? "text-emerald-400" : "text-gray-400 group-hover:text-gray-300"}`} />
+                      {!isCollapsed && (
+                        <div className="overflow-hidden">
+                          <span className="text-xs font-bold block truncate">{item.name}</span>
+                          <span className="text-[10px] text-gray-500 font-semibold leading-none block mt-0.5 transition-colors group-hover:text-gray-400 truncate">{item.desc}</span>
+                        </div>
+                      )}
+                    </div>
+                    {!isCollapsed && (
+                      <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-all duration-200 ${
+                        isActive ? "text-emerald-400 translate-x-0.5" : "text-gray-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5"
+                      }`} />
+                    )}
+                  </Link>
+                </React.Fragment>
               );
             })}
           </nav>
@@ -286,6 +304,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 ? "Financial Dashboard"
                 : location.pathname === "/savings"
                 ? "Savings & Reserves"
+                : location.pathname.startsWith("/lending-and-dues") || location.pathname === "/money-lent" || location.pathname === "/money-to-pay"
+                ? "Lending & Dues Hub"
                 : location.pathname === "/history"
                 ? "Transaction History"
                 : location.pathname === "/budget"

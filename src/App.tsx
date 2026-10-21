@@ -9,26 +9,52 @@ import { DashboardLayout } from "./components/DashboardLayout";
 import { Analytics } from "./pages/Analytics";
 import { SettingsPage } from "./pages/Settings";
 import { SavingsPage } from "./pages/Savings";
+import { MoneyLentPage } from "./pages/MoneyLent";
+import { MoneyToPayPage } from "./pages/MoneyToPay";
+import { LendingAndDues } from "./pages/LendingAndDues";
 import { restoreBackupIfNeeded } from "./lib/sync";
 import { LandingPage } from "./pages/LandingPage";
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return Boolean(localStorage.getItem("token") && localStorage.getItem("user"));
+  });
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    return Boolean(localStorage.getItem("token") && !localStorage.getItem("user"));
+  });
 
   // Persistent login verification on mount
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      const storedUser = localStorage.getItem("user");
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tokenParam = urlParams.get("token");
+        if (tokenParam) {
+          localStorage.setItem("token", tokenParam);
+          const cleanUrl = window.location.origin + window.location.pathname + (window.location.hash || "");
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+      } catch (e) {
+        console.error("Error reading token param:", e);
+      }
 
-      if (token && storedUser) {
+      const token = localStorage.getItem("token");
+
+      if (token) {
         try {
           // Validate token with server
           const response = await api.get("/auth/me");
           const verifiedUser = response.data.user;
           setUser(verifiedUser);
+          localStorage.setItem("user", JSON.stringify(verifiedUser));
           setIsAuthenticated(true);
 
           // Restore any missing backup data due to backend container resets
@@ -38,11 +64,14 @@ export default function App() {
               console.error("Local restore failed:", err);
             });
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error("Session restored failed:", error);
-          // Token is cleared automatically by our Axios response interceptor
-          setIsAuthenticated(false);
-          setUser(null);
+          if (error.response?.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            setIsAuthenticated(false);
+            setUser(null);
+          }
         }
       }
       setLoading(false);
@@ -73,7 +102,7 @@ export default function App() {
   };
 
   if (loading) {
-    const isPublic = ["/"].includes(window.location.pathname);
+    const isPublic = ["/", "/landing"].includes(window.location.pathname);
     return (
       <div className={`min-h-screen ${isPublic ? "bg-cream text-nearblack" : "bg-gray-950 text-gray-100"} flex flex-col items-center justify-center font-sans`}>
         <div className="flex flex-col items-center gap-4">
@@ -92,15 +121,36 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Landing Page */}
+        {/* Root Route: If logged in, go straight to dashboard; otherwise show landing page */}
         <Route
           path="/"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <LandingPage
+                isAuthenticated={isAuthenticated}
+                onLoginSuccess={handleLoginSuccess}
+              />
+            )
+          }
+        />
+
+        {/* Explicit Landing Route */}
+        <Route
+          path="/landing"
           element={
             <LandingPage
               isAuthenticated={isAuthenticated}
               onLoginSuccess={handleLoginSuccess}
             />
           }
+        />
+
+        {/* Convenience /login redirect */}
+        <Route
+          path="/login"
+          element={<Navigate to={isAuthenticated ? "/dashboard" : "/"} replace />}
         />
 
 
@@ -154,6 +204,33 @@ export default function App() {
               <Navigate to="/" replace />
             )
           }
+        />
+
+        <Route
+          path="/lending-and-dues"
+          element={
+            isAuthenticated ? (
+              <DashboardLayout
+                userName={user?.name || "Student"}
+                userEmail={user?.email || "student@example.com"}
+                onLogout={handleLogout}
+              >
+                <LendingAndDues />
+              </DashboardLayout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+
+        <Route
+          path="/money-lent"
+          element={<Navigate to="/lending-and-dues?tab=lent" replace />}
+        />
+
+        <Route
+          path="/money-to-pay"
+          element={<Navigate to="/lending-and-dues?tab=pay" replace />}
         />
 
         <Route

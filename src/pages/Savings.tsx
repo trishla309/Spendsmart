@@ -13,6 +13,9 @@ import {
   AlertCircle,
   CheckCircle,
   CreditCard,
+  Gift,
+  Info,
+  History,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -59,7 +62,7 @@ export const SavingsPage: React.FC = () => {
   // Move To Savings form state
   const [toAmount, setToAmount] = useState("");
   const [toSource, setToSource] = useState<"cash" | "online">("online");
-  const [toFundingSource, setToFundingSource] = useState<"current_balance" | "previous_savings">("current_balance");
+  const [toFundingSource, setToFundingSource] = useState<"external" | "spendable" | "previous_savings">("external");
   const [toDate, setToDate] = useState(getTodayDateStr());
   const [toNote, setToNote] = useState("");
   const [toLoading, setToLoading] = useState(false);
@@ -99,6 +102,7 @@ export const SavingsPage: React.FC = () => {
   const totalSavings = summary?.totalSavings || 0;
   const cashSavings = summary?.cashSavings || 0;
   const onlineSavings = summary?.onlineSavings ?? summary?.gpaySavings ?? 0;
+  const onlineMoney = summary?.onlineMoney ?? summary?.availableBalance ?? 0;
 
   const netMonthSavings = summary?.netMonthSavings || 0;
   const monthMovedToSavings = summary?.monthMovedToSavings || 0;
@@ -117,6 +121,11 @@ export const SavingsPage: React.FC = () => {
       return;
     }
 
+    if (toFundingSource === "spendable" && num > onlineMoney) {
+      setToError(`Cannot shift ${currency}${formatAmount(num)} from Spendable Online Money. Your available spendable balance is only ${currency}${formatAmount(onlineMoney)}.`);
+      return;
+    }
+
     setToError(null);
     setToLoading(true);
 
@@ -124,7 +133,7 @@ export const SavingsPage: React.FC = () => {
       const res = await api.post("/savings/transfer", {
         amount: num,
         direction: "to_savings",
-        source: toFundingSource === "previous_savings" ? "previous_savings" : "online_money",
+        source: toFundingSource === "spendable" ? "online_money" : toFundingSource === "previous_savings" ? "previous_savings" : "external",
         destination: toSource === "cash" ? "cash_savings" : "online_savings",
         fundingSource: toFundingSource,
         date: toDate,
@@ -134,7 +143,7 @@ export const SavingsPage: React.FC = () => {
       setToAmount("");
       setToNote("");
       setToDate(getTodayDateStr());
-      setToFundingSource("current_balance");
+      setToFundingSource("external");
       setIsMoveToSavingsOpen(false);
       showToast(res.data.message || `Saved ${currency}${formatAmount(num)} to ${toSource === "cash" ? "Cash" : "Online"} Savings.`);
       setRefreshKey((k) => k + 1);
@@ -443,7 +452,7 @@ export const SavingsPage: React.FC = () => {
             setToAmount("");
             setToNote("");
             setToDate(getTodayDateStr());
-            setToFundingSource("current_balance");
+            setToFundingSource("external");
             setToError(null);
             setIsMoveToSavingsOpen(true);
           }}
@@ -499,11 +508,11 @@ export const SavingsPage: React.FC = () => {
                 <h3 className="text-base font-extrabold text-white tracking-tight">
                   {toFundingSource === "previous_savings" ? "Add Previous Savings" : "Add to Savings"}
                 </h3>
-                <span className="text-[11px] text-gray-400 mt-0.5 block">
-                  {toFundingSource === "previous_savings"
-                    ? "Add money already saved in past months"
-                    : "Transfer money from Online Money into Cash or Online Savings"}
-                </span>
+                {toFundingSource === "previous_savings" && (
+                  <span className="text-[11px] text-gray-400 mt-0.5 block">
+                    Add money already saved in past months
+                  </span>
+                )}
               </div>
               <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
                 <Plus className="h-4.5 w-4.5" />
@@ -536,6 +545,40 @@ export const SavingsPage: React.FC = () => {
                   />
                 </div>
               </div>
+
+              {/* Resource / Funding Source Selector (Hidden when specifically recording past savings) */}
+              {toFundingSource !== "previous_savings" && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-gray-300">Where is this money coming from?</label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setToFundingSource("external")}
+                      className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        toFundingSource === "external"
+                          ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                    >
+                      <Gift className="h-4 w-4 text-emerald-400 shrink-0" />
+                      <span>External / Gift</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setToFundingSource("spendable")}
+                      className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                        toFundingSource === "spendable"
+                          ? "bg-blue-500/10 border-blue-500/40 text-blue-300 shadow-sm"
+                          : "bg-gray-950 border-gray-800 text-gray-400 hover:text-gray-200"
+                      }`}
+                    >
+                      <ArrowRightLeft className="h-4 w-4 text-blue-400 shrink-0" />
+                      <span>From Spendable</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Destination Source */}
               <div className="flex flex-col gap-1.5">
@@ -753,6 +796,113 @@ export const SavingsPage: React.FC = () => {
           </motion.div>
         </div>
       )}
+      {/* RECENT SAVINGS ACTIVITY */}
+      <div className="mt-4 bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 md:p-6 shadow-xl" id="savings-recent-activity">
+        <div className="flex items-center justify-between border-b border-gray-800/80 pb-3 mb-4">
+          <div className="flex items-center gap-2">
+            <History className="h-4 w-4 text-purple-400" />
+            <h2 className="text-sm font-black text-white tracking-wide uppercase">Savings Activity Log</h2>
+          </div>
+          <span className="text-[11px] text-gray-500 font-medium">
+            {summary?.movements?.length || 0} total records
+          </span>
+        </div>
+
+        {summary?.movements && summary.movements.length > 0 ? (
+          <div className="flex flex-col divide-y divide-gray-800/60">
+            {summary.movements.slice(0, 10).map((m) => {
+              const isToSavings = m.direction === "to_savings";
+              const rawSrc = (m.source || "").toLowerCase();
+              const rawFunding = (m.fundingSource || "").toLowerCase();
+
+              const isRepayment = rawSrc === "lent" || rawFunding === "loan_repayment";
+              const isPrevious = rawSrc === "previous_savings" || rawFunding === "previous_savings";
+              const isSpendableShift = isToSavings && (rawFunding === "spendable" || rawFunding === "from_spendable" || (rawFunding === "current_balance" && m.note && /shift(ed)? to savings|transfer(red)? from (online|spendable)/i.test(m.note)));
+              const isExternal = isToSavings && !isRepayment && !isPrevious && !isSpendableShift;
+
+              return (
+                <div key={m._id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`p-2 rounded-xl shrink-0 ${
+                      !isToSavings
+                        ? "bg-sky-500/10 text-sky-400 border border-sky-500/20"
+                        : isExternal
+                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                        : isSpendableShift
+                        ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                        : isPrevious
+                        ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                        : "bg-purple-500/10 text-purple-400 border border-purple-500/20"
+                    }`}>
+                      {!isToSavings ? (
+                        <ArrowUpRight className="h-4 w-4" />
+                      ) : isExternal ? (
+                        <Gift className="h-4 w-4" />
+                      ) : isSpendableShift ? (
+                        <ArrowRightLeft className="h-4 w-4" />
+                      ) : isPrevious ? (
+                        <Banknote className="h-4 w-4" />
+                      ) : (
+                        <PiggyBank className="h-4 w-4" />
+                      )}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-white truncate">
+                          {m.note || (isToSavings ? "Deposit to Savings" : "Withdrawal from Savings")}
+                        </span>
+                        {/* Status Badge */}
+                        <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full border ${
+                          !isToSavings
+                            ? "bg-sky-500/10 text-sky-300 border-sky-500/20"
+                            : isExternal
+                            ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                            : isSpendableShift
+                            ? "bg-blue-500/10 text-blue-300 border-blue-500/20"
+                            : isPrevious
+                            ? "bg-amber-500/10 text-amber-300 border-amber-500/20"
+                            : "bg-purple-500/10 text-purple-300 border-purple-500/20"
+                        }`}>
+                          {!isToSavings
+                            ? "Withdrawn"
+                            : isExternal
+                            ? "External / Gift"
+                            : isSpendableShift
+                            ? "From Spendable"
+                            : isPrevious
+                            ? "Previous Savings"
+                            : "Loan Repayment"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-gray-500 mt-0.5">
+                        <span>{m.date}</span>
+                        <span>•</span>
+                        <span className="capitalize">
+                          {isToSavings
+                            ? `Destination: ${m.destination === "cash_savings" ? "Cash Savings" : "Online Savings"}`
+                            : `Source: ${m.source === "cash_savings" ? "Cash Savings" : "Online Savings"}`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-right shrink-0">
+                    <span className={`font-mono font-black text-sm ${
+                      isToSavings ? "text-emerald-400" : "text-sky-400"
+                    }`}>
+                      {isToSavings ? "+" : "-"}{currency}{formatAmount(m.amount)}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="py-8 text-center text-gray-500 text-xs">
+            No savings movements recorded yet.
+          </div>
+        )}
+      </div>
     </div>
   );
 };

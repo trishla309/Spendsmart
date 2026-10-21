@@ -113,13 +113,15 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
     // Cumulative Financials from complete user history
     const financials = await getUserCumulativeFinancials(userId, month);
 
-    // Compute month spendable balance strictly tied to the selected month's received funds:
-    // Monthly Spendable = Total Money Received - Total Month Expenses
-    const monthSpendableMoney = Math.max(0, Math.round((totalMoneyReceived - totalExpenses) * 100) / 100);
+    // Compute month spendable balance strictly tied to the selected month's received funds and savings transfers:
+    // Monthly Spendable = Total Money Received - Total Month Expenses - Net Spendable shifted into savings
+    const netMonthSavings = financials.netMonthSavings;
+    const netMonthSpendableTransferred = financials.netMonthSpendableTransferred !== undefined ? financials.netMonthSpendableTransferred : 0;
+    const monthSpendableMoney = Math.round((totalMoneyReceived - totalExpenses - netMonthSpendableTransferred) * 100) / 100;
 
-    const availableBalance = monthSpendableMoney;
-    const onlineMoney = monthSpendableMoney;
-    const remainingBalance = monthSpendableMoney;
+    const availableBalance = financials.onlineMoney;
+    const onlineMoney = financials.onlineMoney;
+    const remainingBalance = financials.onlineMoney;
     const totalSavings = financials.totalSavings;
     const onlineSavings = financials.onlineSavings;
     const cashSavings = financials.cashSavings;
@@ -127,7 +129,6 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
     const totalMoney = financials.totalMoney;
 
     const savingsGoal = budget.savingsGoal || 0;
-    const netMonthSavings = financials.netMonthSavings;
     const monthSavingsProgress = financials.monthSavingsProgress;
     const remainingSavingsRequired = Math.max(0, savingsGoal - monthSavingsProgress);
     const budgetUtilization = totalMoneyReceived > 0 ? Math.round((totalExpenses / totalMoneyReceived) * 100) : 0;
@@ -317,6 +318,8 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
 
     const pocketMoney = budget.pocketMoney || 0;
 
+    const monthSurplus = Math.round((totalMoneyReceived - totalExpenses) * 100) / 100;
+
     res.json({
       month,
       pocketMoney,
@@ -326,6 +329,8 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
       isNew: (budget as any).isNew || false,
       isRolledOver,
       totalExpenses,
+      monthSurplus,
+      monthSpendableMoney,
       remainingBalance,
       availableBalance,
       onlineMoney,
@@ -336,9 +341,12 @@ router.get("/summary", authMiddleware, async (req: AuthenticatedRequest, res: Re
       gpaySavings,
       totalMoney,
       monthMovedToSavings: financials.monthMovedToSavings,
+      monthMovedFromSpendable: financials.monthMovedFromSpendable,
+      monthExternalSavingsAdded: financials.monthExternalSavingsAdded,
       monthReturnedFromSavings: financials.monthReturnedFromSavings,
       monthCashExpenses: financials.monthCashExpenses,
       monthSpentFromSavings: financials.monthSpentFromSavings,
+      netMonthSpendableTransferred,
       netMonthSavings,
       monthSavingsProgress,
       remainingSavingsRequired,

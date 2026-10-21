@@ -114,7 +114,61 @@
       "email": "trishtha97@gmail.com",
       "phone": "",
       "createdAt": "2026-09-03T20:20:57.269Z",
-      "__v": 0
+      "__v": 0,
+      "categories": [
+        {
+          "key": "food",
+          "label": "Food & Dining",
+          "emoji": "🍔",
+          "color": "bg-orange-500",
+          "isDefault": true
+        },
+        {
+          "key": "transport",
+          "label": "Transport",
+          "emoji": "🚌",
+          "color": "bg-sky-500",
+          "isDefault": true
+        },
+        {
+          "key": "shopping",
+          "label": "Shopping",
+          "emoji": "🛍️",
+          "color": "bg-indigo-500",
+          "isDefault": true
+        },
+        {
+          "key": "entertainment",
+          "label": "Entertainment",
+          "emoji": "🎬",
+          "color": "bg-rose-500",
+          "isDefault": true
+        },
+        {
+          "key": "stationery",
+          "label": "Stationery",
+          "emoji": "📝",
+          "color": "bg-emerald-500",
+          "isDefault": true
+        },
+        {
+          "key": "other",
+          "label": "Other / Misc",
+          "emoji": "📦",
+          "color": "bg-amber-500",
+          "isDefault": true
+        },
+        {
+          "key": "grocery",
+          "label": "Grocery",
+          "emoji": "🍕",
+          "color": "bg-amber-500",
+          "isDefault": false
+        }
+      ],
+      "hiddenCategories": [
+        "emergency"
+      ]
     },
     {
       "_id": "6aa42690e188736503a02116",
@@ -464,7 +518,27 @@
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741964",
+      "_id": "6abf1fd119960d84d5ec8ee6",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "month": "2026-10",
+      "pocketMoney": 0,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 0,
+        "transport": 0,
+        "shopping": 0,
+        "entertainment": 0,
+        "emergency": 0,
+        "stationery": 0,
+        "savings": 0,
+        "other": 0,
+        "grocery": 1000
+      },
+      "createdAt": "2026-10-02T03:06:57.391Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad8758144da17aa7e26c419",
       "userId": "6a4e97b4248e6a72d9110792",
       "month": "2026-09",
       "pocketMoney": 8000,
@@ -509,11 +583,11 @@
           "p100": false
         }
       },
-      "createdAt": "2026-09-12T13:18:38.075Z",
+      "createdAt": "2026-10-21T08:19:13.532Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741976",
+      "_id": "6ad8758144da17aa7e26c42b",
       "userId": "6aa42690e188736503a02116",
       "month": "2026-09",
       "pocketMoney": 8000,
@@ -558,7 +632,45 @@
           "p100": false
         }
       },
-      "createdAt": "2026-09-12T13:18:38.103Z",
+      "createdAt": "2026-10-21T08:19:13.572Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87ce944da17aa7e26c43d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "month": "2025-10",
+      "pocketMoney": 0,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 0,
+        "transport": 0,
+        "shopping": 0,
+        "entertainment": 0,
+        "emergency": 0,
+        "stationery": 0,
+        "savings": 0,
+        "other": 0
+      },
+      "createdAt": "2026-10-21T08:50:49.643Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87d9444da17aa7e26c443",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "month": "2026-05",
+      "pocketMoney": 0,
+      "savingsGoal": 1000,
+      "allocated": {
+        "food": 0,
+        "transport": 0,
+        "shopping": 0,
+        "entertainment": 0,
+        "emergency": 0,
+        "stationery": 0,
+        "savings": 0,
+        "other": 0
+      },
+      "createdAt": "2026-10-21T08:53:40.837Z",
       "__v": 0
     }
   ],
@@ -1452,7 +1564,403 @@
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741965",
+      "_id": "6aae9005b7a75ba392943b98",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 385,
+      "category": "food",
+      "description": "Blinkit grocery",
+      "date": "2026-09-13",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.329Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943b9a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 12,
+      "category": "stationery",
+      "description": "print",
+      "date": "2026-09-14",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.353Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943b9c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 50,
+      "category": "food",
+      "description": "food",
+      "date": "2026-09-15",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.362Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943b9e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 20,
+      "category": "food",
+      "description": "food",
+      "date": "2026-09-15",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.372Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba0",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 30,
+      "category": "food",
+      "description": "food",
+      "date": "2026-09-16",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.384Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba1",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 60,
+      "category": "food",
+      "description": "food",
+      "date": "2026-09-17",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.397Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba3",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 60,
+      "category": "food",
+      "description": "food (from savings)",
+      "date": "2026-09-17",
+      "note": "Funded from savings",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.409Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba5",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 500,
+      "category": "income",
+      "description": "daddy",
+      "date": "2026-09-18",
+      "note": "from dad",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.421Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba7",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 30,
+      "category": "food",
+      "description": "food",
+      "date": "2026-09-18",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.432Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba9",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 10,
+      "category": "food",
+      "description": "food",
+      "date": "2026-09-19",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.444Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943baa",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 10,
+      "category": "stationery",
+      "description": "stationery",
+      "date": "2026-09-19",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-19T13:37:09.454Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed1",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 14,
+      "category": "stationery",
+      "description": "stationery",
+      "date": "2026-09-23",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-30T08:14:55.207Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed3",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 20,
+      "category": "food",
+      "description": "snacks",
+      "date": "2026-09-24",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-30T08:14:55.217Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed4",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 20,
+      "category": "food",
+      "description": "breakfast",
+      "date": "2026-09-25",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-30T08:14:55.226Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed9",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 30,
+      "category": "food",
+      "description": "snacks",
+      "date": "2026-09-27",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-30T08:14:55.253Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8edb",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 700,
+      "category": "income",
+      "description": "daddy",
+      "date": "2026-09-28",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-30T08:14:55.256Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8edc",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 405,
+      "category": "food",
+      "description": "dmart for grocery",
+      "date": "2026-09-28",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-09-30T08:14:55.263Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abf22a119960d84d5ec8ee9",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 205,
+      "category": "food",
+      "description": "period treat/craving",
+      "date": "2026-10-01",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-02T03:18:57.196Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac410e9bd77542addd3f6c9",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 600,
+      "category": "income",
+      "description": "daddy for grocery",
+      "date": "2026-10-03",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-05T21:04:41.517Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac413d0bd77542addd3f6d0",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 397,
+      "category": "grocery",
+      "description": "BLINKIT",
+      "date": "2026-10-03",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-05T21:17:04.152Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac41464bd77542addd3f6d5",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 65,
+      "category": "other",
+      "description": "FRIEND",
+      "date": "2026-09-30",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-05T21:19:32.560Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac41668e439276be5e911e0",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1,
+      "category": "income",
+      "description": "Daily interest / rewards adjustment",
+      "date": "2026-09-30",
+      "note": "Account balance alignment",
+      "paidUsing": "online",
+      "createdAt": "2026-10-05T21:28:08.507Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c54",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1300,
+      "category": "income",
+      "description": "didu",
+      "date": "2026-10-10",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-15T12:58:54.785Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c55",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1237.59,
+      "category": "shopping",
+      "description": "diwali shopping",
+      "date": "2026-10-10",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-15T12:58:54.793Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c57",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 15,
+      "category": "grocery",
+      "description": "grocery",
+      "date": "2026-10-12",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-15T12:58:54.802Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c59",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 400,
+      "category": "income",
+      "description": "daddy",
+      "date": "2026-10-14",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-15T12:58:54.869Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c5a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 168,
+      "category": "grocery",
+      "description": "Blinkit",
+      "date": "2026-10-14",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-15T12:58:54.881Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c5f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 236,
+      "category": "other",
+      "description": "Bank annual charges (Debit card AMC)",
+      "date": "2026-10-14",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-15T12:58:54.941Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0fc10156a634bef90012c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 500,
+      "category": "income",
+      "description": "from dad",
+      "date": "2026-10-15",
+      "paidUsing": "online",
+      "note": "Received from dad",
+      "createdAt": "2026-10-15T16:15:12.603Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0fc10156a634bef90012d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 70,
+      "category": "food",
+      "description": "food",
+      "date": "2026-10-15",
+      "paidUsing": "online",
+      "note": "Food expense",
+      "createdAt": "2026-10-15T16:15:12.628Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0fc10156a634bef90012e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 250,
+      "category": "other",
+      "description": "Lent to Sampath",
+      "date": "2026-10-15",
+      "paidUsing": "online",
+      "note": "Lent to Sampath from dad money",
+      "createdAt": "2026-10-15T16:15:12.631Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad103b1d0ace2098f32b300",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 6,
+      "category": "food",
+      "description": "chocolates",
+      "date": "2026-10-15",
+      "paidUsing": "online",
+      "note": "chocolates from savings",
+      "createdAt": "2026-10-15T16:47:45.571Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad861e6dedb64cf65064f26",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 110,
+      "category": "food",
+      "description": "food(ACCIDENT)",
+      "date": "2026-10-18",
+      "note": "",
+      "paidUsing": "online",
+      "createdAt": "2026-10-21T06:55:34.969Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad8758144da17aa7e26c41a",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 120,
       "category": "food",
@@ -1460,11 +1968,11 @@
       "date": "2026-09-01",
       "note": "Welcome lunch meal",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.080Z",
+      "createdAt": "2026-10-21T08:19:13.540Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741966",
+      "_id": "6ad8758144da17aa7e26c41b",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 350,
       "category": "transport",
@@ -1472,11 +1980,11 @@
       "date": "2026-09-01",
       "note": "Monthly transit recharge",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.082Z",
+      "createdAt": "2026-10-21T08:19:13.542Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741967",
+      "_id": "6ad8758144da17aa7e26c41c",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 170,
       "category": "stationery",
@@ -1484,11 +1992,11 @@
       "date": "2026-09-02",
       "note": "Engineering textbook",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.084Z",
+      "createdAt": "2026-10-21T08:19:13.544Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741968",
+      "_id": "6ad8758144da17aa7e26c41d",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 180,
       "category": "food",
@@ -1496,11 +2004,11 @@
       "date": "2026-09-03",
       "note": "Study cafe session",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.085Z",
+      "createdAt": "2026-10-21T08:19:13.545Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741969",
+      "_id": "6ad8758144da17aa7e26c41e",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 400,
       "category": "shopping",
@@ -1508,11 +2016,11 @@
       "date": "2026-09-04",
       "note": "Desk setup upgrade",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.086Z",
+      "createdAt": "2026-10-21T08:19:13.546Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74196a",
+      "_id": "6ad8758144da17aa7e26c41f",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 180,
       "category": "emergency",
@@ -1520,11 +2028,11 @@
       "date": "2026-09-05",
       "note": "Medical essentials",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.086Z",
+      "createdAt": "2026-10-21T08:19:13.548Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74196b",
+      "_id": "6ad8758144da17aa7e26c420",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 60,
       "category": "food",
@@ -1532,11 +2040,11 @@
       "date": "2026-09-05",
       "note": "Campus tea break",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.087Z",
+      "createdAt": "2026-10-21T08:19:13.549Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74196c",
+      "_id": "6ad8758144da17aa7e26c421",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 210,
       "category": "entertainment",
@@ -1544,11 +2052,11 @@
       "date": "2026-09-06",
       "note": "Weekend movie",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.088Z",
+      "createdAt": "2026-10-21T08:19:13.550Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74196d",
+      "_id": "6ad8758144da17aa7e26c422",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 380,
       "category": "food",
@@ -1556,11 +2064,11 @@
       "date": "2026-09-07",
       "note": "Split Sunday dinner",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.089Z",
+      "createdAt": "2026-10-21T08:19:13.551Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74196e",
+      "_id": "6ad8758144da17aa7e26c423",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 120,
       "category": "entertainment",
@@ -1568,11 +2076,11 @@
       "date": "2026-09-08",
       "note": "Monthly music subscription",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.090Z",
+      "createdAt": "2026-10-21T08:19:13.552Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74196f",
+      "_id": "6ad8758144da17aa7e26c424",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 110,
       "category": "transport",
@@ -1580,11 +2088,11 @@
       "date": "2026-09-08",
       "note": "Library auto ride",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.091Z",
+      "createdAt": "2026-10-21T08:19:13.554Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741970",
+      "_id": "6ad8758144da17aa7e26c425",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 80,
       "category": "stationery",
@@ -1592,11 +2100,11 @@
       "date": "2026-09-09",
       "note": "Project stationery",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.092Z",
+      "createdAt": "2026-10-21T08:19:13.555Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741971",
+      "_id": "6ad8758144da17aa7e26c426",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 200,
       "category": "other",
@@ -1604,11 +2112,11 @@
       "date": "2026-09-10",
       "note": "Monthly Wi-Fi contribution",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.092Z",
+      "createdAt": "2026-10-21T08:19:13.557Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741972",
+      "_id": "6ad8758144da17aa7e26c427",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 140,
       "category": "food",
@@ -1616,11 +2124,11 @@
       "date": "2026-09-11",
       "note": "Co-working space snack",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.093Z",
+      "createdAt": "2026-10-21T08:19:13.558Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741973",
+      "_id": "6ad8758144da17aa7e26c428",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 100,
       "category": "food",
@@ -1628,11 +2136,11 @@
       "date": "2026-09-12",
       "note": "Quick morning breakfast",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.093Z",
+      "createdAt": "2026-10-21T08:19:13.559Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741977",
+      "_id": "6ad8758144da17aa7e26c42c",
       "userId": "6aa42690e188736503a02116",
       "amount": 120,
       "category": "food",
@@ -1640,11 +2148,11 @@
       "date": "2026-09-01",
       "note": "Welcome lunch meal",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.104Z",
+      "createdAt": "2026-10-21T08:19:13.574Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741978",
+      "_id": "6ad8758144da17aa7e26c42d",
       "userId": "6aa42690e188736503a02116",
       "amount": 350,
       "category": "transport",
@@ -1652,11 +2160,11 @@
       "date": "2026-09-01",
       "note": "Monthly transit recharge",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.105Z",
+      "createdAt": "2026-10-21T08:19:13.575Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741979",
+      "_id": "6ad8758144da17aa7e26c42e",
       "userId": "6aa42690e188736503a02116",
       "amount": 170,
       "category": "stationery",
@@ -1664,11 +2172,11 @@
       "date": "2026-09-02",
       "note": "Engineering textbook",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.106Z",
+      "createdAt": "2026-10-21T08:19:13.576Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74197a",
+      "_id": "6ad8758144da17aa7e26c42f",
       "userId": "6aa42690e188736503a02116",
       "amount": 180,
       "category": "food",
@@ -1676,11 +2184,11 @@
       "date": "2026-09-03",
       "note": "Study cafe session",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.106Z",
+      "createdAt": "2026-10-21T08:19:13.577Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74197b",
+      "_id": "6ad8758144da17aa7e26c430",
       "userId": "6aa42690e188736503a02116",
       "amount": 400,
       "category": "shopping",
@@ -1688,11 +2196,11 @@
       "date": "2026-09-04",
       "note": "Desk setup upgrade",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.107Z",
+      "createdAt": "2026-10-21T08:19:13.578Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74197c",
+      "_id": "6ad8758144da17aa7e26c431",
       "userId": "6aa42690e188736503a02116",
       "amount": 180,
       "category": "emergency",
@@ -1700,11 +2208,11 @@
       "date": "2026-09-05",
       "note": "Medical essentials",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.108Z",
+      "createdAt": "2026-10-21T08:19:13.579Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74197d",
+      "_id": "6ad8758144da17aa7e26c432",
       "userId": "6aa42690e188736503a02116",
       "amount": 60,
       "category": "food",
@@ -1712,11 +2220,11 @@
       "date": "2026-09-05",
       "note": "Campus tea break",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.109Z",
+      "createdAt": "2026-10-21T08:19:13.580Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74197e",
+      "_id": "6ad8758144da17aa7e26c433",
       "userId": "6aa42690e188736503a02116",
       "amount": 210,
       "category": "entertainment",
@@ -1724,11 +2232,11 @@
       "date": "2026-09-06",
       "note": "Weekend movie",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.109Z",
+      "createdAt": "2026-10-21T08:19:13.581Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b74197f",
+      "_id": "6ad8758144da17aa7e26c434",
       "userId": "6aa42690e188736503a02116",
       "amount": 380,
       "category": "food",
@@ -1736,11 +2244,11 @@
       "date": "2026-09-07",
       "note": "Split Sunday dinner",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.110Z",
+      "createdAt": "2026-10-21T08:19:13.582Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741980",
+      "_id": "6ad8758144da17aa7e26c435",
       "userId": "6aa42690e188736503a02116",
       "amount": 120,
       "category": "entertainment",
@@ -1748,11 +2256,11 @@
       "date": "2026-09-08",
       "note": "Monthly music subscription",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.110Z",
+      "createdAt": "2026-10-21T08:19:13.583Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741981",
+      "_id": "6ad8758144da17aa7e26c436",
       "userId": "6aa42690e188736503a02116",
       "amount": 110,
       "category": "transport",
@@ -1760,11 +2268,11 @@
       "date": "2026-09-08",
       "note": "Library auto ride",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.111Z",
+      "createdAt": "2026-10-21T08:19:13.584Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741982",
+      "_id": "6ad8758144da17aa7e26c437",
       "userId": "6aa42690e188736503a02116",
       "amount": 80,
       "category": "stationery",
@@ -1772,11 +2280,11 @@
       "date": "2026-09-09",
       "note": "Project stationery",
       "paidUsing": "cash",
-      "createdAt": "2026-09-12T13:18:38.111Z",
+      "createdAt": "2026-10-21T08:19:13.585Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741983",
+      "_id": "6ad8758144da17aa7e26c438",
       "userId": "6aa42690e188736503a02116",
       "amount": 200,
       "category": "other",
@@ -1784,11 +2292,11 @@
       "date": "2026-09-10",
       "note": "Monthly Wi-Fi contribution",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.112Z",
+      "createdAt": "2026-10-21T08:19:13.586Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741984",
+      "_id": "6ad8758144da17aa7e26c439",
       "userId": "6aa42690e188736503a02116",
       "amount": 140,
       "category": "food",
@@ -1796,11 +2304,11 @@
       "date": "2026-09-11",
       "note": "Co-working space snack",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.112Z",
+      "createdAt": "2026-10-21T08:19:13.587Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741985",
+      "_id": "6ad8758144da17aa7e26c43a",
       "userId": "6aa42690e188736503a02116",
       "amount": 100,
       "category": "food",
@@ -1808,7 +2316,7 @@
       "date": "2026-09-12",
       "note": "Quick morning breakfast",
       "paidUsing": "online",
-      "createdAt": "2026-09-12T13:18:38.113Z",
+      "createdAt": "2026-10-21T08:19:13.588Z",
       "__v": 0
     }
   ],
@@ -2409,7 +2917,7 @@
       "type": "success",
       "title": "Savings Goal Updated",
       "message": "Your monthly savings target for 2026-09 has been updated to ₹1000.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-06T21:03:33.719Z",
       "__v": 0
     },
@@ -2419,7 +2927,7 @@
       "type": "success",
       "title": "New Monthly Budget Created",
       "message": "A new budget for 2026-06 has been initialized with ₹0 pocket money allocation.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T05:56:04.733Z",
       "__v": 0
     },
@@ -2429,7 +2937,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T05:56:04.772Z",
       "__v": 0
     },
@@ -2439,7 +2947,7 @@
       "type": "success",
       "title": "New Monthly Budget Created",
       "message": "A new budget for 2026-07 has been initialized with ₹0 pocket money allocation.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T05:56:04.792Z",
       "__v": 0
     },
@@ -2449,7 +2957,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T05:56:04.808Z",
       "__v": 0
     },
@@ -2459,7 +2967,7 @@
       "type": "success",
       "title": "New Monthly Budget Created",
       "message": "A new budget for 2026-08 has been initialized with ₹0 pocket money allocation.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T05:56:04.812Z",
       "__v": 0
     },
@@ -2469,7 +2977,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T05:56:04.815Z",
       "__v": 0
     },
@@ -2479,7 +2987,7 @@
       "type": "success",
       "title": "Expense Recorded Successfully",
       "message": "Recorded expense of ₹37 for \"milk and dahi \".",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T15:01:55.687Z",
       "__v": 0
     },
@@ -2489,7 +2997,7 @@
       "type": "success",
       "title": "Previous Savings Recorded",
       "message": "Recorded ₹130 of previous/starting savings in Cash Savings. Future savings added in new months will build on top of this.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-07T15:14:19.049Z",
       "__v": 0
     },
@@ -2549,7 +3057,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T05:20:50.915Z",
       "__v": 0
     },
@@ -2559,7 +3067,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T05:20:50.933Z",
       "__v": 0
     },
@@ -2569,7 +3077,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T05:20:50.953Z",
       "__v": 0
     },
@@ -2579,7 +3087,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T05:24:55.926Z",
       "__v": 0
     },
@@ -2589,7 +3097,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T05:24:55.956Z",
       "__v": 0
     },
@@ -2599,7 +3107,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T05:24:55.974Z",
       "__v": 0
     },
@@ -2609,7 +3117,7 @@
       "type": "info",
       "title": "Moved to Online Money",
       "message": "Moved ₹100 from Online Savings to Online Money.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T05:38:52.086Z",
       "__v": 0
     },
@@ -2619,7 +3127,7 @@
       "type": "success",
       "title": "Money Added Successfully",
       "message": "Successfully credited ₹500 for \"for grocery \".",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T17:55:01.574Z",
       "__v": 0
     },
@@ -2629,7 +3137,7 @@
       "type": "success",
       "title": "Moved to Savings",
       "message": "Moved ₹500 from Online Money to Online Savings.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T17:55:22.475Z",
       "__v": 0
     },
@@ -2639,7 +3147,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T18:43:37.344Z",
       "__v": 0
     },
@@ -2649,7 +3157,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T18:43:37.376Z",
       "__v": 0
     },
@@ -2659,7 +3167,7 @@
       "type": "success",
       "title": "Month-End Report Generated",
       "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
-      "read": false,
+      "read": true,
       "createdAt": "2026-09-10T18:43:37.410Z",
       "__v": 0
     },
@@ -2742,6 +3250,1136 @@
       "read": false,
       "createdAt": "2026-09-11T16:25:56.703Z",
       "__v": 0
+    },
+    {
+      "_id": "6aa55225726517860b741988",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:22:45.431Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55225726517860b741989",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:22:45.471Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55225726517860b74198a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:22:45.527Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55249726517860b74198b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:23:21.908Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55249726517860b74198c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:23:21.958Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55249726517860b74198d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:23:21.996Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55272726517860b74198e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:24:02.160Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55272726517860b74198f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:24:02.220Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa55272726517860b741990",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-12T13:24:02.268Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa787f11a0e3c10f47f7c54",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Moved to Online Money",
+      "message": "Moved ₹385 from Online Savings to Online Money.",
+      "read": true,
+      "createdAt": "2026-09-14T05:36:49.521Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943b99",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹385 for \"Blinkit grocery\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.345Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943b9b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹12 for \"print\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.359Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943b9d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹50 for \"food\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.368Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943b9f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹20 for \"food\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.382Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba2",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹30 for \"food\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.397Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba4",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹60 for \"food\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.411Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba6",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹60 for \"food (from savings)\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.428Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943ba8",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹500 for \"daddy\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.443Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bab",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹10 for \"food\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.459Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bac",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹10 for \"stationery\".",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.512Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bae",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Moved to Online Money",
+      "message": "Moved ₹100 from Online Savings to Online Money.",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.523Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bb0",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Moved to Online Money",
+      "message": "Moved ₹60 from Online Savings to Online Money.",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.550Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bb2",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹400 from Online Money to Online Savings.",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.579Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bb4",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Previous Savings Recorded",
+      "message": "Recorded ₹4 of previous/starting savings in Online Savings. Future savings added in new months will build on top of this.",
+      "read": true,
+      "createdAt": "2026-09-19T13:37:09.595Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed2",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹14 for \"stationery\".",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.216Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed5",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹20 for \"snacks\".",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.242Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed7",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹20 for \"breakfast\".",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.247Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed8",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Moved to Online Money",
+      "message": "Moved ₹100 from Online Savings to Online Money.",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.252Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8eda",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹30 for \"snacks\".",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.255Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8edd",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹700 for \"daddy\".",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.264Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ede",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹405 for \"dmart for grocery\".",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.274Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ee0",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹315 from Online Money to Online Savings.",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.324Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ee2",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Previous Savings Recorded",
+      "message": "Recorded ₹7.85 of previous/starting savings in Online Savings. Future savings added in new months will build on top of this.",
+      "read": true,
+      "createdAt": "2026-09-30T08:14:55.347Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc57e19960d84d5ec8ee3",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-30T08:17:02.331Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc57e19960d84d5ec8ee4",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-30T08:17:02.425Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc57e19960d84d5ec8ee5",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-09-30T08:17:02.487Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abf1fd119960d84d5ec8ee7",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-10 has been initialized with ₹0 pocket money allocation.",
+      "read": true,
+      "createdAt": "2026-10-02T03:06:57.491Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abf1ff419960d84d5ec8ee8",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-10-02T03:07:32.195Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abf22a119960d84d5ec8eea",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹205 for \"period treat/craving\".",
+      "read": true,
+      "createdAt": "2026-10-02T03:18:57.206Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abf22d719960d84d5ec8eec",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Moved to Online Money",
+      "message": "Moved ₹205 from Online Savings to Online Money.",
+      "read": true,
+      "createdAt": "2026-10-02T03:19:51.541Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abf22e419960d84d5ec8eed",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-10-02T03:20:04.882Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac40f13bd77542addd3f6c5",
+      "userId": "6a4ea73ef19b3b4f78ec9bd2",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹600 for \"daddy\".",
+      "read": false,
+      "createdAt": "2026-10-05T20:56:51.506Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac4104dbd77542addd3f6c8",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹600 for \"daddy\".",
+      "read": true,
+      "createdAt": "2026-10-05T21:02:05.148Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac410e9bd77542addd3f6ca",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹600 for \"daddy for grocery\".",
+      "read": true,
+      "createdAt": "2026-10-05T21:04:41.554Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac410f7bd77542addd3f6cb",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Savings Goal Updated",
+      "message": "Your monthly savings target for 2026-10 has been updated to ₹1000.",
+      "read": true,
+      "createdAt": "2026-10-05T21:04:55.594Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac4112abd77542addd3f6cd",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹200 from Online Money to Online Savings.",
+      "read": true,
+      "createdAt": "2026-10-05T21:05:46.215Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac4121dbd77542addd3f6ce",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-10-05T21:09:49.700Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac41389bd77542addd3f6cf",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Transaction Deleted",
+      "message": "Deleted transaction \"daddy\" of ₹600.",
+      "read": true,
+      "createdAt": "2026-10-05T21:15:53.640Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac413d0bd77542addd3f6d1",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹400 for \"BLINKIT\".",
+      "read": true,
+      "createdAt": "2026-10-05T21:17:04.177Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac413d0bd77542addd3f6d2",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "warning",
+      "title": "Pocket Money Exceeded",
+      "message": "Total monthly expenses (₹605) have exceeded your pocket money budget (₹600)!",
+      "read": true,
+      "createdAt": "2026-10-05T21:17:04.253Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac413e9bd77542addd3f6d3",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-10-05T21:17:29.759Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac4142ebd77542addd3f6d4",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": true,
+      "createdAt": "2026-10-05T21:18:38.675Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac41464bd77542addd3f6d6",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹65 for \"FRIEND\".",
+      "read": true,
+      "createdAt": "2026-10-05T21:19:32.583Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac41479bd77542addd3f6d7",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Transaction Updated",
+      "message": "Successfully updated details for \"BLINKIT\" (food).",
+      "read": true,
+      "createdAt": "2026-10-05T21:19:53.660Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c56",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹1300 for \"didu\".",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.796Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c58",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹1237.59 for \"diwali shopping\".",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.865Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c5b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "warning",
+      "title": "Pocket Money High Usage",
+      "message": "Total monthly expenses are at 97% of your pocket money budget (₹1900).",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.883Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c5c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹15 for \"grocery\".",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.911Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c5e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Money Added Successfully",
+      "message": "Successfully credited ₹400 for \"daddy\".",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.933Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c60",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "warning",
+      "title": "Pocket Money High Usage",
+      "message": "Total monthly expenses are at 98% of your pocket money budget (₹1900).",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.942Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c61",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹168 for \"Blinkit\".",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.946Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c62",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹87 from Online Money to Online Savings.",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.954Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c63",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹236 for \"Bank annual charges (Debit card AMC)\".",
+      "read": true,
+      "createdAt": "2026-10-15T12:58:54.959Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d4792256aada18d14212",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Money Lent Recorded",
+      "message": "Recorded ₹100 lent to Test Alice.",
+      "read": true,
+      "createdAt": "2026-10-15T13:26:17.921Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d4ffac750f5809d7e39a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Money Lent Recorded",
+      "message": "Recorded ₹100 lent to Test Alice.",
+      "read": true,
+      "createdAt": "2026-10-15T13:28:31.137Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d4ffac750f5809d7e39c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹40 received from Test Alice. ₹60 still remaining.",
+      "read": true,
+      "createdAt": "2026-10-15T13:28:31.164Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d4ffac750f5809d7e39e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹60 received from Test Alice. Loan is now fully repaid!",
+      "read": true,
+      "createdAt": "2026-10-15T13:28:31.176Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d4ffac750f5809d7e3a0",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Payment Obligation Added",
+      "message": "Added payment obligation of ₹200 to Landlord Bob due on 2026-10-20.",
+      "read": true,
+      "createdAt": "2026-10-15T13:28:31.190Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d4ffac750f5809d7e3a2",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Payment Recorded",
+      "message": "₹50 paid to Landlord Bob. ₹150 remaining due by 2026-10-20.",
+      "read": true,
+      "createdAt": "2026-10-15T13:28:31.206Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d4ffac750f5809d7e3a4",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Payment Recorded",
+      "message": "₹150 paid to Landlord Bob. Obligation is fully settled!",
+      "read": true,
+      "createdAt": "2026-10-15T13:28:31.219Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d531ac750f5809d7e3a7",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Money Lent Recorded",
+      "message": "Recorded ₹100 lent to Test Alice.",
+      "read": true,
+      "createdAt": "2026-10-15T13:29:21.560Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d531ac750f5809d7e3a9",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹40 received from Test Alice. ₹60 still remaining.",
+      "read": true,
+      "createdAt": "2026-10-15T13:29:21.576Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d531ac750f5809d7e3ab",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹60 received from Test Alice. Loan is now fully repaid!",
+      "read": true,
+      "createdAt": "2026-10-15T13:29:21.590Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d531ac750f5809d7e3ad",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Payment Obligation Added",
+      "message": "Added payment obligation of ₹200 to Landlord Bob due on 2026-10-20.",
+      "read": true,
+      "createdAt": "2026-10-15T13:29:21.602Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d531ac750f5809d7e3af",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Payment Recorded",
+      "message": "₹50 paid to Landlord Bob. ₹150 remaining due by 2026-10-20.",
+      "read": true,
+      "createdAt": "2026-10-15T13:29:21.616Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d531ac750f5809d7e3b1",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Payment Recorded",
+      "message": "₹150 paid to Landlord Bob. Obligation is fully settled!",
+      "read": true,
+      "createdAt": "2026-10-15T13:29:21.627Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d5a5ac750f5809d7e3b3",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Money Lent Recorded",
+      "message": "Recorded ₹1000 lent to sampath.",
+      "read": true,
+      "createdAt": "2026-10-15T13:31:17.101Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0d5d6ac750f5809d7e3b5",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Money Lent Recorded",
+      "message": "Recorded ₹250 lent to sampath.",
+      "read": true,
+      "createdAt": "2026-10-15T13:32:06.298Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0dd7463573bdeddb2a2a6",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Payment Obligation Added",
+      "message": "Added payment obligation of ₹113 to Meesho due on 2026-10-18.",
+      "read": true,
+      "createdAt": "2026-10-15T14:04:36.317Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0dd7463573bdeddb2a2a7",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Payment Due Soon: Meesho",
+      "message": "Payment of ₹113 to \"Meesho\" is due in 3 days (2026-10-18).",
+      "read": true,
+      "createdAt": "2026-10-15T14:04:36.395Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0fb8263573bdeddb2a2a8",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Category Removed",
+      "message": "Category \"emergency\" was removed from your active cards.",
+      "read": false,
+      "createdAt": "2026-10-15T16:12:50.558Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0fbb863573bdeddb2a2a9",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Category Added",
+      "message": "New category \"Grocery\" has been added to your budget workspace.",
+      "read": false,
+      "createdAt": "2026-10-15T16:13:44.853Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1cfec38cc245d1541e343",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Payment Due Soon: Meesho",
+      "message": "Payment of ₹113 to \"Meesho\" is due in 2 days (2026-10-18).",
+      "read": false,
+      "createdAt": "2026-10-16T07:19:08.253Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1d3c7ca6828a090683750",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹250 received from sampath. Loan is now fully repaid!",
+      "read": false,
+      "createdAt": "2026-10-16T07:35:35.083Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1d3cbca6828a090683752",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹1000 received from sampath. Loan is now fully repaid!",
+      "read": false,
+      "createdAt": "2026-10-16T07:35:39.260Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1d923ca6828a090683754",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Money Lent Recorded",
+      "message": "Recorded ₹50 lent to TestFriend.",
+      "read": false,
+      "createdAt": "2026-10-16T07:58:27.631Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1d923ca6828a090683756",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹50 received from TestFriend. Loan is now fully repaid!",
+      "read": false,
+      "createdAt": "2026-10-16T07:58:27.669Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1da546d97aaf8581ef545",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "info",
+      "title": "Money Lent Recorded",
+      "message": "Recorded ₹50 lent to TestFriend (from Online Savings).",
+      "read": false,
+      "createdAt": "2026-10-16T08:03:32.322Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1da546d97aaf8581ef548",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Repayment Received",
+      "message": "₹50 received from TestFriend. Loan is now fully repaid! Automatically deposited back into your savings.",
+      "read": false,
+      "createdAt": "2026-10-16T08:03:32.359Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1ec1a6d97aaf8581ef549",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:19:22.154Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1ec1a6d97aaf8581ef54a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:19:22.357Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1ec1a6d97aaf8581ef54b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:19:22.476Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1ed326d97aaf8581ef54c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:24:02.622Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1ed326d97aaf8581ef54d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:24:02.793Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1ed326d97aaf8581ef54e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:24:02.831Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1ed376d97aaf8581ef54f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:24:07.935Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1edddee24bc3c650d016c",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:26:53.404Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1edddee24bc3c650d016d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:26:53.548Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1edddee24bc3c650d016e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-16T09:26:53.608Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad861e6dedb64cf65064f27",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Expense Recorded Successfully",
+      "message": "Recorded expense of ₹110 for \"food(ACCIDENT)\".",
+      "read": false,
+      "createdAt": "2026-10-21T06:55:34.997Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad86210dedb64cf65064f29",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Moved to Savings",
+      "message": "Moved ₹111 from Online Money to Online Savings.",
+      "read": false,
+      "createdAt": "2026-10-21T06:56:16.742Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87ce944da17aa7e26c43e",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2025-10 has been initialized with ₹0 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-10-21T08:50:49.660Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87ce944da17aa7e26c43f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2025-10 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:50:49.682Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87cff44da17aa7e26c440",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "warning",
+      "title": "Payment Overdue: Meesho",
+      "message": "Payment of ₹113 to \"Meesho\" is overdue since 2026-10-18. Please clear it as soon as possible.",
+      "read": false,
+      "createdAt": "2026-10-21T08:51:11.060Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87d4e44da17aa7e26c442",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Payment Recorded",
+      "message": "₹5 paid to Meesho. ₹108 remaining due by 2026-10-18.",
+      "read": false,
+      "createdAt": "2026-10-21T08:52:30.624Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87d9444da17aa7e26c444",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "New Monthly Budget Created",
+      "message": "A new budget for 2026-05 has been initialized with ₹0 pocket money allocation.",
+      "read": false,
+      "createdAt": "2026-10-21T08:53:40.846Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87d9444da17aa7e26c445",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-05 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:53:40.878Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87d9c44da17aa7e26c446",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-06 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:53:48.105Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87d9f44da17aa7e26c447",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-07 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:53:51.684Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87da344da17aa7e26c448",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:53:55.796Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87da844da17aa7e26c449",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:54:00.635Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87dcc44da17aa7e26c44a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-08 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:54:36.779Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad87dd944da17aa7e26c44b",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "type": "success",
+      "title": "Month-End Report Generated",
+      "message": "Month-end report for 2026-09 is generated! Head to Analytics to view insights.",
+      "read": false,
+      "createdAt": "2026-10-21T08:54:49.049Z",
+      "__v": 0
     }
   ],
   "otps": [
@@ -2774,9 +4412,9 @@
       "userId": "6a99d52bb42f28fd3536d1d3",
       "amount": 1000,
       "direction": "to_savings",
-      "source": "cash",
+      "source": "external",
       "destination": "",
-      "fundingSource": "current_balance",
+      "fundingSource": "external",
       "date": "2026-09-04",
       "note": "",
       "createdAt": "2026-09-03T20:16:53.077Z",
@@ -2813,7 +4451,7 @@
       "userId": "6a99d6a9b42f28fd3536d217",
       "amount": 101,
       "direction": "to_savings",
-      "source": "gpay_upi",
+      "source": "online_money",
       "destination": "",
       "fundingSource": "current_balance",
       "date": "2026-09-04",
@@ -2839,7 +4477,7 @@
       "userId": "6a99d6a9b42f28fd3536d217",
       "amount": 520,
       "direction": "to_savings",
-      "source": "gpay_upi",
+      "source": "online_money",
       "destination": "",
       "fundingSource": "current_balance",
       "date": "2026-09-06",
@@ -2887,55 +4525,353 @@
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741974",
+      "_id": "6aa787f11a0e3c10f47f7c53",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 385,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "online_money",
+      "fundingSource": "current_balance",
+      "date": "2026-09-14",
+      "note": "blinkit grocery ",
+      "createdAt": "2026-09-14T05:36:49.449Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bad",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 100,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "online_money",
+      "fundingSource": "current_balance",
+      "date": "2026-09-17",
+      "note": "",
+      "createdAt": "2026-09-19T13:37:09.518Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943baf",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 60,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "online_money",
+      "fundingSource": "current_balance",
+      "date": "2026-09-17",
+      "note": "food from savings",
+      "createdAt": "2026-09-19T13:37:09.539Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bb1",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 400,
+      "direction": "to_savings",
+      "source": "online_money",
+      "destination": "online_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-09-18",
+      "note": "from dad",
+      "createdAt": "2026-09-19T13:37:09.575Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aae9005b7a75ba392943bb3",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 4,
+      "direction": "to_savings",
+      "source": "previous_savings",
+      "destination": "online_savings",
+      "fundingSource": "previous_savings",
+      "date": "2026-09-19",
+      "note": "Slice daily interest / rewards",
+      "createdAt": "2026-09-19T13:37:09.591Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ed6",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 100,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "online_money",
+      "fundingSource": "current_balance",
+      "date": "2026-09-25",
+      "note": "transfer from savings to spendable account",
+      "createdAt": "2026-09-30T08:14:55.244Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8edf",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 315,
+      "direction": "to_savings",
+      "source": "online_money",
+      "destination": "online_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-09-28",
+      "note": "added to savings account",
+      "createdAt": "2026-09-30T08:14:55.282Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abcc4ff19960d84d5ec8ee1",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 7.85,
+      "direction": "to_savings",
+      "source": "previous_savings",
+      "destination": "online_savings",
+      "fundingSource": "previous_savings",
+      "date": "2026-09-30",
+      "note": "interest on savings",
+      "createdAt": "2026-09-30T08:14:55.340Z",
+      "__v": 0
+    },
+    {
+      "_id": "6abf22d719960d84d5ec8eeb",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 205,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "online_money",
+      "fundingSource": "current_balance",
+      "date": "2026-10-01",
+      "note": "period treat ",
+      "createdAt": "2026-10-02T03:19:51.535Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ac4112abd77542addd3f6cc",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 200,
+      "direction": "to_savings",
+      "source": "online_money",
+      "destination": "online_savings",
+      "fundingSource": "current_balance",
+      "date": "2026-10-03",
+      "note": "from blinkit money ",
+      "createdAt": "2026-10-05T21:05:46.203Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0ce0e49b8795107202c5d",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 87,
+      "direction": "to_savings",
+      "source": "online_money",
+      "destination": "online_savings",
+      "fundingSource": "spendable",
+      "date": "2026-10-14",
+      "note": "shifted to savings",
+      "createdAt": "2026-10-15T12:58:54.928Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad0fc10156a634bef90012f",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1000,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "lent",
+      "fundingSource": "current_balance",
+      "date": "2026-10-13",
+      "note": "Lent to Sampath from online savings",
+      "createdAt": "2026-10-15T16:15:12.634Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad103b1d0ace2098f32b2ff",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 6,
+      "direction": "from_savings",
+      "source": "online_savings",
+      "destination": "online_money",
+      "fundingSource": "current_balance",
+      "date": "2026-10-15",
+      "note": "chocolates from savings",
+      "createdAt": "2026-10-15T16:47:45.542Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1d5e66a31f073e370345a",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 1000,
+      "direction": "to_savings",
+      "source": "lent",
+      "destination": "online_savings",
+      "fundingSource": "loan_repayment",
+      "date": "2026-10-16",
+      "note": "Repayment received from sampath (Restored to Online Savings)",
+      "createdAt": "2026-10-16T07:44:38.646Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad1e7c8e9d9c037154e29c6",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 250,
+      "direction": "to_savings",
+      "source": "lent",
+      "destination": "online_savings",
+      "fundingSource": "loan_repayment",
+      "date": "2026-10-16",
+      "note": "Repayment received from sampath (Saved to Online Savings from dad's money)",
+      "createdAt": "2026-10-16T09:00:56.733Z",
+      "updatedAt": "2026-10-16T09:00:56.733Z",
+      "countsTowardGoal": true
+    },
+    {
+      "_id": "6ad86210dedb64cf65064f28",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "amount": 111,
+      "direction": "to_savings",
+      "source": "external",
+      "destination": "online_savings",
+      "fundingSource": "external",
+      "countsTowardGoal": false,
+      "date": "2026-10-21",
+      "note": "Kanjiki from bhabhi ",
+      "createdAt": "2026-10-21T06:56:16.726Z",
+      "__v": 0
+    },
+    {
+      "_id": "6ad8758144da17aa7e26c429",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 400,
       "direction": "to_savings",
       "source": "online_money",
       "destination": "online_savings",
       "fundingSource": "current_balance",
+      "countsTowardGoal": false,
       "date": "2026-09-03",
       "note": "Tech Fund weekly stash",
-      "createdAt": "2026-09-12T13:18:38.094Z",
+      "createdAt": "2026-10-21T08:19:13.560Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741975",
+      "_id": "6ad8758144da17aa7e26c42a",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 200,
       "direction": "to_savings",
       "source": "cash",
       "destination": "cash_savings",
       "fundingSource": "current_balance",
+      "countsTowardGoal": false,
       "date": "2026-09-07",
       "note": "Emergency cash envelope",
-      "createdAt": "2026-09-12T13:18:38.095Z",
+      "createdAt": "2026-10-21T08:19:13.561Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741986",
+      "_id": "6ad8758144da17aa7e26c43b",
       "userId": "6aa42690e188736503a02116",
       "amount": 400,
       "direction": "to_savings",
       "source": "online_money",
       "destination": "online_savings",
       "fundingSource": "current_balance",
+      "countsTowardGoal": false,
       "date": "2026-09-03",
       "note": "Tech Fund weekly stash",
-      "createdAt": "2026-09-12T13:18:38.113Z",
+      "createdAt": "2026-10-21T08:19:13.589Z",
       "__v": 0
     },
     {
-      "_id": "6aa5512e726517860b741987",
+      "_id": "6ad8758144da17aa7e26c43c",
       "userId": "6aa42690e188736503a02116",
       "amount": 200,
       "direction": "to_savings",
       "source": "cash",
       "destination": "cash_savings",
       "fundingSource": "current_balance",
+      "countsTowardGoal": false,
       "date": "2026-09-07",
       "note": "Emergency cash envelope",
-      "createdAt": "2026-09-12T13:18:38.114Z",
+      "createdAt": "2026-10-21T08:19:13.590Z",
+      "__v": 0
+    }
+  ],
+  "moneyLent": [
+    {
+      "_id": "6ad0d5a5ac750f5809d7e3b2",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "personName": "sampath",
+      "amount": 1000,
+      "date": "2026-10-13",
+      "expectedReturnDate": "2026-10-20",
+      "note": "Lent from online savings account",
+      "paidUsing": "online",
+      "amountReceived": 1000,
+      "remainingAmount": 0,
+      "status": "Received",
+      "repayments": [
+        {
+          "_id": "6ad1d3cbca6828a090683751",
+          "amount": 1000,
+          "date": "2026-10-16",
+          "note": "",
+          "paidUsing": "online",
+          "createdAt": "2026-10-16T07:35:39.246Z"
+        }
+      ],
+      "updatedAt": "2026-10-16T07:35:39.246Z",
+      "createdAt": "2026-10-15T13:31:17.081Z",
+      "__v": 0,
+      "lentFrom": "online_savings"
+    },
+    {
+      "_id": "6ad0d5d6ac750f5809d7e3b4",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "personName": "sampath",
+      "amount": 250,
+      "date": "2026-10-15",
+      "expectedReturnDate": "2026-10-30",
+      "note": "",
+      "paidUsing": "online",
+      "amountReceived": 250,
+      "remainingAmount": 0,
+      "status": "Received",
+      "repayments": [
+        {
+          "_id": "6ad1d3c7ca6828a09068374f",
+          "amount": 250,
+          "date": "2026-10-16",
+          "note": "",
+          "paidUsing": "online",
+          "createdAt": "2026-10-16T07:35:35.051Z"
+        }
+      ],
+      "updatedAt": "2026-10-16T07:35:35.051Z",
+      "createdAt": "2026-10-15T13:32:06.286Z",
+      "__v": 0,
+      "lentFrom": "online_money"
+    }
+  ],
+  "moneyToPay": [
+    {
+      "_id": "6ad0dd7463573bdeddb2a2a5",
+      "userId": "6a99d6a9b42f28fd3536d217",
+      "payeeName": "Meesho",
+      "amount": 113,
+      "dateAdded": "2026-10-15",
+      "dueDate": "2026-10-18",
+      "category": "Shopping",
+      "note": "",
+      "amountPaid": 5,
+      "remainingAmount": 108,
+      "status": "Overdue",
+      "payments": [
+        {
+          "_id": "6ad87d4e44da17aa7e26c441",
+          "amount": 5,
+          "date": "2026-10-21",
+          "note": "",
+          "paidUsing": "online",
+          "createdAt": "2026-10-21T08:52:30.587Z"
+        }
+      ],
+      "updatedAt": "2026-10-21T08:52:30.587Z",
+      "createdAt": "2026-10-15T14:04:36.254Z",
       "__v": 0
     }
   ]

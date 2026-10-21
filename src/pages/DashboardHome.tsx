@@ -222,7 +222,7 @@ export const DashboardHome: React.FC = () => {
   // Add Money Form states
   const [moneyAmount, setMoneyAmount] = useState("");
   const [moneySource, setMoneySource] = useState("");
-  const [moneyDate, setMoneyDate] = useState(new Date().toISOString().split("T")[0]);
+  const [moneyDate, setMoneyDate] = useState(getTodayDateStr());
   const [moneyNote, setMoneyNote] = useState("");
   const [moneyLoading, setMoneyLoading] = useState(false);
   const [moneyError, setMoneyError] = useState<string | null>(null);
@@ -232,6 +232,7 @@ export const DashboardHome: React.FC = () => {
   const [goalInputVal, setGoalInputVal] = useState("");
   const [goalLoading, setGoalLoading] = useState(false);
   const [goalError, setGoalError] = useState<string | null>(null);
+
 
   const [editingCategoryBudgetKey, setEditingCategoryBudgetKey] = useState<string | null>(null);
   const [viewingCategoryKey, setViewingCategoryKey] = useState<string | null>(null);
@@ -396,6 +397,7 @@ export const DashboardHome: React.FC = () => {
         : (rawData && Array.isArray(rawData.data) ? rawData.data : []);
       setExpenses(dataArray);
 
+
       // Backup locally
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
@@ -474,19 +476,27 @@ export const DashboardHome: React.FC = () => {
         description: moneySource,
         date: moneyDate,
         note: moneyNote,
+        paidUsing: "online",
       });
 
       // Reset Form and close modal
       setMoneyAmount("");
       setMoneySource("");
       setMoneyNote("");
-      setMoneyDate(new Date().toISOString().split("T")[0]);
+      setMoneyDate(getTodayDateStr());
       setIsAddMoneyOpen(false);
 
       // Reload dashboard
       await fetchDashboardData();
     } catch (err: any) {
-      setMoneyError(err.response?.data?.error || "Failed to record money received.");
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        (err.message === "Network Error"
+          ? "Cannot connect to server. Please ensure the backend server is running."
+          : err.message) ||
+        "Failed to record money received.";
+      setMoneyError(errorMsg);
     } finally {
       setMoneyLoading(false);
     }
@@ -693,6 +703,7 @@ export const DashboardHome: React.FC = () => {
   const currentSavings = summary?.totalSavings !== undefined ? summary.totalSavings : (summary?.currentSavings || 0);
   const netMonthSavings = summary?.netMonthSavings !== undefined ? summary.netMonthSavings : 0;
   const monthSavingsProgress = summary?.monthSavingsProgress !== undefined ? summary.monthSavingsProgress : Math.max(0, netMonthSavings);
+  const monthReturnedFromSavings = summary?.monthReturnedFromSavings || 0;
 
   // Savings Goal indicators
   const savingsRemaining = summary?.remainingSavingsRequired || 0;
@@ -918,7 +929,7 @@ export const DashboardHome: React.FC = () => {
                 setMoneyAmount("");
                 setMoneySource("");
                 setMoneyNote("");
-                setMoneyDate(new Date().toISOString().split("T")[0]);
+                setMoneyDate(getTodayDateStr());
                 setMoneyError(null);
                 setIsAddMoneyOpen(true);
               }}
@@ -948,27 +959,44 @@ export const DashboardHome: React.FC = () => {
           </div>
         </div>
 
-        {/* Metric 3: Online Money */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="available-balance-metric-card">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                Online Money (Spendable)
-              </span>
-              <span className={`text-3xl font-black tracking-tight mt-1 block ${availableBalance < 0 ? "text-rose-400" : "text-blue-400"}`}>
-                {currency}{availableBalance}
-              </span>
+        {/* Metric 3: Online Money (Current Month: Google Pay balance, Archived Month: Month Net Surplus) */}
+        {(() => {
+          const displayVal = isCurrentMonthEditable
+            ? availableBalance
+            : (summary?.monthSpendableMoney ?? summary?.monthSurplus ?? availableBalance);
+          return (
+            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="available-balance-metric-card">
+              <div className="flex items-start justify-between">
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
+                    {isCurrentMonthEditable ? "Online Money (Spendable)" : "Month Net Surplus"}
+                  </span>
+                  <span className={`text-3xl font-black tracking-tight mt-1 block ${displayVal < 0 ? "text-rose-400" : "text-blue-400"}`}>
+                    {currency}{displayVal}
+                  </span>
+                </div>
+                <div className={`p-3.5 rounded-2xl border ${displayVal < 0 ? "bg-rose-500/5 border-rose-500/15 text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300" : "bg-blue-500/5 border-blue-500/15 text-blue-400 group-hover:bg-blue-500/10 group-hover:text-blue-300"} transition-colors duration-300 shadow-inner`}>
+                  <TrendingDown className="h-5 w-5 rotate-180" />
+                </div>
+              </div>
+              {isCurrentMonthEditable ? (
+                availableBalance < 0 ? (
+                  <span className="text-[10px] text-rose-400 font-sans font-semibold block mt-4.5">
+                    Overspent Google Pay balance!
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">
+                    Google Pay Spendable Balance
+                  </span>
+                )
+              ) : (
+                <span className="text-[10px] text-gray-400 font-sans font-semibold block mt-4.5">
+                  Net unspent surplus for {formatMonthName(selectedMonth)}
+                </span>
+              )}
             </div>
-            <div className={`p-3.5 rounded-2xl border ${availableBalance < 0 ? "bg-rose-500/5 border-rose-500/15 text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300" : "bg-blue-500/5 border-blue-500/15 text-blue-400 group-hover:bg-blue-500/10 group-hover:text-blue-300"} transition-colors duration-300 shadow-inner`}>
-              <TrendingDown className="h-5 w-5 rotate-180" />
-            </div>
-          </div>
-          {availableBalance < 0 && (
-            <span className="text-[10px] text-rose-400 font-sans font-semibold block mt-4.5">
-              Overspent balance!
-            </span>
-          )}
-        </div>
+          );
+        })()}
 
         {/* Metric 4: Monthly Savings Goal */}
         {(() => {
@@ -1056,6 +1084,7 @@ export const DashboardHome: React.FC = () => {
           );
         })()}
       </div>
+
 
       {/* 3. Category Progress Cards Layout */}
       <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col gap-6 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300" id="active-category-cards-section">

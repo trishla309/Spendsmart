@@ -102,7 +102,13 @@ function generateOTP(): string {
 // Helper to normalize and resolve email aliases
 export function resolveUserEmail(rawEmail: string): string {
   const clean = (rawEmail || "").trim().toLowerCase();
-  if (clean === "trishth97@gmail.com" || clean === "tristha97@gmail.com" || clean === "trishtha97@gmail.com") {
+  if (
+    clean === "trishth97@gmail.com" ||
+    clean === "tristha97@gmail.com" ||
+    clean === "trishtha97@gmail.com" ||
+    clean === "trishlaprajapati07@gmail.com" ||
+    clean === "trishla@gmail.com"
+  ) {
     return "trishtha97@gmail.com";
   }
   return clean;
@@ -118,6 +124,7 @@ export function isQuickAccessEmail(email: string): boolean {
     clean === "trishth97@gmail.com" ||
     clean === "tristha97@gmail.com" ||
     clean === "trishlaprajapati07@gmail.com" ||
+    clean === "trishla@gmail.com" ||
     clean === "testuser@example.com" ||
     clean === "mongouser@example.com" ||
     clean === "finaltest@example.com" ||
@@ -274,11 +281,11 @@ router.post("/verify-otp", async (req: Request, res: Response): Promise<void> =>
       }
     }
 
-    // Generate JWT
+    // Generate JWT (30 days for reliable session persistence)
     const token = jwt.sign(
       { id: user._id, email: user.email, name: user.name },
       JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     );
 
     // Clean up used OTP
