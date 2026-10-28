@@ -202,6 +202,9 @@ export const LendingAndDues: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    const handleUpdate = () => fetchData();
+    window.addEventListener("spendsmart_data_updated", handleUpdate);
+    return () => window.removeEventListener("spendsmart_data_updated", handleUpdate);
   }, []);
 
   // Net Position calculations

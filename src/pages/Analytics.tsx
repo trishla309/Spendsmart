@@ -159,8 +159,10 @@ export const Analytics: React.FC = () => {
       fetchAnalyticsData();
     };
     window.addEventListener("spendsmart_settings_change", handleSettingsChange);
+    window.addEventListener("spendsmart_data_updated", handleSettingsChange);
     return () => {
       window.removeEventListener("spendsmart_settings_change", handleSettingsChange);
+      window.removeEventListener("spendsmart_data_updated", handleSettingsChange);
     };
   }, [selectedMonth]);
 
