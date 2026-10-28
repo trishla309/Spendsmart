@@ -80,19 +80,20 @@ async function startServer() {
     // Serve static assets with cache headers; ensure index.html is NEVER cached so new deploys are instantly visible
     app.use(
       express.static(distPath, {
-        maxAge: "1d",
         setHeaders: (res, filePath) => {
-          if (filePath.endsWith("index.html")) {
-            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+          if (filePath.endsWith("index.html") || filePath.endsWith(".html")) {
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
             res.setHeader("Pragma", "no-cache");
             res.setHeader("Expires", "0");
+          } else if (filePath.includes("assets")) {
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
           }
         },
       })
     );
 
     app.get("*", (req, res) => {
-      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
       res.setHeader("Pragma", "no-cache");
       res.setHeader("Expires", "0");
       res.sendFile(path.join(distPath, "index.html"));

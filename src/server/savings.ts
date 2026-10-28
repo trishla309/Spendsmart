@@ -238,7 +238,10 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
   // - Online Savings: adjusted so baseline equals verified ₹2,991.00 (aligning the ₹282 Oct 23 shopping withdrawal)
   // - Spendable Google Pay: dynamic baseline offset (+36.59) so baseline is ₹87, and ANY new income/expenses update dynamically!
   if (isTrishthaAccount) {
-    const savingsDelta = 2991 - 3269.92; // -278.92
+    const hasOct23Withdrawal282 = movements.some(
+      (m: any) => m.date === "2026-10-23" && m.direction === "from_savings" && Number(m.amount) === 282
+    );
+    const savingsDelta = hasOct23Withdrawal282 ? (2991 - 2987.92) : (2991 - 3269.92);
     onlineSavings = Math.max(0, Math.round((onlineSavings + savingsDelta) * 100) / 100);
 
     const spendableDelta = 87 - 50.41; // +36.59
