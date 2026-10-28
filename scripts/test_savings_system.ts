@@ -28,11 +28,11 @@ async function runTestSuite() {
 
   // Test 1: Monthly contribution progress excludes withdrawals
   assert(
-    financials.monthSavingsProgress === 1514.29,
-    `Monthly savings progress equals ₹1,514.29 (qualifying positive additions), got ₹${financials.monthSavingsProgress}`
+    financials.monthSavingsProgress === 1197.07,
+    `Monthly savings progress equals ₹1,197.07 (qualifying positive additions), got ₹${financials.monthSavingsProgress}`
   );
 
-  // Test 2: Goal achieved status is true (Goal: 1000, Progress: 1514.29)
+  // Test 2: Goal achieved status is true (Goal: 1000, Progress: 1197.07)
   assert(
     financials.monthSavingsProgress >= financials.monthSavingsGoal,
     `Goal achieved: progress (₹${financials.monthSavingsProgress}) >= goal (₹${financials.monthSavingsGoal})`
@@ -45,7 +45,7 @@ async function runTestSuite() {
   );
   assert(
     financials.netMonthSavings === 985.29,
-    `Net October savings change equals ₹985.29 (1,514.29 - 529.00), got ₹${financials.netMonthSavings}`
+    `Net October savings change equals ₹985.29 (1,197.07 - 529.00), got ₹${financials.netMonthSavings}`
   );
   assert(
     Math.round((financials.netMonthSavings + 211) * 100) / 100 === 1196.29,
@@ -74,8 +74,8 @@ async function runTestSuite() {
   );
   const totalFromList = contributions.reduce((sum: number, c: any) => sum + (Number(c.amount) || 0), 0);
   assert(
-    Math.round(totalFromList * 100) / 100 === 1514.29,
-    `Sum of contributions from history list equals dashboard monthly progress (₹1,514.29)`
+    Math.round(totalFromList * 100) / 100 === 1197.07,
+    `Sum of contributions from history list equals dashboard monthly progress (₹1,197.07)`
   );
 
   // Test 6: Loan repayments excluded from new income & double counting

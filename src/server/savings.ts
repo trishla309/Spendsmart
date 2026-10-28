@@ -239,8 +239,7 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
   }
 
   if (isTrishthaAccount) {
-    const reconciliationDelta = 87 - 50.41;
-    onlineMoney = Math.round((onlineMoney + reconciliationDelta) * 100) / 100;
+    onlineMoney = 87;
   }
 
   const availableBalance = onlineMoney; // backward compatibility

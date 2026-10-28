@@ -996,7 +996,8 @@ export const DashboardHome: React.FC = () => {
 
         {/* Metric 4: Monthly Savings Goal */}
         {(() => {
-          const savingsPercentage = savingsGoal > 0 ? Math.min(100, Math.round((monthSavingsProgress / savingsGoal) * 100)) : 0;
+          const actualSavingsPercentage = savingsGoal > 0 ? Math.round((monthSavingsProgress / savingsGoal) * 100) : 0;
+          const visualBarWidth = Math.min(100, actualSavingsPercentage);
           return (
             <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="savings-goal-card">
               <div>
@@ -1041,7 +1042,7 @@ export const DashboardHome: React.FC = () => {
                       </span>
                       {savingsGoal > 0 && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/15 border border-purple-500/30 text-purple-300 font-mono">
-                          {savingsPercentage}%
+                          {actualSavingsPercentage}%
                         </span>
                       )}
                     </div>
@@ -1055,12 +1056,12 @@ export const DashboardHome: React.FC = () => {
               <div className="mt-auto pt-2">
                 <div className="flex justify-between items-center text-[10px] mb-1 font-bold">
                   <span className="text-gray-400">Monthly Progress</span>
-                  <span className="text-purple-400 font-mono font-bold">{savingsPercentage}%</span>
+                  <span className="text-purple-400 font-mono font-bold">{actualSavingsPercentage}%</span>
                 </div>
                 <div className="h-2 w-full bg-gray-950 rounded-full overflow-hidden relative border border-gray-800/40 shadow-inner">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-400 transition-all duration-500"
-                    style={{ width: `${savingsPercentage}%` }}
+                    style={{ width: `${visualBarWidth}%` }}
                   />
                 </div>
                 <div className="flex justify-between items-center text-[10px] mt-1 font-medium">

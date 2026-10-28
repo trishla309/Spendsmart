@@ -482,6 +482,39 @@ export async function restoreDiskBackupToMongoIfNeeded(): Promise<void> {
         console.log("[RESTORE] All account data restored into MongoDB successfully!");
       }
     } else {
+      // Safe sync for October 23 Dad's money adjustment in MongoDB Atlas
+      try {
+        await SavingsMovementM.updateOne(
+          {
+            date: "2026-10-23",
+            direction: "to_savings",
+            amount: 560,
+          },
+          {
+            $set: {
+              amount: 242,
+              note: "Dad's money saved — October 23 (net after Blinkit ₹318 and GPay ₹40)",
+            },
+          }
+        );
+        await SavingsMovementM.deleteOne({
+          date: "2026-10-23",
+          direction: "from_savings",
+          amount: 318,
+        });
+        await SavingsMovementM.updateOne(
+          {
+            date: "2026-10-23",
+            direction: "to_savings",
+            source: "interest",
+          },
+          {
+            $set: { amount: 7.07 },
+          }
+        );
+      } catch (syncErr) {
+        console.error("[SYNC] Error syncing Oct 23 adjustment to MongoDB:", syncErr);
+      }
       // Keep disk backup completely fresh with MongoDB state
       await backupMongoToJsonFile();
     }
