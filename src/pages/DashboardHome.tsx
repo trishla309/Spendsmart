@@ -33,6 +33,8 @@ import {
   HelpCircle,
   ArrowUpRight,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   History,
   Target,
   ArrowRight,
@@ -828,6 +830,33 @@ export const DashboardHome: React.FC = () => {
     return d.toLocaleString("default", { month: "long", year: "numeric" });
   };
 
+  const getUserGreeting = () => {
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        const u = JSON.parse(stored);
+        if (u.name) return u.name;
+        if (u.username) return u.username;
+      }
+    } catch {}
+    return "Trishtha";
+  };
+
+  const getTimeGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  const navigateMonth = (direction: -1 | 1) => {
+    const [year, month] = selectedMonth.split("-").map(Number);
+    const date = new Date(year, month - 1 + direction, 1);
+    const newY = date.getFullYear();
+    const newM = String(date.getMonth() + 1).padStart(2, "0");
+    setSelectedMonth(`${newY}-${newM}`);
+  };
+
   return (
     <div className="flex flex-col gap-12 md:gap-16 max-w-6xl mx-auto pb-16" id="dashboard-wrapper">
       {/* Undo Toast Notification */}
@@ -864,28 +893,100 @@ export const DashboardHome: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* 1. Header with Month Selection and Read-only lock notice */}
-      <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300" id="dashboard-header-container">
-        <div className="flex items-center gap-3 self-stretch md:self-auto">
-          <input
-            type="month"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="px-4.5 py-3 bg-gray-950/60 border border-gray-800 hover:border-emerald-500/30 focus:border-emerald-500/70 focus:ring-4 focus:ring-emerald-500/10 text-sm text-gray-100 rounded-2xl outline-none font-bold transition-all shadow-inner"
-            id="dashboard-month-select"
-          />
+      {/* 1. Ultra-Modern Executive Greeting & Month Hub */}
+      <div
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-gray-900/90 via-gray-900/60 to-gray-900/90 backdrop-blur-xl border border-gray-800/80 p-5 sm:p-6 md:p-7 shadow-xl shadow-gray-950/20 hover:border-gray-700/60 transition-all duration-300"
+        id="dashboard-header-container"
+      >
+        {/* Subtle ambient lighting effect */}
+        <div className="absolute -top-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          {/* Left: Warm Dynamic Greeting + Financial Pulse */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                <span>{getTimeGreeting()}, {getUserGreeting()}</span>
+                <span className="inline-block text-lg">✨</span>
+              </h1>
+              {isCurrentMonthEditable ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Live Sync
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/10 border border-amber-500/25 text-amber-400 shadow-sm">
+                  <Lock className="w-3 h-3 text-amber-400" />
+                  Archived Month
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-gray-400 font-medium flex-wrap">
+              <span className="flex items-center gap-1.5 text-gray-400">
+                <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                {new Date().toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+              </span>
+              <span className="text-gray-700 hidden sm:inline">•</span>
+              <span className="text-gray-400">
+                Daily Budget Pace: <strong className="text-emerald-300 font-bold">{currency}366/day</strong>
+              </span>
+            </div>
+          </div>
+
+          {/* Right: Sleek Month Navigator Pill with Prev / Next Chevrons */}
+          <div className="flex items-center gap-2.5 self-start md:self-auto">
+            <div className="flex items-center bg-gray-950/80 border border-gray-800 rounded-2xl p-1 shadow-inner hover:border-gray-700/80 transition-all">
+              <button
+                type="button"
+                onClick={() => navigateMonth(-1)}
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-850 rounded-xl transition-all cursor-pointer"
+                title="Previous Month"
+              >
+                <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+              </button>
+
+              <div className="relative flex items-center px-3 cursor-pointer group">
+                <Calendar className="w-4 h-4 text-emerald-400 mr-2 shrink-0 pointer-events-none group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-black text-white font-mono tracking-tight select-none">
+                  {formatMonthName(selectedMonth)}
+                </span>
+                <input
+                  type="month"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  id="dashboard-month-select"
+                  title="Click to select month"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => navigateMonth(1)}
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-850 rounded-xl transition-all cursor-pointer"
+                title="Next Month"
+              >
+                <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Lock indicator state */}
+        {/* Read-Only Archive Bar when viewing a past month */}
         {!isCurrentMonthEditable && (
-          <div className="flex items-start gap-3.5 px-5 py-4 bg-amber-500/5 border border-amber-500/15 text-amber-400 rounded-2xl text-xs max-w-md shadow-lg shadow-amber-500/2" id="readonly-warning-banner">
-            <Lock className="h-4.5 w-4.5 shrink-0 text-amber-500 mt-0.5" />
-            <div>
-              <span className="font-extrabold block text-amber-300 mb-0.5">Monthly Archive Read-Only</span>
-              <p className="text-gray-400 leading-relaxed font-semibold">
-                This is a historical archive. Previous months can be viewed but remain non-editable. Select the current month ({formatMonthName(currentMonthStr)}) to edit.
-              </p>
+          <div className="mt-4 pt-3.5 border-t border-amber-500/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-300 bg-amber-500/5 px-4 py-3 rounded-2xl border border-amber-500/20" id="readonly-warning-banner">
+            <div className="flex items-center gap-2.5">
+              <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Historical archive for <strong>{formatMonthName(selectedMonth)}</strong> is in view-only mode.</span>
             </div>
+            <button
+              onClick={() => setSelectedMonth(currentMonthStr)}
+              className="text-[11px] font-extrabold text-amber-400 hover:text-amber-200 underline cursor-pointer self-start sm:self-auto"
+            >
+              Jump to Current Month ({formatMonthName(currentMonthStr)}) →
+            </button>
           </div>
         )}
       </div>
@@ -893,23 +994,27 @@ export const DashboardHome: React.FC = () => {
       {/* 2. Unified Financial Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5" id="dashboard-summary-cards">
         {/* Metric 1: Money Received */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="money-received-metric-card">
+        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-emerald-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden" id="money-received-metric-card">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
           <div>
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                <span className="text-[11px] font-extrabold text-emerald-400/90 uppercase tracking-wider block">
                   Money Received
                 </span>
-                <span className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1 block">
-                  {currency}{pocketMoney}
-                </span>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="text-sm font-bold text-emerald-400/70">{currency}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                    {pocketMoney}
+                  </span>
+                </div>
               </div>
-              <div className="p-2.5 bg-emerald-500/5 border border-emerald-500/15 rounded-lg text-emerald-400 group-hover:bg-emerald-500/10 group-hover:text-emerald-300 transition-colors duration-300 shadow-inner">
+              <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 group-hover:bg-emerald-500/20 group-hover:text-emerald-300 transition-all duration-300 shadow-inner">
                 <Wallet className="h-5 w-5" />
               </div>
             </div>
-            <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-2">
-              Total pocket money & additions
+            <span className="text-[11px] text-gray-400 font-medium block mt-1.5">
+              Pocket money & additions
             </span>
           </div>
           {isCurrentMonthEditable && (
@@ -922,39 +1027,42 @@ export const DashboardHome: React.FC = () => {
                 setMoneyError(null);
                 setIsAddMoneyOpen(true);
               }}
-              className="mt-auto w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-500/40 text-emerald-400 hover:text-emerald-300 text-xs font-extrabold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              className="mt-4 w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
               id="add-money-metric-btn"
             >
-              <Plus className="h-3.5 w-3.5 font-bold stroke-[2.5px]" />
+              <Plus className="h-3.5 w-3.5 stroke-[2.5px]" />
               <span>Add Money</span>
             </button>
           )}
         </div>
 
         {/* Metric 2: Total Spent */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group">
+        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-rose-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-rose-500/10 transition-colors" />
           <div>
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                <span className="text-[11px] font-extrabold text-rose-400/90 uppercase tracking-wider block">
                   Total Spent
                 </span>
-                <span className="text-2xl sm:text-3xl font-black tracking-tight text-rose-400 mt-1 block">
-                  {currency}{totalExpenseSum}
-                </span>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="text-sm font-bold text-rose-400/70">{currency}</span>
+                  <span className="text-2xl sm:text-3xl font-black tracking-tight text-rose-400">
+                    {totalExpenseSum}
+                  </span>
+                </div>
               </div>
-              <div className="p-2.5 bg-rose-500/5 border border-rose-500/15 rounded-lg text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300 transition-colors duration-300 shadow-inner">
+              <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 group-hover:bg-rose-500/20 group-hover:text-rose-300 transition-all duration-300 shadow-inner">
                 <TrendingDown className="h-5 w-5" />
               </div>
             </div>
-            <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-2">
-              Total outflow across all categories
+            <span className="text-[11px] text-gray-400 font-medium block mt-1.5">
+              Outflow across all categories
             </span>
           </div>
-          <div className="mt-auto pt-2">
-            <span className="text-[10px] text-gray-500 font-medium block">
-              Tracked for {formatMonthName(selectedMonth)}
-            </span>
+          <div className="mt-4 pt-2.5 border-t border-gray-800/60 flex items-center justify-between text-[11px] text-gray-400">
+            <span className="font-medium">Tracked expenses</span>
+            <span className="text-gray-500">{formatMonthName(selectedMonth)}</span>
           </div>
         </div>
 
@@ -964,30 +1072,35 @@ export const DashboardHome: React.FC = () => {
             ? availableBalance
             : (summary?.monthSpendableMoney ?? summary?.monthSurplus ?? availableBalance);
           return (
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="available-balance-metric-card">
+            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-sky-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden" id="available-balance-metric-card">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
               <div>
                 <div className="flex items-start justify-between">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                    <span className="text-[11px] font-extrabold text-sky-400/90 uppercase tracking-wider block">
                       {isCurrentMonthEditable ? "Online Money (Spendable)" : "Month Net Surplus"}
                     </span>
-                    <span className={`text-2xl sm:text-3xl font-black tracking-tight mt-1 block ${displayVal < 0 ? "text-rose-400" : "text-blue-400"}`}>
-                      {currency}{displayVal}
-                    </span>
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span className={`text-sm font-bold ${displayVal < 0 ? "text-rose-400/70" : "text-sky-400/70"}`}>{currency}</span>
+                      <span className={`text-2xl sm:text-3xl font-black tracking-tight ${displayVal < 0 ? "text-rose-400" : "text-sky-400"}`}>
+                        {displayVal}
+                      </span>
+                    </div>
                   </div>
-                  <div className={`p-2.5 rounded-lg border ${displayVal < 0 ? "bg-rose-500/5 border-rose-500/15 text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300" : "bg-blue-500/5 border-blue-500/15 text-blue-400 group-hover:bg-blue-500/10 group-hover:text-blue-300"} transition-colors duration-300 shadow-inner`}>
+                  <div className={`p-2.5 rounded-xl border ${displayVal < 0 ? "bg-rose-500/10 border-rose-500/20 text-rose-400 group-hover:bg-rose-500/20 group-hover:text-rose-300" : "bg-sky-500/10 border-sky-500/20 text-sky-400 group-hover:bg-sky-500/20 group-hover:text-sky-300"} transition-all duration-300 shadow-inner`}>
                     <TrendingDown className="h-5 w-5 rotate-180" />
                   </div>
                 </div>
-                <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-2">
+                <span className="text-[11px] text-gray-400 font-medium block mt-1.5">
                   {isCurrentMonthEditable
                     ? (availableBalance < 0 ? "Overspent Google Pay balance!" : "Google Pay Spendable Balance")
                     : `Net unspent surplus for ${formatMonthName(selectedMonth)}`}
                 </span>
               </div>
-              <div className="mt-auto pt-2">
-                <span className={`text-[10px] font-semibold block ${displayVal < 0 ? "text-rose-400" : "text-emerald-400"}`}>
-                  {displayVal >= 0 ? "● Available to spend" : "● Attention needed"}
+              <div className="mt-4 pt-2.5 border-t border-gray-800/60 flex items-center justify-between text-[11px]">
+                <span className={`inline-flex items-center gap-1.5 font-bold ${displayVal < 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${displayVal < 0 ? "bg-rose-400" : "bg-emerald-400"} animate-pulse`} />
+                  {displayVal >= 0 ? "Available to spend" : "Attention needed"}
                 </span>
               </div>
             </div>
@@ -999,10 +1112,11 @@ export const DashboardHome: React.FC = () => {
           const actualSavingsPercentage = savingsGoal > 0 ? Math.round((monthSavingsProgress / savingsGoal) * 100) : 0;
           const visualBarWidth = Math.min(100, actualSavingsPercentage);
           return (
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="savings-goal-card">
+            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-purple-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden" id="savings-goal-card">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-purple-500/10 transition-colors" />
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[11px] font-extrabold text-purple-400/90 uppercase tracking-wider block">
                     Savings Goal
                   </span>
                   <div className="flex items-center gap-1.5">
@@ -1028,7 +1142,7 @@ export const DashboardHome: React.FC = () => {
                         </>
                       )}
                     </button>
-                    <div className="p-2 bg-purple-500/5 border border-purple-500/15 rounded-lg text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
+                    <div className="p-2 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-400 group-hover:bg-purple-500/20 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
                       <Target className="h-4 w-4" />
                     </div>
                   </div>
@@ -1036,29 +1150,30 @@ export const DashboardHome: React.FC = () => {
 
                 <div className="flex items-baseline justify-between gap-2">
                   <div>
-                    <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="text-2xl sm:text-3xl font-black tracking-tight text-purple-400 block">
-                        {currency}{formatIndianNumber(savingsGoal)}
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <span className="text-sm font-bold text-purple-400/70">{currency}</span>
+                      <span className="text-2xl sm:text-3xl font-black tracking-tight text-purple-400">
+                        {formatIndianNumber(savingsGoal)}
                       </span>
                       {savingsGoal > 0 && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/15 border border-purple-500/30 text-purple-300 font-mono">
+                        <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/15 border border-purple-500/30 text-purple-300 font-mono">
                           {actualSavingsPercentage}%
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-1">
+                    <span className="text-[11px] text-gray-400 font-medium block mt-1.5">
                       {savingsGoal > 0 ? "Target set for this month" : "No monthly target set"}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-auto pt-2">
+              <div className="mt-4 pt-2.5 border-t border-gray-800/60">
                 <div className="flex justify-between items-center text-[10px] mb-1 font-bold">
                   <span className="text-gray-400">Monthly Progress</span>
-                  <span className="text-purple-400 font-mono font-bold">{actualSavingsPercentage}%</span>
+                  <span className="text-purple-300 font-mono font-bold">{actualSavingsPercentage}%</span>
                 </div>
-                <div className="h-2 w-full bg-gray-950 rounded-full overflow-hidden relative border border-gray-800/40 shadow-inner">
+                <div className="h-1.5 w-full bg-gray-950 rounded-full overflow-hidden relative border border-gray-800/50 shadow-inner">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-400 transition-all duration-500"
                     style={{ width: `${visualBarWidth}%` }}

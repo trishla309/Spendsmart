@@ -266,13 +266,13 @@ export const SavingsPage: React.FC = () => {
         id="current-total-savings-card"
       >
         <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl -z-10 pointer-events-none" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               <div className="p-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-400">
                 <PiggyBank className="h-4 w-4" />
               </div>
-              <span className="text-xs font-black text-purple-400 uppercase tracking-wider">
+              <span className="text-xs font-black text-purple-300 uppercase tracking-wider">
                 Current Total Savings
               </span>
               <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
@@ -283,6 +283,41 @@ export const SavingsPage: React.FC = () => {
               <span className="text-4xl md:text-5xl font-black text-white tracking-tight">
                 {currency}{formatAmount(totalSavings)}
               </span>
+            </div>
+          </div>
+
+          {/* Asset Allocation Breakdown (Cash vs Online) */}
+          <div className="flex flex-col gap-2.5 bg-gray-950/60 border border-gray-800/80 rounded-2xl p-4 min-w-[280px]">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-bold text-gray-400 uppercase tracking-wider text-[10px]">Asset Split</span>
+              <span className="font-mono text-[11px] text-gray-300 font-bold">100% Accounted</span>
+            </div>
+            {/* Segmented bar */}
+            <div className="h-2 w-full bg-gray-900 rounded-full overflow-hidden flex">
+              <div
+                className="bg-amber-400 transition-all duration-500"
+                style={{ width: `${totalSavings > 0 ? (cashSavings / totalSavings) * 100 : 0}%` }}
+                title={`Cash: ${totalSavings > 0 ? Math.round((cashSavings / totalSavings) * 100) : 0}%`}
+              />
+              <div
+                className="bg-blue-400 transition-all duration-500"
+                style={{ width: `${totalSavings > 0 ? (onlineSavings / totalSavings) * 100 : 0}%` }}
+                title={`Online: ${totalSavings > 0 ? Math.round((onlineSavings / totalSavings) * 100) : 0}%`}
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs font-semibold gap-3 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                <span className="text-gray-400 text-[11px]">Cash:</span>
+                <span className="text-amber-300 font-mono font-bold text-[11px]">{currency}{formatAmount(cashSavings)}</span>
+                <span className="text-[10px] text-gray-500">({totalSavings > 0 ? Math.round((cashSavings / totalSavings) * 100) : 0}%)</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-400 shrink-0" />
+                <span className="text-gray-400 text-[11px]">Online:</span>
+                <span className="text-blue-300 font-mono font-bold text-[11px]">{currency}{formatAmount(onlineSavings)}</span>
+                <span className="text-[10px] text-gray-500">({totalSavings > 0 ? Math.round((onlineSavings / totalSavings) * 100) : 0}%)</span>
+              </div>
             </div>
           </div>
         </div>
