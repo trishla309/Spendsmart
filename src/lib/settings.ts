@@ -4,13 +4,13 @@ export type CurrencySymbol = "$" | "₹" | "€" | "£";
 export type PaymentMethod = "Online" | "Cash";
 
 export type AppThemeId =
-  // ☀️ Bright & Pastel Themes
-  | "sakura-day"
-  | "matcha-garden"
-  | "sunshine-peach"
-  | "lavender-milk"
-  | "ocean-breeze"
-  // 🌙 Pretty & Luminous Dark Themes
+  // 🎨 Curated Editorial & Balanced Themes (from user palettes)
+  | "bordo-pine"
+  | "violet-dusk"
+  | "velvet-burgundy"
+  | "espresso-mint"
+  | "shaded-spruce"
+  // 🌙 Deep Velvety Moods
   | "cosmic-twilight"
   | "midnight-sakura"
   | "emerald-zen"
@@ -18,12 +18,17 @@ export type AppThemeId =
   | "obsidian-luxe"
   // Backward compatibility
   | "dark"
-  | "light";
+  | "light"
+  | "sakura-day"
+  | "matcha-garden"
+  | "sunshine-peach"
+  | "lavender-milk"
+  | "ocean-breeze";
 
 export interface ThemeOption {
   id: AppThemeId;
   name: string;
-  type: "light" | "dark";
+  category: "curated" | "mood";
   tagline: string;
   emoji: string;
   bgPreview: string;
@@ -35,81 +40,81 @@ export interface ThemeOption {
 }
 
 export const THEME_OPTIONS: ThemeOption[] = [
-  // 1. 🌸 Sakura Day (Bright & Pastel Light)
+  // 1. 🍷 Bordo Atelier (Image 1: Bordo #6C151E, Green #0F3D3A, Cream #F5DABF)
   {
-    id: "sakura-day",
-    name: "Sakura Day",
-    type: "light",
-    tagline: "Cherry blossom pink & soft quartz",
-    emoji: "🌸",
-    bgPreview: "#FFF5F8",
-    cardPreview: "#FFFFFF",
-    borderPreview: "#FBCFE8",
-    accentColor: "#EC4899",
-    accentGlow: "rgba(236, 72, 153, 0.25)",
-    palette: ["#FFF5F8", "#FFFFFF", "#F43F5E", "#EC4899"],
+    id: "bordo-pine",
+    name: "Bordo Atelier",
+    category: "curated",
+    tagline: "Deep pine evergreen, bordeaux & warm champagne cream",
+    emoji: "🍷",
+    bgPreview: "#091A18",
+    cardPreview: "#122624",
+    borderPreview: "#6C151E",
+    accentColor: "#F5DABF",
+    accentGlow: "rgba(245, 218, 191, 0.28)",
+    palette: ["#091A18", "#0F3D3A", "#6C151E", "#F5DABF"],
   },
-  // 2. 🍵 Matcha Garden (Bright & Pastel Light)
+  // 2. 🔮 Violet Dusk (Image 2: Violet #502D55, Mauve #935073, Warm Cream #F6DBC0, Vanilla #F8F4E9)
   {
-    id: "matcha-garden",
-    name: "Matcha Garden",
-    type: "light",
-    tagline: "Calming pastel sage & pistachio",
-    emoji: "🍵",
-    bgPreview: "#F4F7F4",
-    cardPreview: "#FFFFFF",
-    borderPreview: "#D1E7DD",
-    accentColor: "#10B981",
-    accentGlow: "rgba(16, 185, 129, 0.25)",
-    palette: ["#F4F7F4", "#FFFFFF", "#10B981", "#D97706"],
+    id: "violet-dusk",
+    name: "Violet Dusk",
+    category: "curated",
+    tagline: "Moody twilight violet, mauve orchid & soft vanilla",
+    emoji: "🔮",
+    bgPreview: "#170D1A",
+    cardPreview: "#251429",
+    borderPreview: "#502D55",
+    accentColor: "#935073",
+    accentGlow: "rgba(147, 80, 115, 0.35)",
+    palette: ["#502D55", "#935073", "#F6DBC0", "#F8F4E9"],
   },
-  // 3. ☀️ Sunshine Peach (Bright & Pastel Light)
+  // 3. 🎩 Velvet Burgundy (Image 3: Black #000000, Burgundy #6D001A, Silk White #FFFFFF)
   {
-    id: "sunshine-peach",
-    name: "Sunshine Peach",
-    type: "light",
-    tagline: "Warm vanilla cream & apricot glow",
-    emoji: "☀️",
-    bgPreview: "#FFF9F2",
-    cardPreview: "#FFFFFF",
-    borderPreview: "#FED7AA",
-    accentColor: "#F97316",
-    accentGlow: "rgba(249, 115, 22, 0.25)",
-    palette: ["#FFF9F2", "#FFFFFF", "#F97316", "#F59E0B"],
+    id: "velvet-burgundy",
+    name: "Velvet Burgundy",
+    category: "curated",
+    tagline: "Stealth carbon noir, royal burgundy & pure silk white",
+    emoji: "🎩",
+    bgPreview: "#0E090B",
+    cardPreview: "#190F14",
+    borderPreview: "#6D001A",
+    accentColor: "#A60D30",
+    accentGlow: "rgba(166, 13, 48, 0.35)",
+    palette: ["#0E090B", "#190F14", "#6D001A", "#FFFFFF"],
   },
-  // 4. 💜 Lavender Milk (Bright & Pastel Light)
+  // 4. ☕ Espresso & Aero Mint (Image 4: Black Coffee #322B2B, Aero Blue #CCFFE2)
   {
-    id: "lavender-milk",
-    name: "Lavender Milk",
-    type: "light",
-    tagline: "Dreamy pastel lilac & sweet periwinkle",
-    emoji: "💜",
-    bgPreview: "#FAF6FE",
-    cardPreview: "#FFFFFF",
-    borderPreview: "#E9D5FF",
-    accentColor: "#8B5CF6",
-    accentGlow: "rgba(139, 92, 246, 0.25)",
-    palette: ["#FAF6FE", "#FFFFFF", "#8B5CF6", "#C084FC"],
+    id: "espresso-mint",
+    name: "Espresso & Aero Mint",
+    category: "curated",
+    tagline: "Warm roasted dark coffee & fresh pastel aero mint",
+    emoji: "☕",
+    bgPreview: "#1C1616",
+    cardPreview: "#272020",
+    borderPreview: "#473D3D",
+    accentColor: "#2FD48D",
+    accentGlow: "rgba(47, 212, 141, 0.35)",
+    palette: ["#1C1616", "#322B2B", "#473D3D", "#CCFFE2"],
   },
-  // 5. 🌊 Ocean Breeze (Bright & Pastel Light)
+  // 5. 🌊 Shaded Spruce (Image 5: Shaded Spruce #005E6D, Lavender Blush #FFF5F4)
   {
-    id: "ocean-breeze",
-    name: "Ocean Breeze",
-    type: "light",
-    tagline: "Crisp azure aqua & seafoam teal",
+    id: "shaded-spruce",
+    name: "Shaded Spruce",
+    category: "curated",
+    tagline: "Deep oceanic spruce teal & porcelain blush",
     emoji: "🌊",
-    bgPreview: "#F0F8FF",
-    cardPreview: "#FFFFFF",
-    borderPreview: "#BAE6FD",
-    accentColor: "#0284C7",
-    accentGlow: "rgba(2, 132, 199, 0.25)",
-    palette: ["#F0F8FF", "#FFFFFF", "#0284C7", "#06B6D4"],
+    bgPreview: "#051E24",
+    cardPreview: "#0A2B33",
+    borderPreview: "#005E6D",
+    accentColor: "#008FA5",
+    accentGlow: "rgba(0, 143, 165, 0.35)",
+    palette: ["#051E24", "#0A2B33", "#005E6D", "#FFF5F4"],
   },
-  // 6. 🌌 Cosmic Twilight (Pretty Dark)
+  // 6. 🌌 Cosmic Twilight (Deep Mood)
   {
     id: "cosmic-twilight",
     name: "Cosmic Twilight",
-    type: "dark",
+    category: "mood",
     tagline: "Deep velvet plum & glowing lilac",
     emoji: "🌌",
     bgPreview: "#0D0B18",
@@ -119,11 +124,11 @@ export const THEME_OPTIONS: ThemeOption[] = [
     accentGlow: "rgba(139, 92, 246, 0.35)",
     palette: ["#0D0B18", "#161329", "#8B5CF6", "#EC4899"],
   },
-  // 7. 🌺 Midnight Sakura (Pretty Dark)
+  // 7. 🌺 Midnight Sakura (Deep Mood)
   {
     id: "midnight-sakura",
     name: "Midnight Sakura",
-    type: "dark",
+    category: "mood",
     tagline: "Velvet black-cherry & neon rose",
     emoji: "🌺",
     bgPreview: "#150D15",
@@ -133,11 +138,11 @@ export const THEME_OPTIONS: ThemeOption[] = [
     accentGlow: "rgba(244, 63, 94, 0.35)",
     palette: ["#150D15", "#20121E", "#F43F5E", "#FB7185"],
   },
-  // 8. 🌿 Emerald Zen (Pretty Dark)
+  // 8. 🌿 Emerald Zen (Deep Mood)
   {
     id: "emerald-zen",
     name: "Emerald Zen",
-    type: "dark",
+    category: "mood",
     tagline: "Deep pine obsidian & neon mint",
     emoji: "🌿",
     bgPreview: "#07120C",
@@ -147,11 +152,11 @@ export const THEME_OPTIONS: ThemeOption[] = [
     accentGlow: "rgba(16, 185, 129, 0.35)",
     palette: ["#07120C", "#0E2015", "#10B981", "#34D399"],
   },
-  // 9. 🌅 Sunset Mirage (Pretty Dark)
+  // 9. 🌅 Sunset Mirage (Deep Mood)
   {
     id: "sunset-mirage",
     name: "Sunset Mirage",
-    type: "dark",
+    category: "mood",
     tagline: "Dark roasted espresso & amber glow",
     emoji: "🌅",
     bgPreview: "#140C0A",
@@ -161,12 +166,12 @@ export const THEME_OPTIONS: ThemeOption[] = [
     accentGlow: "rgba(249, 115, 22, 0.35)",
     palette: ["#140C0A", "#1F130E", "#F97316", "#FBBF24"],
   },
-  // 10. 🖤 Obsidian Luxe (Classic Dark Fintech)
+  // 10. 🖤 Obsidian Luxe (Stealth Classic)
   {
     id: "obsidian-luxe",
     name: "Obsidian Luxe",
-    type: "dark",
-    tagline: "Stealth titanium carbon & mint",
+    category: "mood",
+    tagline: "Stealth titanium carbon & emerald",
     emoji: "🖤",
     bgPreview: "#08080A",
     cardPreview: "#121215",
@@ -200,7 +205,9 @@ export const getSettings = (): AppSettings => {
     const parsed = JSON.parse(stored);
     let theme = parsed.theme || defaultSettings.theme;
     if (theme === "dark") theme = "obsidian-luxe";
-    if (theme === "light") theme = "sakura-day";
+    if (theme === "light" || ["sakura-day", "matcha-garden", "sunshine-peach", "lavender-milk", "ocean-breeze"].includes(theme)) {
+      theme = "bordo-pine";
+    }
     return { ...defaultSettings, ...parsed, theme };
   } catch {
     return defaultSettings;
@@ -226,21 +233,16 @@ export const applyTheme = (theme: AppThemeId) => {
   // Resolve legacy mappings
   let resolvedTheme = theme;
   if (theme === "dark") resolvedTheme = "obsidian-luxe";
-  if (theme === "light") resolvedTheme = "sakura-day";
+  if (theme === "light" || ["sakura-day", "matcha-garden", "sunshine-peach", "lavender-milk", "ocean-breeze"].includes(theme)) {
+    resolvedTheme = "bordo-pine";
+  }
 
-  const themeMeta = THEME_OPTIONS.find((t) => t.id === resolvedTheme) || THEME_OPTIONS[9];
-  const isLight = themeMeta.type === "light";
+  const themeMeta = THEME_OPTIONS.find((t) => t.id === resolvedTheme) || THEME_OPTIONS[0];
 
   // Set data-theme on html element for custom property selectors
   root.setAttribute("data-theme", resolvedTheme);
-
-  if (isLight) {
-    root.classList.add("light-mode");
-    root.style.colorScheme = "light";
-  } else {
-    root.classList.remove("light-mode");
-    root.style.colorScheme = "dark";
-  }
+  root.classList.remove("light-mode");
+  root.style.colorScheme = "dark";
 
   // Set dynamic CSS accent variables
   root.style.setProperty("--theme-accent-color", themeMeta.accentColor);

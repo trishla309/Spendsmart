@@ -37,8 +37,8 @@ interface SettingsPageProps {
 
 export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState<AppThemeId>("obsidian-luxe");
-  const [themeCategoryFilter, setThemeCategoryFilter] = useState<"all" | "light" | "dark">("all");
+  const [theme, setTheme] = useState<AppThemeId>("bordo-pine");
+  const [themeCategoryFilter, setThemeCategoryFilter] = useState<"all" | "curated" | "mood">("all");
   const [currency, setCurrency] = useState<CurrencySymbol>("₹");
   const [defaultPaymentMethod, setDefaultPaymentMethod] = useState<PaymentMethod>("Online");
 
@@ -172,8 +172,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   };
 
   const filteredThemes = THEME_OPTIONS.filter((t) => {
-    if (themeCategoryFilter === "light") return t.type === "light";
-    if (themeCategoryFilter === "dark") return t.type === "dark";
+    if (themeCategoryFilter === "curated") return t.category === "curated";
+    if (themeCategoryFilter === "mood") return t.category === "mood";
     return true;
   });
 
@@ -279,7 +279,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
                 </span>
               </h3>
               <p className="text-xs text-gray-400 mt-1">
-                Choose a cheerful light pastel aesthetic or a velvety dark mood. Every theme transforms your entire workspace immediately.
+                Choose from rich, velvety dark colorways and bespoke editorial palettes. Every theme transforms your entire workspace immediately.
               </p>
             </div>
           </div>
@@ -299,27 +299,27 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
             </button>
             <button
               type="button"
-              onClick={() => setThemeCategoryFilter("light")}
+              onClick={() => setThemeCategoryFilter("curated")}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                themeCategoryFilter === "light"
+                themeCategoryFilter === "curated"
                   ? "bg-amber-500/20 border border-amber-500/30 text-amber-300 shadow-sm"
                   : "text-gray-400 hover:text-gray-200"
               }`}
             >
-              <Sun className="h-3.5 w-3.5 text-amber-400" />
-              <span>☀️ Bright & Pastel</span>
+              <Palette className="h-3.5 w-3.5 text-amber-400" />
+              <span>🎨 Curated Palettes (5)</span>
             </button>
             <button
               type="button"
-              onClick={() => setThemeCategoryFilter("dark")}
+              onClick={() => setThemeCategoryFilter("mood")}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                themeCategoryFilter === "dark"
+                themeCategoryFilter === "mood"
                   ? "bg-purple-500/20 border border-purple-500/30 text-purple-300 shadow-sm"
                   : "text-gray-400 hover:text-gray-200"
               }`}
             >
               <Moon className="h-3.5 w-3.5 text-purple-400" />
-              <span>🌙 Pretty Dark</span>
+              <span>🌙 Deep Moods (5)</span>
             </button>
           </div>
         </div>
@@ -330,7 +330,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
             const isSelected =
               theme === t.id ||
               (theme === "dark" && t.id === "obsidian-luxe") ||
-              (theme === "light" && t.id === "sakura-day");
+              (theme === "light" && t.id === "bordo-pine");
 
             return (
               <div
@@ -343,18 +343,18 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
                 }`}
                 id={`theme-card-${t.id}`}
               >
-                {/* Header: Emoji, Name & Light/Dark Tag */}
+                {/* Header: Emoji, Name & Curated/Mood Tag */}
                 <div>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xl">{t.emoji}</span>
                     <span
                       className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                        t.type === "light"
+                        t.category === "curated"
                           ? "bg-amber-500/10 border-amber-500/20 text-amber-300"
                           : "bg-purple-500/10 border-purple-500/20 text-purple-300"
                       }`}
                     >
-                      {t.type === "light" ? "Bright" : "Dark"}
+                      {t.category === "curated" ? "Curated" : "Velvet"}
                     </span>
                   </div>
                   <h4 className="text-xs font-black text-white mt-2 truncate group-hover:text-emerald-300 transition-colors">

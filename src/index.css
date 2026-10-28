@@ -53,84 +53,84 @@ html, body, #root, div, nav, aside, main, header, section, button, input, select
    FENNO AESTHETIC THEME ENGINE - 10 CURATED COLORWAYS
    ======================================================== */
 
-/* 1. 🌸 SAKURA DAY (Bright & Pastel Light) */
-[data-theme="sakura-day"] {
-  --color-gray-950: #FFF5F8;
-  --color-gray-900: #FFFFFF;
-  --color-gray-850: #FFE4EC;
-  --color-gray-800: #FBCFE8;
-  --color-gray-700: #F472B6;
-  --color-gray-600: #9D174D;
-  --color-gray-500: #831843;
-  --color-gray-400: #701A75;
-  --color-gray-300: #581C87;
-  --color-gray-200: #3B0764;
-  --color-gray-100: #1F0A24;
-  --color-gray-50: #120317;
+/* 1. 🍷 BORDO ATELIER (Image 1: Bordo #6C151E, Green #0F3D3A, Cream #F5DABF) */
+[data-theme="bordo-pine"] {
+  --color-gray-950: #081715;
+  --color-gray-900: #102422;
+  --color-gray-850: #173330;
+  --color-gray-800: #351419;
+  --color-gray-700: #6C151E;
+  --color-gray-600: #94212D;
+  --color-gray-500: #AB8E78;
+  --color-gray-400: #D8BDAB;
+  --color-gray-300: #F5DABF;
+  --color-gray-200: #FCEFE2;
+  --color-gray-100: #FFF9F4;
+  --color-gray-50: #FFFFFF;
 }
 
-/* 2. 🍵 MATCHA GARDEN (Bright & Pastel Light) */
-[data-theme="matcha-garden"] {
-  --color-gray-950: #F4F7F4;
-  --color-gray-900: #FFFFFF;
-  --color-gray-850: #E5EDE6;
-  --color-gray-800: #D1E7DD;
-  --color-gray-700: #A3CFBB;
-  --color-gray-600: #2D6A4F;
-  --color-gray-500: #1B4332;
-  --color-gray-400: #2D3748;
-  --color-gray-300: #1A202C;
-  --color-gray-200: #142018;
-  --color-gray-100: #0B1910;
-  --color-gray-50: #040D07;
+/* 2. 🔮 VIOLET DUSK (Image 2: Violet #502D55, Mauve #935073, Warm Cream #F6DBC0, Vanilla #F8F4E9) */
+[data-theme="violet-dusk"] {
+  --color-gray-950: #160B19;
+  --color-gray-900: #231227;
+  --color-gray-850: #301935;
+  --color-gray-800: #502D55;
+  --color-gray-700: #713865;
+  --color-gray-600: #935073;
+  --color-gray-500: #B7799B;
+  --color-gray-400: #DEB59D;
+  --color-gray-300: #F6DBC0;
+  --color-gray-200: #F8F4E9;
+  --color-gray-100: #FCFAF6;
+  --color-gray-50: #FFFFFF;
 }
 
-/* 3. ☀️ SUNSHINE PEACH (Bright & Pastel Light) */
-[data-theme="sunshine-peach"] {
-  --color-gray-950: #FFF9F2;
-  --color-gray-900: #FFFFFF;
-  --color-gray-850: #FFEDD5;
-  --color-gray-800: #FED7AA;
-  --color-gray-700: #FDBA74;
-  --color-gray-600: #C2410C;
-  --color-gray-500: #9A3412;
-  --color-gray-400: #7C2D12;
-  --color-gray-300: #431407;
-  --color-gray-200: #290E05;
-  --color-gray-100: #1C0A03;
-  --color-gray-50: #0C0401;
+/* 3. 🎩 VELVET BURGUNDY (Image 3: Carbon Noir #000000, Burgundy #6D001A, White #FFFFFF) */
+[data-theme="velvet-burgundy"] {
+  --color-gray-950: #0C080A;
+  --color-gray-900: #170E12;
+  --color-gray-850: #24131B;
+  --color-gray-800: #420C19;
+  --color-gray-700: #6D001A;
+  --color-gray-600: #9E102F;
+  --color-gray-500: #887E82;
+  --color-gray-400: #B8B0B4;
+  --color-gray-300: #DDD8DA;
+  --color-gray-200: #F2EFF0;
+  --color-gray-100: #FFFFFF;
+  --color-gray-50: #FFFFFF;
 }
 
-/* 4. 💜 LAVENDER MILK (Bright & Pastel Light) */
-[data-theme="lavender-milk"] {
-  --color-gray-950: #FAF6FE;
-  --color-gray-900: #FFFFFF;
-  --color-gray-850: #F3E8FF;
-  --color-gray-800: #E9D5FF;
-  --color-gray-700: #D8B4FE;
-  --color-gray-600: #7E22CE;
-  --color-gray-500: #6B21A8;
-  --color-gray-400: #581C87;
-  --color-gray-300: #3B0764;
-  --color-gray-200: #230438;
-  --color-gray-100: #170224;
-  --color-gray-50: #0B0012;
+/* 4. ☕ ESPRESSO & AERO MINT (Image 4: Black Coffee #322B2B, Aero Blue #CCFFE2) */
+[data-theme="espresso-mint"] {
+  --color-gray-950: #191414;
+  --color-gray-900: #241D1D;
+  --color-gray-850: #322B2B;
+  --color-gray-800: #473E3E;
+  --color-gray-700: #615555;
+  --color-gray-600: #2C8760;
+  --color-gray-500: #62B892;
+  --color-gray-400: #94E3BD;
+  --color-gray-300: #CCFFE2;
+  --color-gray-200: #E6FFF1;
+  --color-gray-100: #F7FFFA;
+  --color-gray-50: #FFFFFF;
 }
 
-/* 5. 🌊 OCEAN BREEZE (Bright & Pastel Light) */
-[data-theme="ocean-breeze"] {
-  --color-gray-950: #F0F8FF;
-  --color-gray-900: #FFFFFF;
-  --color-gray-850: #E0F2FE;
-  --color-gray-800: #BAE6FD;
-  --color-gray-700: #7DD3FC;
-  --color-gray-600: #0369A1;
-  --color-gray-500: #075985;
-  --color-gray-400: #0C4A6E;
-  --color-gray-300: #082F49;
-  --color-gray-200: #041B2D;
-  --color-gray-100: #02101C;
-  --color-gray-50: #01080E;
+/* 5. 🌊 SHADED SPRUCE (Image 5: Shaded Spruce #005E6D, Lavender Blush #FFF5F4) */
+[data-theme="shaded-spruce"] {
+  --color-gray-950: #041B20;
+  --color-gray-900: #09272E;
+  --color-gray-850: #0E353E;
+  --color-gray-800: #005E6D;
+  --color-gray-700: #007D91;
+  --color-gray-600: #00A6C0;
+  --color-gray-500: #7DA4AA;
+  --color-gray-400: #AED0D6;
+  --color-gray-300: #DDF0F4;
+  --color-gray-200: #FFF5F4;
+  --color-gray-100: #FFFFFF;
+  --color-gray-50: #FFFFFF;
 }
 
 /* 6. 🌌 COSMIC TWILIGHT (Pretty Dark) */
