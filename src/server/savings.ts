@@ -206,7 +206,7 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
   let onlineSavings = Math.max(0, Math.round((totalOnlineSavingsIn - totalOnlineSavingsOut) * 100) / 100);
 
   // 2. Cash Savings (Physical cash kept aside in cash savings pot, minus any cash expenses spent from cash)
-  const cashSavings = Math.max(0, Math.round((totalCashSavingsIn - totalCashSavingsOut - allCashExpenses) * 100) / 100);
+  let cashSavings = Math.max(0, Math.round((totalCashSavingsIn - totalCashSavingsOut - allCashExpenses) * 100) / 100);
 
   // Net savings transferred from current spendable balance into savings buckets
   const netSavingsFromIncome = totalMovedFromOnlineMoney - totalReturnedToOnlineMoney;
@@ -235,17 +235,44 @@ export async function getUserCumulativeFinancials(userId: string, selectedMonth?
   }
 
   // Account reconciliation for Trishtha:
-  // - Online Savings: adjusted so baseline equals verified ₹2,991.00 (aligning the ₹282 Oct 23 shopping withdrawal)
-  // - Spendable Google Pay: dynamic baseline offset (+36.59) so baseline is ₹87, and ANY new income/expenses update dynamically!
+  // - Real-world verified baseline as of Oct 23, 2026:
+  //     * Online Savings (Slice): ₹2,991.00
+  //     * Cash Savings: ₹1,130.00
+  //     * Spendable Online Money (Google Pay): ₹87.00
+  // - All transactions after Oct 23, 2026 dynamically adjust these verified baselines:
   if (isTrishthaAccount) {
-    const hasOct23Withdrawal282 = movements.some(
-      (m: any) => m.date === "2026-10-23" && m.direction === "from_savings" && Number(m.amount) === 282
-    );
-    const savingsDelta = hasOct23Withdrawal282 ? (2991 - 2987.92) : (2991 - 3269.92);
-    onlineSavings = Math.max(0, Math.round((onlineSavings + savingsDelta) * 100) / 100);
+    const postBaselineMovements = movements.filter((m: any) => m.date && m.date > "2026-10-23");
+    let postOnlineSavingsIn = 0;
+    let postOnlineSavingsOut = 0;
+    let postCashSavingsIn = 0;
+    let postCashSavingsOut = 0;
+    let postNetShiftFromSpendable = 0;
 
-    const spendableDelta = 87 - 50.41; // +36.59
-    onlineMoney = Math.round((onlineMoney + spendableDelta) * 100) / 100;
+    postBaselineMovements.forEach((m: any) => {
+      const amt = Number(m.amount) || 0;
+      const info = getMovementInfo(m);
+      if (info.dest === "online_savings") postOnlineSavingsIn += amt;
+      if (info.dest === "cash_savings") postCashSavingsIn += amt;
+      if (info.src === "online_savings") postOnlineSavingsOut += amt;
+      if (info.src === "cash_savings") postCashSavingsOut += amt;
+      if (info.src === "online_money") postNetShiftFromSpendable += amt;
+      if (!info.isToSavings && info.dest === "online_money") postNetShiftFromSpendable -= amt;
+    });
+
+    const postBaselineExpenses = allExpenses.filter((e: any) => e.date && e.date > "2026-10-23");
+    const postIncome = postBaselineExpenses
+      .filter((e: any) => e.category === "income")
+      .reduce((sum: number, e: any) => sum + (Number(e.amount) || 0), 0);
+    const postOnlineExpenses = postBaselineExpenses
+      .filter((e: any) => e.category !== "income" && e.category !== "savings" && (e.paidUsing || "online").toLowerCase() !== "cash")
+      .reduce((sum: number, e: any) => sum + (Number(e.amount) || 0), 0);
+    const postCashExpenses = postBaselineExpenses
+      .filter((e: any) => e.category !== "income" && e.category !== "savings" && (e.paidUsing || "online").toLowerCase() === "cash")
+      .reduce((sum: number, e: any) => sum + (Number(e.amount) || 0), 0);
+
+    onlineSavings = Math.round((2991 + postOnlineSavingsIn - postOnlineSavingsOut) * 100) / 100;
+    cashSavings = Math.round((1130 + postCashSavingsIn - postCashSavingsOut - postCashExpenses) * 100) / 100;
+    onlineMoney = Math.round((87 + postIncome - postOnlineExpenses - postNetShiftFromSpendable) * 100) / 100;
   }
 
   const gpaySavings = onlineSavings; // backward compatibility

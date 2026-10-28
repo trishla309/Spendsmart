@@ -536,6 +536,25 @@ export async function restoreDiskBackupToMongoIfNeeded(): Promise<void> {
             note: "shopping",
           });
         }
+
+        const hasAccidentIncome = await (ExpenseM as any).findOne({
+          userId: targetUserId,
+          date: "2026-10-28",
+          category: "income",
+          amount: 650,
+        });
+        if (!hasAccidentIncome) {
+          console.log("[SYNC] Inserting Oct 28 ₹650 Pocket Money income into MongoDB Atlas...");
+          await (ExpenseM as any).create({
+            userId: targetUserId,
+            amount: 650,
+            category: "income",
+            description: "Pocket Money (accident money)",
+            date: "2026-10-28",
+            note: "",
+            paidUsing: "online",
+          });
+        }
       } catch (syncErr) {
         console.error("[SYNC] Error syncing Oct 23 adjustment to MongoDB:", syncErr);
       }
