@@ -15,7 +15,7 @@
   --color-graytext: #6B7280;
   --color-sand-border: #E8E1D3;
 
-  /* True Dark Black (OLED Obsidian / Neutral Dark, zero bluish tint) */
+  /* Default True Dark Black (OLED Obsidian / Neutral Dark) */
   --color-gray-950: #080809; /* Deepest pure black background */
   --color-gray-900: #121214; /* Crisp dark card background */
   --color-gray-850: #18181b; /* Raised card / section surface */
@@ -44,6 +44,192 @@
   --color-fenno-burgundy-subtle: rgba(168, 13, 83, 0.12);
 }
 
+/* Smooth theme transitions across the system */
+html, body, #root, div, nav, aside, main, header, section, button, input, select {
+  transition: background-color 0.22s ease, border-color 0.22s ease, color 0.15s ease, box-shadow 0.22s ease;
+}
+
+/* ========================================================
+   FENNO AESTHETIC THEME ENGINE - 10 CURATED COLORWAYS
+   ======================================================== */
+
+/* 1. 🌸 SAKURA DAY (Bright & Pastel Light) */
+[data-theme="sakura-day"] {
+  --color-gray-950: #FFF5F8;
+  --color-gray-900: #FFFFFF;
+  --color-gray-850: #FFE4EC;
+  --color-gray-800: #FBCFE8;
+  --color-gray-700: #F472B6;
+  --color-gray-600: #9D174D;
+  --color-gray-500: #831843;
+  --color-gray-400: #701A75;
+  --color-gray-300: #581C87;
+  --color-gray-200: #3B0764;
+  --color-gray-100: #1F0A24;
+  --color-gray-50: #120317;
+}
+
+/* 2. 🍵 MATCHA GARDEN (Bright & Pastel Light) */
+[data-theme="matcha-garden"] {
+  --color-gray-950: #F4F7F4;
+  --color-gray-900: #FFFFFF;
+  --color-gray-850: #E5EDE6;
+  --color-gray-800: #D1E7DD;
+  --color-gray-700: #A3CFBB;
+  --color-gray-600: #2D6A4F;
+  --color-gray-500: #1B4332;
+  --color-gray-400: #2D3748;
+  --color-gray-300: #1A202C;
+  --color-gray-200: #142018;
+  --color-gray-100: #0B1910;
+  --color-gray-50: #040D07;
+}
+
+/* 3. ☀️ SUNSHINE PEACH (Bright & Pastel Light) */
+[data-theme="sunshine-peach"] {
+  --color-gray-950: #FFF9F2;
+  --color-gray-900: #FFFFFF;
+  --color-gray-850: #FFEDD5;
+  --color-gray-800: #FED7AA;
+  --color-gray-700: #FDBA74;
+  --color-gray-600: #C2410C;
+  --color-gray-500: #9A3412;
+  --color-gray-400: #7C2D12;
+  --color-gray-300: #431407;
+  --color-gray-200: #290E05;
+  --color-gray-100: #1C0A03;
+  --color-gray-50: #0C0401;
+}
+
+/* 4. 💜 LAVENDER MILK (Bright & Pastel Light) */
+[data-theme="lavender-milk"] {
+  --color-gray-950: #FAF6FE;
+  --color-gray-900: #FFFFFF;
+  --color-gray-850: #F3E8FF;
+  --color-gray-800: #E9D5FF;
+  --color-gray-700: #D8B4FE;
+  --color-gray-600: #7E22CE;
+  --color-gray-500: #6B21A8;
+  --color-gray-400: #581C87;
+  --color-gray-300: #3B0764;
+  --color-gray-200: #230438;
+  --color-gray-100: #170224;
+  --color-gray-50: #0B0012;
+}
+
+/* 5. 🌊 OCEAN BREEZE (Bright & Pastel Light) */
+[data-theme="ocean-breeze"] {
+  --color-gray-950: #F0F8FF;
+  --color-gray-900: #FFFFFF;
+  --color-gray-850: #E0F2FE;
+  --color-gray-800: #BAE6FD;
+  --color-gray-700: #7DD3FC;
+  --color-gray-600: #0369A1;
+  --color-gray-500: #075985;
+  --color-gray-400: #0C4A6E;
+  --color-gray-300: #082F49;
+  --color-gray-200: #041B2D;
+  --color-gray-100: #02101C;
+  --color-gray-50: #01080E;
+}
+
+/* 6. 🌌 COSMIC TWILIGHT (Pretty Dark) */
+[data-theme="cosmic-twilight"] {
+  --color-gray-950: #0D0B18;
+  --color-gray-900: #161329;
+  --color-gray-850: #1E1A38;
+  --color-gray-800: #3B2D64;
+  --color-gray-700: #5B449A;
+  --color-gray-600: #7C5EC7;
+  --color-gray-500: #A28ADB;
+  --color-gray-400: #C4B5FD;
+  --color-gray-300: #DDD6FE;
+  --color-gray-200: #EDE9FE;
+  --color-gray-100: #F5F3FF;
+  --color-gray-50: #FFFFFF;
+}
+
+/* 7. 🌺 MIDNIGHT SAKURA (Pretty Dark) */
+[data-theme="midnight-sakura"] {
+  --color-gray-950: #150D15;
+  --color-gray-900: #20121E;
+  --color-gray-850: #2C182A;
+  --color-gray-800: #4C2442;
+  --color-gray-700: #723463;
+  --color-gray-600: #A3488C;
+  --color-gray-500: #C966AE;
+  --color-gray-400: #E879C5;
+  --color-gray-300: #F4A5DC;
+  --color-gray-200: #FBCFE8;
+  --color-gray-100: #FDF2F8;
+  --color-gray-50: #FFFFFF;
+}
+
+/* 8. 🌿 EMERALD ZEN (Pretty Dark) */
+[data-theme="emerald-zen"] {
+  --color-gray-950: #07120C;
+  --color-gray-900: #0E2015;
+  --color-gray-850: #142E1F;
+  --color-gray-800: #1B432C;
+  --color-gray-700: #256140;
+  --color-gray-600: #308457;
+  --color-gray-500: #42AC73;
+  --color-gray-400: #6EE7B7;
+  --color-gray-300: #A7F3D0;
+  --color-gray-200: #D1FAE5;
+  --color-gray-100: #ECFDF5;
+  --color-gray-50: #FFFFFF;
+}
+
+/* 9. 🌅 SUNSET MIRAGE (Pretty Dark) */
+[data-theme="sunset-mirage"] {
+  --color-gray-950: #140C0A;
+  --color-gray-900: #1F130E;
+  --color-gray-850: #2E1A13;
+  --color-gray-800: #452516;
+  --color-gray-700: #69371E;
+  --color-gray-600: #9A4F2A;
+  --color-gray-500: #C46737;
+  --color-gray-400: #FB923C;
+  --color-gray-300: #FDBA74;
+  --color-gray-200: #FED7AA;
+  --color-gray-100: #FFF7ED;
+  --color-gray-50: #FFFFFF;
+}
+
+/* 10. 🖤 OBSIDIAN LUXE (Classic Stealth Fintech) */
+[data-theme="obsidian-luxe"],
+:root:not([data-theme]) {
+  --color-gray-950: #080809;
+  --color-gray-900: #121214;
+  --color-gray-850: #18181b;
+  --color-gray-800: #27272a;
+  --color-gray-700: #3f3f46;
+  --color-gray-600: #52525b;
+  --color-gray-500: #71717a;
+  --color-gray-400: #a1a1aa;
+  --color-gray-300: #d4d4d8;
+  --color-gray-200: #e4e4e7;
+  --color-gray-100: #f4f4f5;
+  --color-gray-50: #fafafa;
+}
+
+/* Fallback light mode */
+.light-mode:not([data-theme]) {
+  --color-gray-950: #f8fafc;
+  --color-gray-900: #ffffff;
+  --color-gray-850: #f1f5f9;
+  --color-gray-800: #e2e8f0;
+  --color-gray-700: #cbd5e1;
+  --color-gray-600: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-400: #475569;
+  --color-gray-300: #334155;
+  --color-gray-200: #1e293b;
+  --color-gray-100: #0f172a;
+  --color-gray-50: #020617;
+}
+
 /* Scoped Landing Page Utilities */
 .fenno-landing {
   background-color: #FFFFFF;
@@ -67,23 +253,6 @@
   .fenno-preview-float {
     animation: none !important;
   }
-}
-
-
-/* Light mode theme mappings to perfectly match our new vars */
-.light-mode {
-  --color-gray-950: #f8fafc;
-  --color-gray-900: #ffffff;
-  --color-gray-850: #f1f5f9;
-  --color-gray-800: #e2e8f0;
-  --color-gray-700: #cbd5e1;
-  --color-gray-600: #94a3b8;
-  --color-gray-500: #64748b;
-  --color-gray-400: #475569;
-  --color-gray-300: #334155;
-  --color-gray-200: #1e293b;
-  --color-gray-100: #0f172a;
-  --color-gray-50: #020617;
 }
 
 /* Custom scrollbars for a premium modern look */

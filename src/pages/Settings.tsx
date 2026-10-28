@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
-import { getSettings, saveSettings, CurrencySymbol, PaymentMethod } from "../lib/settings";
+import {
+  getSettings,
+  saveSettings,
+  CurrencySymbol,
+  PaymentMethod,
+  AppThemeId,
+  THEME_OPTIONS,
+  ThemeOption,
+} from "../lib/settings";
 import {
   User as UserIcon,
   Mail,
@@ -17,6 +25,9 @@ import {
   CheckCircle,
   CreditCard,
   Banknote,
+  Sparkles,
+  Palette,
+  Check,
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -26,8 +37,9 @@ interface SettingsPageProps {
 
 export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [currency, setCurrency] = useState<CurrencySymbol>("$");
+  const [theme, setTheme] = useState<AppThemeId>("obsidian-luxe");
+  const [themeCategoryFilter, setThemeCategoryFilter] = useState<"all" | "light" | "dark">("all");
+  const [currency, setCurrency] = useState<CurrencySymbol>("₹");
   const [defaultPaymentMethod, setDefaultPaymentMethod] = useState<PaymentMethod>("Online");
 
   // User details from localStorage
@@ -73,11 +85,12 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     fetchDbStatus();
   }, []);
 
-  const handleThemeChange = (newTheme: "dark" | "light") => {
+  const handleThemeChange = (newTheme: AppThemeId) => {
     setTheme(newTheme);
     saveSettings({ theme: newTheme });
     triggerGlobalSettingsUpdate();
-    showToast("Theme updated successfully.");
+    const meta = THEME_OPTIONS.find((t) => t.id === newTheme);
+    showToast(`Applied ${meta ? meta.name : newTheme} style.`);
   };
 
   const handleCurrencyChange = (newCurrency: CurrencySymbol) => {
@@ -133,6 +146,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
       setShowResetConfirm(false);
       // Trigger update
       window.dispatchEvent(new Event("spendsmart_settings_change"));
+      window.dispatchEvent(new Event("spendsmart_data_updated"));
     } catch (err: any) {
       setErrorMsg(err.response?.data?.error || "Failed to reset current month budget.");
     } finally {
@@ -140,62 +154,100 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     }
   };
 
-  // Delete User Account
+  // Delete User Account Wiping Data
   const handleDeleteAccount = async () => {
     setLoading(true);
     setErrorMsg("");
     try {
       await api.delete("/auth/account");
-      // Call standard logout
-      onLogout();
-      navigate("/login");
+      showToast("Account deleted successfully. Logging out...");
+      setTimeout(() => {
+        onLogout();
+        navigate("/");
+      }, 1500);
     } catch (err: any) {
-      setErrorMsg(err.response?.data?.error || "Failed to delete user account.");
+      setErrorMsg(err.response?.data?.error || "Failed to delete account. Please try again.");
       setLoading(false);
     }
   };
 
+  const filteredThemes = THEME_OPTIONS.filter((t) => {
+    if (themeCategoryFilter === "light") return t.type === "light";
+    if (themeCategoryFilter === "dark") return t.type === "dark";
+    return true;
+  });
+
   return (
-    <div className="max-w-4xl mx-auto flex flex-col gap-8 pb-16" id="settings-view">
-      {/* Messages */}
-      {successMsg && (
-        <div className="bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 p-4 rounded-xl flex items-center gap-3 text-sm font-semibold shadow-md">
-          <CheckCircle className="h-5 w-5 shrink-0" />
-          <span>{successMsg}</span>
+    <div className="flex flex-col gap-8 max-w-7xl mx-auto pb-12" id="settings-container">
+      {/* Page Title */}
+      <div className="flex items-center gap-3">
+        <div className="p-3 bg-gray-900 border border-gray-800 rounded-2xl text-emerald-400">
+          <SettingsIcon className="h-6 w-6" />
         </div>
+        <div>
+          <h1 className="text-2xl font-black text-white tracking-tight">System & Account Settings</h1>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Configure your workspace style, regional preferences, and profile credentials.
+          </p>
+        </div>
+      </div>
+
+      {/* Toast Feedback */}
+      {successMsg && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-2xl text-xs font-bold flex items-center gap-3 shadow-lg shadow-emerald-500/5"
+          id="settings-success-alert"
+        >
+          <CheckCircle className="h-4 w-4 shrink-0 text-emerald-400" />
+          <span>{successMsg}</span>
+        </motion.div>
       )}
 
       {errorMsg && (
-        <div className="bg-rose-500/10 border border-rose-500/25 text-rose-400 p-4 rounded-xl flex items-center gap-3 text-sm font-semibold shadow-md">
-          <AlertTriangle className="h-5 w-5 shrink-0" />
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-2xl text-xs font-bold flex items-center gap-3 shadow-lg shadow-rose-500/5"
+          id="settings-error-alert"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
           <span>{errorMsg}</span>
-        </div>
+        </motion.div>
       )}
 
-      {/* 1. Profile Panel */}
+      {/* 1. Profile & Database Connection Overview */}
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4.5 min-w-0">
-          <div className="h-16 w-16 bg-gradient-to-tr from-emerald-500 to-indigo-500 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-emerald-500/10 shrink-0">
-            {user?.name ? user.name.charAt(0).toUpperCase() : "S"}
+        <div className="flex items-center gap-4">
+          <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-gray-950 font-black text-xl shadow-lg shadow-emerald-500/20">
+            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
           </div>
-          <div className="min-w-0">
-            <span className="text-[10px] text-gray-500 font-mono font-extrabold tracking-wider uppercase block">Logged Profile</span>
-            <h2 className="text-xl font-extrabold text-white tracking-tight truncate mt-0.5">{user?.name || "Student Demographics"}</h2>
-            <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1.5 font-medium">
-              <Mail className="h-3.5 w-3.5" />
-              <span className="truncate">{user?.email || "student@example.com"}</span>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-black text-white tracking-tight">{user?.name || "Active Student"}</h2>
+              <span className="text-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-extrabold px-2 py-0.5 rounded-full">
+                Verified
+              </span>
             </div>
+            <p className="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
+              <Mail className="h-3.5 w-3.5 text-gray-500" />
+              <span>{user?.email || "No email bound"}</span>
+            </p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 w-full md:w-auto">
-          <div className="bg-gray-950/60 border border-gray-800 px-4 py-2.5 rounded-xl text-center md:text-right font-mono text-[10px] text-gray-500">
-            ACCOUNT STATUS: <span className="text-emerald-400 font-bold">VERIFIED LEVEL 1</span>
-          </div>
+        {/* Database Status Badge */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
           {dbStatus && (
-            <div className="bg-gray-950/60 border border-gray-800 px-4 py-2.5 rounded-xl text-center md:text-right font-mono text-[10px] text-gray-500 flex flex-col gap-1 items-center md:items-end">
-              <div>
-                DATABASE:{" "}
+            <div className="px-4 py-2 bg-gray-950 border border-gray-850 rounded-xl flex flex-col gap-0.5">
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider font-extrabold">Data Source</span>
+              <div className="flex items-center gap-2 text-xs">
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    dbStatus.connected ? "bg-emerald-400 animate-pulse" : "bg-amber-400"
+                  }`}
+                />
                 {dbStatus.connected ? (
                   <span className="text-emerald-400 font-bold">MONGODB ATLAS CONNECTED</span>
                 ) : (
@@ -212,50 +264,164 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* 2. Interface Appearance */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col gap-6">
-          <div className="flex items-center gap-2.5 border-b border-gray-850 pb-3">
-            <Sun className="h-5 w-5 text-amber-400 shrink-0" />
-            <h3 className="text-sm font-extrabold text-white">Interface Customization</h3>
-          </div>
-
-          {/* Theme Toggling */}
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-gray-400">Workspace Accent Lightness Mode</label>
-            <div className="grid grid-cols-2 gap-3 mt-1">
-              <button
-                onClick={() => handleThemeChange("dark")}
-                className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2.5 text-xs font-bold transition-all cursor-pointer ${
-                  theme === "dark"
-                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300"
-                    : "bg-gray-950/40 border-gray-850 text-gray-500 hover:text-gray-300"
-                }`}
-                id="theme-dark-btn"
-              >
-                <Moon className="h-4 w-4" />
-                <span>Stealth Dark Mode</span>
-              </button>
-
-              <button
-                onClick={() => handleThemeChange("light")}
-                className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2.5 text-xs font-bold transition-all cursor-pointer ${
-                  theme === "light"
-                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300"
-                    : "bg-gray-950/40 border-gray-850 text-gray-500 hover:text-gray-300"
-                }`}
-                id="theme-light-btn"
-              >
-                <Sun className="h-4 w-4" />
-                <span>Clean Light Mode</span>
-              </button>
+      {/* 2. Aesthetic & Visual Style Studio (Curated 10 Themes) */}
+      <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 md:p-7 shadow-xl flex flex-col gap-6" id="theme-studio-section">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-850 pb-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-400 shadow-inner">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-black text-white tracking-tight flex items-center gap-2">
+                Aesthetic & Theme Studio
+                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                  10 Handcrafted Styles
+                </span>
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Choose a cheerful light pastel aesthetic or a velvety dark mood. Every theme transforms your entire workspace immediately.
+              </p>
             </div>
           </div>
 
+          {/* Filter Toggle Buttons */}
+          <div className="flex items-center gap-1 p-1 bg-gray-950/80 border border-gray-800/80 rounded-2xl self-start sm:self-auto shrink-0 shadow-inner">
+            <button
+              type="button"
+              onClick={() => setThemeCategoryFilter("all")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                themeCategoryFilter === "all"
+                  ? "bg-gray-800 text-white shadow-sm"
+                  : "text-gray-400 hover:text-gray-200"
+              }`}
+            >
+              All (10)
+            </button>
+            <button
+              type="button"
+              onClick={() => setThemeCategoryFilter("light")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                themeCategoryFilter === "light"
+                  ? "bg-amber-500/20 border border-amber-500/30 text-amber-300 shadow-sm"
+                  : "text-gray-400 hover:text-gray-200"
+              }`}
+            >
+              <Sun className="h-3.5 w-3.5 text-amber-400" />
+              <span>☀️ Bright & Pastel</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setThemeCategoryFilter("dark")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                themeCategoryFilter === "dark"
+                  ? "bg-purple-500/20 border border-purple-500/30 text-purple-300 shadow-sm"
+                  : "text-gray-400 hover:text-gray-200"
+              }`}
+            >
+              <Moon className="h-3.5 w-3.5 text-purple-400" />
+              <span>🌙 Pretty Dark</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 10 Aesthetic Theme Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5" id="theme-cards-grid">
+          {filteredThemes.map((t) => {
+            const isSelected =
+              theme === t.id ||
+              (theme === "dark" && t.id === "obsidian-luxe") ||
+              (theme === "light" && t.id === "sakura-day");
+
+            return (
+              <div
+                key={t.id}
+                onClick={() => handleThemeChange(t.id)}
+                className={`group relative p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-3.5 ${
+                  isSelected
+                    ? "bg-gray-850/80 border-emerald-400/80 shadow-xl shadow-emerald-500/10 ring-2 ring-emerald-500/30 scale-[1.02]"
+                    : "bg-gray-950/60 border-gray-800/80 hover:border-gray-700/80 hover:bg-gray-900 hover:-translate-y-0.5"
+                }`}
+                id={`theme-card-${t.id}`}
+              >
+                {/* Header: Emoji, Name & Light/Dark Tag */}
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xl">{t.emoji}</span>
+                    <span
+                      className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                        t.type === "light"
+                          ? "bg-amber-500/10 border-amber-500/20 text-amber-300"
+                          : "bg-purple-500/10 border-purple-500/20 text-purple-300"
+                      }`}
+                    >
+                      {t.type === "light" ? "Bright" : "Dark"}
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-black text-white mt-2 truncate group-hover:text-emerald-300 transition-colors">
+                    {t.name}
+                  </h4>
+                  <p className="text-[10px] text-gray-400 font-medium leading-relaxed line-clamp-2 mt-0.5">
+                    {t.tagline}
+                  </p>
+                </div>
+
+                {/* Swatch Preview Box */}
+                <div
+                  className="p-2.5 rounded-xl border flex flex-col gap-2 shadow-inner"
+                  style={{ backgroundColor: t.bgPreview, borderColor: t.borderPreview }}
+                >
+                  <div
+                    className="p-1.5 rounded-lg border flex items-center justify-between"
+                    style={{ backgroundColor: t.cardPreview, borderColor: t.borderPreview }}
+                  >
+                    <div className="flex items-center gap-1">
+                      {t.palette.map((color, idx) => (
+                        <div
+                          key={idx}
+                          className="h-3 w-3 rounded-full border border-black/10 shadow-sm"
+                          style={{ backgroundColor: color }}
+                          title={color}
+                        />
+                      ))}
+                    </div>
+                    <div
+                      className="h-2 w-4 rounded-full"
+                      style={{ backgroundColor: t.accentColor }}
+                    />
+                  </div>
+                </div>
+
+                {/* Active Indicator Button */}
+                <div className="pt-0.5">
+                  {isSelected ? (
+                    <div className="w-full py-1.5 px-2 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-extrabold rounded-xl flex items-center justify-center gap-1 shadow-sm">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                      <span>Active Style</span>
+                    </div>
+                  ) : (
+                    <div className="w-full py-1.5 px-2 bg-gray-900 group-hover:bg-gray-800 text-gray-400 group-hover:text-gray-200 text-[10px] font-bold rounded-xl text-center transition-colors border border-gray-800/60">
+                      Choose Style
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Regional Preferences & Maintenance Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Regional & Currency Preferences */}
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col gap-6">
+          <div className="flex items-center gap-2.5 border-b border-gray-850 pb-3">
+            <Coins className="h-5 w-5 text-emerald-400 shrink-0" />
+            <h3 className="text-sm font-extrabold text-white">Regional & Payment Preferences</h3>
+          </div>
+
           {/* Currency Selection */}
-          <div className="flex flex-col gap-2 mt-2">
+          <div className="flex flex-col gap-2">
             <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
-              <Coins className="h-3.5 w-3.5 text-emerald-400" />
               Standard Currency Representation Symbols
             </label>
             <select
@@ -312,7 +478,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
           </div>
         </div>
 
-        {/* 3. Account Actions / Maintenance */}
+        {/* Maintenance & Security Actions */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col gap-6">
           <div className="flex items-center gap-2.5 border-b border-gray-850 pb-3">
             <Shield className="h-5 w-5 text-indigo-400 shrink-0" />
