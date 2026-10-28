@@ -502,17 +502,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </main>
       </div>
 
-      {/* Floating Quick Action Button (Bottom Right) */}
-      <button
-        type="button"
-        onClick={() => setIsQuickActionOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-black shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-emerald-300/40 group"
-        id="floating-quick-action-btn"
-        title="Quick Money Hub (Press N)"
-      >
-        <Plus className="h-5 w-5 stroke-[3] group-hover:rotate-90 transition-transform duration-300" />
-        <span className="text-xs font-black hidden md:inline">Quick Entry</span>
-      </button>
+
 
       {/* Global Quick Action Modal */}
       <QuickActionModal

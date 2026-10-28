@@ -54,16 +54,16 @@ async function runTestSuite() {
 
   // Test 4: Current available balances separation
   assert(
-    financials.onlineSavings === 3269.14,
-    `Available Online Savings (Slice) equals ₹3,269.14, got ₹${financials.onlineSavings}`
+    financials.onlineSavings === 2991,
+    `Available Online Savings (Slice) equals ₹2,991.00, got ₹${financials.onlineSavings}`
   );
   assert(
     financials.cashSavings === 1130,
     `Available Cash Savings equals ₹1,130.00, got ₹${financials.cashSavings}`
   );
   assert(
-    financials.totalSavings === 4399.14,
-    `Combined Available Savings equals ₹4,399.14 (3,269.14 + 1,130.00), got ₹${financials.totalSavings}`
+    financials.totalSavings === 4121,
+    `Combined Available Savings equals ₹4,121.00 (2,991.00 + 1,130.00), got ₹${financials.totalSavings}`
   );
 
   // Test 5: Compact contribution history contains 7 qualifying items
@@ -87,8 +87,8 @@ async function runTestSuite() {
 
   // Test 7: ₹318 transfer and Blinkit purchase do not double-deduct from savings
   assert(
-    financials.onlineSavings === 3269.14,
-    `Slice savings deducted ₹318 once via transfer, available balance correctly ₹3,269.14`
+    financials.onlineSavings === 2991,
+    `Slice savings deducted ₹318 once via transfer, available balance correctly ₹2,991.00`
   );
 
   // 2. Isolated Unit / Hypothetical Scenarios

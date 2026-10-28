@@ -512,6 +512,30 @@ export async function restoreDiskBackupToMongoIfNeeded(): Promise<void> {
             $set: { amount: 7.07 },
           }
         );
+
+        // Ensure Oct 23 ₹282 shopping withdrawal exists in MongoDB Atlas so Withdrawn & Online Savings reflect real balance
+        const trishthaUser = await (UserM as any).findOne({ email: /trishtha/i });
+        const targetUserId = trishthaUser ? trishthaUser._id.toString() : "6a99d6a9b42f28fd3536d217";
+        const hasShopping = await (SavingsMovementM as any).findOne({
+          userId: targetUserId,
+          date: "2026-10-23",
+          direction: "from_savings",
+          amount: 282,
+        });
+        if (!hasShopping) {
+          console.log("[SYNC] Inserting missing Oct 23 ₹282 shopping movement into MongoDB Atlas...");
+          await SavingsMovementM.create({
+            userId: targetUserId,
+            amount: 282,
+            direction: "from_savings",
+            source: "online_savings",
+            destination: "online_money",
+            fundingSource: "spendable",
+            countsTowardGoal: true,
+            date: "2026-10-23",
+            note: "shopping",
+          });
+        }
       } catch (syncErr) {
         console.error("[SYNC] Error syncing Oct 23 adjustment to MongoDB:", syncErr);
       }
