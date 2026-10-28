@@ -420,6 +420,16 @@ export const DashboardHome: React.FC = () => {
     fetchDashboardData();
   }, [selectedMonth]);
 
+  useEffect(() => {
+    const handleDataUpdate = () => {
+      fetchDashboardData();
+    };
+    window.addEventListener("spendsmart_data_updated", handleDataUpdate);
+    return () => {
+      window.removeEventListener("spendsmart_data_updated", handleDataUpdate);
+    };
+  }, [selectedMonth]);
+
   // ADD EXPENSE handler
   const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -867,7 +877,7 @@ export const DashboardHome: React.FC = () => {
         </div>
 
         {/* Lock indicator state */}
-        {!isCurrentMonthEditable ? (
+        {!isCurrentMonthEditable && (
           <div className="flex items-start gap-3.5 px-5 py-4 bg-amber-500/5 border border-amber-500/15 text-amber-400 rounded-2xl text-xs max-w-md shadow-lg shadow-amber-500/2" id="readonly-warning-banner">
             <Lock className="h-4.5 w-4.5 shrink-0 text-amber-500 mt-0.5" />
             <div>
@@ -877,51 +887,30 @@ export const DashboardHome: React.FC = () => {
               </p>
             </div>
           </div>
-        ) : (
-          <div className="flex items-center gap-4 flex-wrap md:flex-nowrap w-full md:w-auto justify-end" id="editable-success-container">
-
-            <button
-              onClick={() => {
-                setAmount("");
-                setCategory("food");
-                setDescription("");
-                const d = new Date();
-                const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-                setDate(todayStr);
-                setNote("");
-                setPaidUsing(getSettings().defaultPaymentMethod || "Online");
-                setAddError(null);
-                setIsAddExpenseOpen(true);
-              }}
-              className="w-full md:w-auto px-6 py-4 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 border border-emerald-400/20"
-              id="global-add-expense-btn"
-            >
-              <Plus className="h-4.5 w-4.5 font-bold stroke-[3px]" />
-              <span>Add Expense</span>
-            </button>
-          </div>
         )}
       </div>
 
       {/* 2. Unified Financial Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="dashboard-summary-cards">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5" id="dashboard-summary-cards">
         {/* Metric 1: Money Received */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="money-received-metric-card">
+        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="money-received-metric-card">
           <div>
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-1">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
+                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
                   Money Received
                 </span>
-                <span className="text-3xl font-black tracking-tight text-white mt-1 block">
+                <span className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1 block">
                   {currency}{pocketMoney}
                 </span>
               </div>
-              <div className="p-3.5 bg-emerald-500/5 border border-emerald-500/15 rounded-2xl text-emerald-400 group-hover:bg-emerald-500/10 group-hover:text-emerald-300 transition-colors duration-300 shadow-inner">
+              <div className="p-2.5 bg-emerald-500/5 border border-emerald-500/15 rounded-lg text-emerald-400 group-hover:bg-emerald-500/10 group-hover:text-emerald-300 transition-colors duration-300 shadow-inner">
                 <Wallet className="h-5 w-5" />
               </div>
             </div>
-            <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">Total pocket money & additions</span>
+            <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-2">
+              Total pocket money & additions
+            </span>
           </div>
           {isCurrentMonthEditable && (
             <button
@@ -933,7 +922,7 @@ export const DashboardHome: React.FC = () => {
                 setMoneyError(null);
                 setIsAddMoneyOpen(true);
               }}
-              className="mt-4 w-full py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-500/40 text-emerald-400 hover:text-emerald-300 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              className="mt-auto w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-500/40 text-emerald-400 hover:text-emerald-300 text-xs font-extrabold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
               id="add-money-metric-btn"
             >
               <Plus className="h-3.5 w-3.5 font-bold stroke-[2.5px]" />
@@ -943,19 +932,29 @@ export const DashboardHome: React.FC = () => {
         </div>
 
         {/* Metric 2: Total Spent */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                Total Spent
-              </span>
-              <span className="text-3xl font-black tracking-tight text-rose-400 mt-1 block">
-                {currency}{totalExpenseSum}
-              </span>
+        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group">
+          <div>
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                  Total Spent
+                </span>
+                <span className="text-2xl sm:text-3xl font-black tracking-tight text-rose-400 mt-1 block">
+                  {currency}{totalExpenseSum}
+                </span>
+              </div>
+              <div className="p-2.5 bg-rose-500/5 border border-rose-500/15 rounded-lg text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300 transition-colors duration-300 shadow-inner">
+                <TrendingDown className="h-5 w-5" />
+              </div>
             </div>
-            <div className="p-3.5 bg-rose-500/5 border border-rose-500/15 rounded-2xl text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300 transition-colors duration-300 shadow-inner">
-              <TrendingDown className="h-5 w-5" />
-            </div>
+            <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-2">
+              Total outflow across all categories
+            </span>
+          </div>
+          <div className="mt-auto pt-2">
+            <span className="text-[10px] text-gray-500 font-medium block">
+              Tracked for {formatMonthName(selectedMonth)}
+            </span>
           </div>
         </div>
 
@@ -965,35 +964,32 @@ export const DashboardHome: React.FC = () => {
             ? availableBalance
             : (summary?.monthSpendableMoney ?? summary?.monthSurplus ?? availableBalance);
           return (
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="available-balance-metric-card">
-              <div className="flex items-start justify-between">
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
-                    {isCurrentMonthEditable ? "Online Money (Spendable)" : "Month Net Surplus"}
-                  </span>
-                  <span className={`text-3xl font-black tracking-tight mt-1 block ${displayVal < 0 ? "text-rose-400" : "text-blue-400"}`}>
-                    {currency}{displayVal}
-                  </span>
+            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="available-balance-metric-card">
+              <div>
+                <div className="flex items-start justify-between">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                      {isCurrentMonthEditable ? "Online Money (Spendable)" : "Month Net Surplus"}
+                    </span>
+                    <span className={`text-2xl sm:text-3xl font-black tracking-tight mt-1 block ${displayVal < 0 ? "text-rose-400" : "text-blue-400"}`}>
+                      {currency}{displayVal}
+                    </span>
+                  </div>
+                  <div className={`p-2.5 rounded-lg border ${displayVal < 0 ? "bg-rose-500/5 border-rose-500/15 text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300" : "bg-blue-500/5 border-blue-500/15 text-blue-400 group-hover:bg-blue-500/10 group-hover:text-blue-300"} transition-colors duration-300 shadow-inner`}>
+                    <TrendingDown className="h-5 w-5 rotate-180" />
+                  </div>
                 </div>
-                <div className={`p-3.5 rounded-2xl border ${displayVal < 0 ? "bg-rose-500/5 border-rose-500/15 text-rose-400 group-hover:bg-rose-500/10 group-hover:text-rose-300" : "bg-blue-500/5 border-blue-500/15 text-blue-400 group-hover:bg-blue-500/10 group-hover:text-blue-300"} transition-colors duration-300 shadow-inner`}>
-                  <TrendingDown className="h-5 w-5 rotate-180" />
-                </div>
-              </div>
-              {isCurrentMonthEditable ? (
-                availableBalance < 0 ? (
-                  <span className="text-[10px] text-rose-400 font-sans font-semibold block mt-4.5">
-                    Overspent Google Pay balance!
-                  </span>
-                ) : (
-                  <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-4.5">
-                    Google Pay Spendable Balance
-                  </span>
-                )
-              ) : (
-                <span className="text-[10px] text-gray-400 font-sans font-semibold block mt-4.5">
-                  Net unspent surplus for {formatMonthName(selectedMonth)}
+                <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-2">
+                  {isCurrentMonthEditable
+                    ? (availableBalance < 0 ? "Overspent Google Pay balance!" : "Google Pay Spendable Balance")
+                    : `Net unspent surplus for ${formatMonthName(selectedMonth)}`}
                 </span>
-              )}
+              </div>
+              <div className="mt-auto pt-2">
+                <span className={`text-[10px] font-semibold block ${displayVal < 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                  {displayVal >= 0 ? "● Available to spend" : "● Attention needed"}
+                </span>
+              </div>
             </div>
           );
         })()}
@@ -1002,10 +998,10 @@ export const DashboardHome: React.FC = () => {
         {(() => {
           const savingsPercentage = savingsGoal > 0 ? Math.min(100, Math.round((monthSavingsProgress / savingsGoal) * 100)) : 0;
           return (
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="savings-goal-card">
+            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-xl p-5 sm:p-5.5 flex flex-col justify-between aspect-square shadow-xl shadow-gray-950/15 hover:border-gray-700/50 hover:-translate-y-1 transition-all duration-300 relative group" id="savings-goal-card">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
                     Savings Goal
                   </span>
                   <div className="flex items-center gap-1.5">
@@ -1016,7 +1012,7 @@ export const DashboardHome: React.FC = () => {
                         setGoalError(null);
                         setIsSetGoalOpen(true);
                       }}
-                      className="px-2.5 py-1 bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/25 text-purple-300 text-[11px] font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                      className="px-2 py-0.5 bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/25 text-purple-300 text-[10px] font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer"
                       title={savingsGoal > 0 ? "Edit monthly savings goal" : "Set monthly savings goal"}
                     >
                       {savingsGoal > 0 ? (
@@ -1031,8 +1027,8 @@ export const DashboardHome: React.FC = () => {
                         </>
                       )}
                     </button>
-                    <div className="p-2.5 bg-purple-500/5 border border-purple-500/15 rounded-xl text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
-                      <Target className="h-4.5 w-4.5" />
+                    <div className="p-2 bg-purple-500/5 border border-purple-500/15 rounded-lg text-purple-400 group-hover:bg-purple-500/10 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
+                      <Target className="h-4 w-4" />
                     </div>
                   </div>
                 </div>
@@ -1040,7 +1036,7 @@ export const DashboardHome: React.FC = () => {
                 <div className="flex items-baseline justify-between gap-2">
                   <div>
                     <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="text-3xl font-black tracking-tight text-purple-400 block">
+                      <span className="text-2xl sm:text-3xl font-black tracking-tight text-purple-400 block">
                         {currency}{formatIndianNumber(savingsGoal)}
                       </span>
                       {savingsGoal > 0 && (
@@ -1050,14 +1046,14 @@ export const DashboardHome: React.FC = () => {
                       )}
                     </div>
                     <span className="text-[10px] text-gray-500 font-sans font-semibold block mt-1">
-                      {savingsGoal > 0 ? "Target set for this month" : "No monthly target set — click 'Set Target'"}
+                      {savingsGoal > 0 ? "Target set for this month" : "No monthly target set"}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4">
-                <div className="flex justify-between items-center text-[10px] mb-1.5 font-bold">
+              <div className="mt-auto pt-2">
+                <div className="flex justify-between items-center text-[10px] mb-1 font-bold">
                   <span className="text-gray-400">Monthly Progress</span>
                   <span className="text-purple-400 font-mono font-bold">{savingsPercentage}%</span>
                 </div>
@@ -1067,7 +1063,7 @@ export const DashboardHome: React.FC = () => {
                     style={{ width: `${savingsPercentage}%` }}
                   />
                 </div>
-                <div className="flex justify-between items-center text-[10px] mt-1.5 font-medium">
+                <div className="flex justify-between items-center text-[10px] mt-1 font-medium">
                   <span className="text-gray-400">
                     {savingsGoal > 0
                       ? `${currency}${formatIndianNumber(monthSavingsProgress)} saved`
@@ -1388,115 +1384,6 @@ export const DashboardHome: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* 5. Compact Recent Transactions Preview */}
-      {(() => {
-        const recentTransactions = expenses
-          .slice()
-          .sort((a, b) => {
-            const dateCmp = b.date.localeCompare(a.date);
-            if (dateCmp !== 0) return dateCmp;
-            return (b.createdAt || "").localeCompare(a.createdAt || "");
-          })
-          .slice(0, 5);
-
-        return (
-          <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col gap-4 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300" id="recent-transactions-section">
-            <div className="flex items-center justify-between border-b border-gray-800 pb-3.5">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl">
-                  <History className="h-4.5 w-4.5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black text-white tracking-tight" id="recent-transactions-title">
-                    Recent Transactions
-                  </h3>
-                  <span className="text-[11px] text-gray-500 font-medium">Quick overview of recent activity</span>
-                </div>
-              </div>
-
-              <Link
-                to="/history"
-                className="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5 py-1.5 px-3 rounded-xl hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
-                id="view-all-transactions-top-link"
-              >
-                <span>View all transactions →</span>
-              </Link>
-            </div>
-
-            {recentTransactions.length > 0 ? (
-              <div className="flex flex-col divide-y divide-gray-800/60" id="recent-transactions-preview-list">
-                {recentTransactions.map((exp) => {
-                  const isIncome = exp.category === "income";
-                  const emoji = getEmojiForTransaction(exp.description, exp.category);
-                  return (
-                    <div
-                      key={exp._id}
-                      className="py-3 px-2 flex items-center justify-between gap-3 hover:bg-gray-950/40 rounded-xl transition-colors duration-150 group"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-xl shrink-0 select-none p-2 bg-gray-950/80 border border-gray-800/60 rounded-xl group-hover:scale-105 transition-all duration-300 shadow-inner">
-                          {emoji}
-                        </span>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-sm font-bold text-gray-100 group-hover:text-white transition-colors truncate">
-                            {exp.description}
-                          </span>
-                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                            <span className="text-[11px] text-gray-400 font-semibold truncate">
-                              {getCategoryLabel(exp.category)}
-                            </span>
-                            <span className="text-[10px] text-gray-500 font-mono font-medium">• {formatDateGPay(exp.date)}</span>
-                            {!isIncome && (
-                              <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded border ${
-                                (exp.paidUsing || "online").toLowerCase() === "cash"
-                                  ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
-                                  : "bg-blue-500/10 border-blue-500/25 text-blue-300"
-                              }`}>
-                                {(exp.paidUsing || "online").toLowerCase() === "cash" ? "Cash" : "Online"}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 shrink-0">
-                        <span className={`text-sm font-black font-mono tracking-tight ${isIncome ? "text-emerald-400" : "text-white"}`}>
-                          {isIncome ? "+" : "-"}{currency}{formatIndianNumber(exp.amount)}
-                        </span>
-                        {isCurrentMonthEditable && (
-                          <button
-                            onClick={() => openEditModal(exp)}
-                            className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all cursor-pointer opacity-0 group-hover:opacity-100"
-                            title="Edit transaction"
-                            id={`edit-recent-expense-${exp._id}`}
-                          >
-                            <Edit className="h-3 w-3" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="py-10 text-center text-gray-500 border border-dashed border-gray-800/80 rounded-2xl bg-gray-950/20 px-4">
-                <span className="text-xs font-semibold text-gray-400">No recent transactions recorded.</span>
-              </div>
-            )}
-
-            <div className="flex justify-center pt-2 border-t border-gray-800/60">
-              <Link
-                to="/history"
-                className="text-xs text-emerald-400 hover:text-emerald-300 font-bold transition-all flex items-center gap-1.5 py-1.5 px-4 rounded-xl hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
-                id="view-all-transactions-bottom-link"
-              >
-                <span>View all transactions →</span>
-              </Link>
-            </div>
-          </div>
-        );
-      })()}
 
       {/* 7. Full Edit Modal */}
       <AnimatePresence>

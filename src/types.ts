@@ -58,6 +58,17 @@ export interface SavingsMovement {
   createdAt: string;
 }
 
+export interface MonthContribution {
+  _id: string;
+  date: string;
+  amount: number;
+  source?: string;
+  destination?: string;
+  fundingSource?: string;
+  note?: string;
+  description: string;
+}
+
 export interface SavingsSummary {
   cashSavings: number;
   onlineSavings: number;
@@ -85,6 +96,8 @@ export interface SavingsSummary {
   monthCashExpenses?: number;
   monthSpentFromSavings?: number;
   remainingSavingsRequired: number;
+  monthSavingsContributions?: MonthContribution[];
+  monthContributions?: MonthContribution[];
   totalLentOut?: number;
   totalLentReceived?: number;
   totalLentOwed?: number;

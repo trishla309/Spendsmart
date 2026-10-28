@@ -281,6 +281,7 @@ const MoneyToPayMongoSchema = new Schema({
   dueDate: { type: String, required: true },
   category: { type: String, required: true },
   note: { type: String, default: "" },
+
   amountPaid: { type: Number, default: 0 },
   remainingAmount: { type: Number, required: true },
   status: { type: String, default: "Pending" },
@@ -301,7 +302,7 @@ const MoneyToPayM = mongoose.models.MoneyToPay || mongoose.model("MoneyToPay", M
 // Try connecting to MongoDB. If it fails, fall back to JSON database.
 export async function initDatabaseConnection(): Promise<boolean> {
   const isProduction = process.env.NODE_ENV === "production";
-  const allowFallback = process.env.ALLOW_LOCAL_DB_FALLBACK === "true";
+  const allowFallback = process.env.ALLOW_LOCAL_DB_FALLBACK !== "false";
 
   if (!MONGODB_URI) {
     if (isProduction && !allowFallback) {

@@ -16,6 +16,8 @@ import {
   Gift,
   Info,
   History,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -58,6 +60,7 @@ export const SavingsPage: React.FC = () => {
   // Modals state
   const [isMoveToSavingsOpen, setIsMoveToSavingsOpen] = useState(false);
   const [isMoveBackOpen, setIsMoveBackOpen] = useState(false);
+  const [showAllMovements, setShowAllMovements] = useState(false);
 
   // Move To Savings form state
   const [toAmount, setToAmount] = useState("");
@@ -97,6 +100,16 @@ export const SavingsPage: React.FC = () => {
   useEffect(() => {
     fetchSavingsData();
   }, [selectedMonth, refreshKey]);
+
+  useEffect(() => {
+    const handleDataUpdate = () => {
+      fetchSavingsData();
+    };
+    window.addEventListener("spendsmart_data_updated", handleDataUpdate);
+    return () => {
+      window.removeEventListener("spendsmart_data_updated", handleDataUpdate);
+    };
+  }, [selectedMonth]);
 
   // Derived financial figures using existing Fenno logic
   const totalSavings = summary?.totalSavings || 0;
@@ -809,8 +822,16 @@ export const SavingsPage: React.FC = () => {
         </div>
 
         {summary?.movements && summary.movements.length > 0 ? (
-          <div className="flex flex-col divide-y divide-gray-800/60">
-            {summary.movements.slice(0, 10).map((m) => {
+          (() => {
+            const totalMovements = summary.movements.length;
+            const displayedMovements = showAllMovements
+              ? summary.movements
+              : summary.movements.slice(0, 10);
+
+            return (
+              <>
+                <div className="flex flex-col divide-y divide-gray-800/60">
+                  {displayedMovements.map((m) => {
               const isToSavings = m.direction === "to_savings";
               const rawSrc = (m.source || "").toLowerCase();
               const rawFunding = (m.fundingSource || "").toLowerCase();
@@ -897,7 +918,38 @@ export const SavingsPage: React.FC = () => {
               );
             })}
           </div>
-        ) : (
+
+          {/* Show More / Show Less Toggle */}
+          {totalMovements > 10 && (
+            <div className="pt-3.5 mt-2 border-t border-gray-800/80 flex items-center justify-between text-xs">
+              <span className="text-gray-400 text-[11px] font-medium">
+                Showing <strong className="text-white">{displayedMovements.length}</strong> of{" "}
+                <strong className="text-white">{totalMovements}</strong> records
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowAllMovements(!showAllMovements)}
+                className="px-3.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 font-bold text-xs border border-purple-500/25 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm hover:border-purple-500/40"
+                id="savings-toggle-show-more-btn"
+              >
+                {showAllMovements ? (
+                  <>
+                    <span>Show Less</span>
+                    <ChevronUp className="h-3.5 w-3.5" />
+                  </>
+                ) : (
+                  <>
+                    <span>Show More ({totalMovements - 10} more)</span>
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </>
+      );
+    })()
+  ) : (
           <div className="py-8 text-center text-gray-500 text-xs">
             No savings movements recorded yet.
           </div>

@@ -1,8 +1,9 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check, PiggyBank, PanelLeftClose, PanelLeftOpen, HandCoins, Receipt } from "lucide-react";
+import { LayoutDashboard, Wallet, LogOut, ChevronRight, User as UserIcon, Award, BarChart3, Settings, History, Bell, Trash2, CheckCircle, AlertTriangle, Info, Check, PiggyBank, PanelLeftClose, PanelLeftOpen, HandCoins, Receipt, Plus, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import { api } from "../lib/api";
+import { QuickActionModal } from "./QuickActionModal";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [notifications, setNotifications] = React.useState<any[]>([]);
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
   const [isNotifOpen, setIsNotifOpen] = React.useState<boolean>(false);
+  const [isQuickActionOpen, setIsQuickActionOpen] = React.useState<boolean>(false);
+  const [quickActionMode, setQuickActionMode] = React.useState<"expense" | "to_savings" | "from_savings" | "income">("expense");
   const [isCollapsed, setIsCollapsed] = React.useState<boolean>(() => {
     try {
       return localStorage.getItem("spendsmart_sidebar_collapsed") === "true";
@@ -30,6 +33,40 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       return false;
     }
   });
+
+  // Global keyboard shortcut and event listeners for Quick Money Hub
+  React.useEffect(() => {
+    const handleOpen = (e: Event) => {
+      const customEvt = e as CustomEvent<{ mode?: "expense" | "to_savings" | "from_savings" | "income" }>;
+      if (customEvt.detail?.mode) {
+        setQuickActionMode(customEvt.detail.mode);
+      } else {
+        setQuickActionMode("expense");
+      }
+      setIsQuickActionOpen(true);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key.toLowerCase() === "n" &&
+        !["INPUT", "TEXTAREA", "SELECT"].includes((e.target as HTMLElement)?.tagName) &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.altKey
+      ) {
+        e.preventDefault();
+        setQuickActionMode("expense");
+        setIsQuickActionOpen(true);
+      }
+    };
+
+    window.addEventListener("open-quick-action", handleOpen);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("open-quick-action", handleOpen);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setIsCollapsed((prev) => {
@@ -315,7 +352,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 : "Profile & Settings"}
             </h2>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Quick Money Hub Action Button */}
+            <button
+              onClick={() => setIsQuickActionOpen(true)}
+              className="flex items-center gap-2 py-2 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-black text-xs shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shrink-0 border border-emerald-300/30"
+              id="navbar-quick-action-btn"
+              title="Quick Money Hub (Press N)"
+            >
+              <Plus className="h-4 w-4 stroke-[3]" />
+              <span className="hidden sm:inline">Quick Entry</span>
+            </button>
+
             {/* Notification Bell */}
             <div className="relative">
               <button
@@ -453,6 +501,25 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </motion.div>
         </main>
       </div>
+
+      {/* Floating Quick Action Button (Bottom Right) */}
+      <button
+        type="button"
+        onClick={() => setIsQuickActionOpen(true)}
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-black shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-emerald-300/40 group"
+        id="floating-quick-action-btn"
+        title="Quick Money Hub (Press N)"
+      >
+        <Plus className="h-5 w-5 stroke-[3] group-hover:rotate-90 transition-transform duration-300" />
+        <span className="text-xs font-black hidden md:inline">Quick Entry</span>
+      </button>
+
+      {/* Global Quick Action Modal */}
+      <QuickActionModal
+        isOpen={isQuickActionOpen}
+        onClose={() => setIsQuickActionOpen(false)}
+        initialMode={quickActionMode}
+      />
     </div>
   );
 };

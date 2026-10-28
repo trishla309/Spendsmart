@@ -28,7 +28,47 @@
   --color-gray-200: #e4e4e7; /* High contrast text */
   --color-gray-100: #f4f4f5; /* Near-white headings */
   --color-gray-50: #fafafa;  /* Full white */
+
+  /* Fenno Redesign - Strict 3-Color Palette Tokens */
+  --color-fenno-dark: #101010;
+  --color-fenno-card: #151515;
+  --color-fenno-surface: #1B1B1B;
+  --color-fenno-border: rgba(255, 255, 255, 0.08);
+  --color-fenno-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-fenno-border-hover: rgba(255, 255, 255, 0.16);
+  --color-fenno-white: #FFFFFF;
+  --color-fenno-burgundy: #A80D53;
+  --color-fenno-burgundy-hover: #C21362;
+  --color-fenno-burgundy-active: #8C0B45;
+  --color-fenno-burgundy-glow: rgba(168, 13, 83, 0.32);
+  --color-fenno-burgundy-subtle: rgba(168, 13, 83, 0.12);
 }
+
+/* Scoped Landing Page Utilities */
+.fenno-landing {
+  background-color: #FFFFFF;
+  color: #0F172A;
+}
+
+@keyframes fenno-subtle-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.fenno-preview-float {
+  animation: fenno-subtle-float 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fenno-preview-float {
+    animation: none !important;
+  }
+}
+
 
 /* Light mode theme mappings to perfectly match our new vars */
 .light-mode {

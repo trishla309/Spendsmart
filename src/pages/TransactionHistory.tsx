@@ -356,6 +356,16 @@ export const TransactionHistory: React.FC = () => {
     fetchTransactions();
   }, [selectedMonth]);
 
+  useEffect(() => {
+    const handleDataUpdate = () => {
+      fetchTransactions();
+    };
+    window.addEventListener("spendsmart_data_updated", handleDataUpdate);
+    return () => {
+      window.removeEventListener("spendsmart_data_updated", handleDataUpdate);
+    };
+  }, [selectedMonth]);
+
   // ADD EXPENSE handler
   const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -661,17 +671,11 @@ export const TransactionHistory: React.FC = () => {
           {isCurrentMonthEditable ? (
             <button
               onClick={() => {
-                setAmount("");
-                setCategory("food");
-                setDescription("");
-                setDate(new Date().toISOString().split("T")[0]);
-                setNote("");
-                setPaidUsing(getSettings().defaultPaymentMethod || "Online");
-                setAddError(null);
-                setIsAddExpenseOpen(true);
+                window.dispatchEvent(new CustomEvent("open-quick-action", { detail: { mode: "expense" } }));
               }}
               className="px-4.5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md shadow-emerald-500/10"
               id="history-add-expense-btn"
+              title="Add Expense (Quick Entry)"
             >
               <PlusCircle className="h-4 w-4" />
               <span>Record Expense</span>

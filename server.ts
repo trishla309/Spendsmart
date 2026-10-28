@@ -11,11 +11,23 @@ import categoriesRouter from "./src/server/categories";
 import moneyLentRouter from "./src/server/moneyLent";
 import moneyToPayRouter from "./src/server/moneyToPay";
 import { initCronJobs } from "./src/server/cron";
+
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
-  // Midldlewares
+  // Determine production environment reliably across Render, local builds, and process runners
+  const isProduction =
+    process.env.NODE_ENV === "production" ||
+    Boolean(process.env.RENDER) ||
+    Boolean(process.env.PORT && !process.env.npm_lifecycle_event?.includes("dev")) ||
+    (typeof __filename !== "undefined" && (__filename.endsWith(".cjs") || __filename.includes("dist")));
+
+  if (isProduction && process.env.NODE_ENV !== "production") {
+    process.env.NODE_ENV = "production";
+  }
+
+  // Middlewares
   app.use(express.json());
 
   // Log requests
@@ -54,7 +66,7 @@ async function startServer() {
   });
 
   // Vite development middleware vs. static file serving in production
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProduction) {
     console.log("Starting server in DEVELOPMENT mode with Vite middleware...");
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -64,18 +76,35 @@ async function startServer() {
   } else {
     console.log("Starting server in PRODUCTION mode with static assets...");
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+
+    // Serve static assets with cache headers; ensure index.html is NEVER cached so new deploys are instantly visible
+    app.use(
+      express.static(distPath, {
+        maxAge: "1d",
+        setHeaders: (res, filePath) => {
+          if (filePath.endsWith("index.html")) {
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            res.setHeader("Pragma", "no-cache");
+            res.setHeader("Expires", "0");
+          }
+        },
+      })
+    );
+
     app.get("*", (req, res) => {
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`SpendSmart Server is live on port ${PORT}`);
+    console.log(`SpendSmart Server is live on port ${PORT} [Mode: ${isProduction ? "PRODUCTION" : "DEVELOPMENT"}]`);
   });
 
   // Helper redirect: if port 5173 is visited in local development, automatically forward to port 3000
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProduction) {
     try {
       const redirectApp = express();
       redirectApp.use((req, res) => {

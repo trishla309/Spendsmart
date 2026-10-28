@@ -200,9 +200,12 @@ export const Analytics: React.FC = () => {
   const highestSpendingCategory = activeCategories.length > 0 ? activeCategories[0].label : "No spending yet";
   const lowestSpendingCategory = activeCategories.length > 0 ? activeCategories[activeCategories.length - 1].label : "No spending yet";
   const savingsGoal = summary?.savingsGoal || 0;
-  const savingsRemaining = Math.max(0, savingsGoal - totalSavings);
+  const monthSavingsProgress = summary?.monthSavingsProgress !== undefined 
+    ? summary.monthSavingsProgress 
+    : (summary?.netMonthSavings !== undefined ? Math.max(0, summary.netMonthSavings) : totalSavings);
+  const savingsRemaining = Math.max(0, savingsGoal - monthSavingsProgress);
   const savingsGoalProgress =
-    savingsGoal > 0 ? Math.min(100, Math.round((totalSavings / savingsGoal) * 100)) : 0;
+    savingsGoal > 0 ? Math.min(100, Math.round((monthSavingsProgress / savingsGoal) * 100)) : 0;
 
   // Modern Horizontal Bar Chart Data (compares all category spending, filter out empty ones)
   const horizontalChartData = useMemo(() => {
@@ -273,10 +276,10 @@ export const Analytics: React.FC = () => {
   }, [historicalSpending]);
 
   const savingsInsight = useMemo(() => {
-    return totalSavings >= savingsGoal && savingsGoal > 0 
+    return monthSavingsProgress >= savingsGoal && savingsGoal > 0 
       ? "successfully achieved your savings goal" 
       : "did not meet your savings goal";
-  }, [totalSavings, savingsGoal]);
+  }, [monthSavingsProgress, savingsGoal]);
 
   const disciplineInsight = useMemo(() => {
     return budgetUtilization <= 100 
@@ -647,8 +650,8 @@ export const Analytics: React.FC = () => {
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm text-gray-400 font-medium">Savings Goal Status</span>
-                <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${totalSavings >= savingsGoal ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                  {totalSavings >= savingsGoal ? "Achieved" : "Not Achieved"}
+                <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${monthSavingsProgress >= savingsGoal && savingsGoal > 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
+                  {monthSavingsProgress >= savingsGoal && savingsGoal > 0 ? "Achieved" : "Not Achieved"}
                 </span>
               </div>
             </div>
