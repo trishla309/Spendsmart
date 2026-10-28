@@ -189,21 +189,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col md:flex-row font-sans" id="app-container">
       {/* Sidebar */}
       <aside
-        className={`w-full md:h-screen md:sticky md:top-0 bg-gray-900/40 backdrop-blur-xl border-b md:border-b-0 md:border-r border-gray-800/80 flex flex-col justify-between shrink-0 z-30 transition-all duration-300 ease-in-out ${
+        className={`w-full md:h-screen md:sticky md:top-0 bg-gray-900/30 backdrop-blur-xl border-b md:border-b-0 md:border-r border-white/[0.03] flex flex-col justify-between shrink-0 z-30 transition-all duration-300 ease-in-out ${
           isCollapsed ? "md:w-20" : "md:w-72"
         }`}
         id="sidebar-panel"
       >
         <div className="flex flex-col flex-1 min-h-0">
           {/* Sidebar Header Brand & Toggle Button */}
-          <div className={`p-4 border-b border-gray-800/60 flex items-center shrink-0 ${isCollapsed ? "justify-center flex-col gap-3" : "justify-between"}`}>
+          <div className={`p-4 border-b border-white/[0.03] flex items-center shrink-0 ${isCollapsed ? "justify-center flex-col gap-3" : "justify-between"}`}>
             <Link 
               to="/" 
               className={`flex items-center gap-2.5 hover:opacity-95 transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1 ${isCollapsed ? "justify-center" : ""}`}
               title={isCollapsed ? "Fenno" : "Back to Landing Page"}
               id="sidebar-brand-link"
             >
-              <div className="p-2 bg-emerald-500/5 text-emerald-400 rounded-xl border border-emerald-500/15 shadow-lg shadow-emerald-500/5 group-hover:scale-105 transition-transform shrink-0">
+              <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl shadow-lg shadow-emerald-500/5 group-hover:scale-105 transition-transform shrink-0">
                 <Award className="h-5 w-5 animate-pulse" />
               </div>
               {!isCollapsed && (
@@ -219,7 +219,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <button
               type="button"
               onClick={toggleSidebar}
-              className="p-2 rounded-xl border border-gray-800/80 text-gray-400 hover:text-white bg-gray-950/60 hover:bg-gray-900 transition-colors cursor-pointer hidden md:flex items-center justify-center shrink-0 shadow-sm"
+              className="p-2 rounded-xl text-gray-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.07] transition-colors cursor-pointer hidden md:flex items-center justify-center shrink-0 shadow-sm"
               title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               id="sidebar-toggle-btn"
             >
@@ -331,9 +331,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Main Panel */}
       <div className="flex-1 flex flex-col min-w-0" id="main-panel">
         {/* Top Navbar */}
-        <header className="h-20 bg-gray-950/20 border-b border-gray-800/60 flex items-center justify-between px-6 md:px-10 shrink-0 sticky top-0 backdrop-blur-md z-40" id="navbar">
+        <header className="h-18 bg-gray-950/30 border-b border-white/[0.03] flex items-center justify-between px-6 md:px-10 shrink-0 sticky top-0 backdrop-blur-xl z-40" id="navbar">
           <div>
-            <span className="text-[10px] text-gray-500 font-mono font-extrabold tracking-wider uppercase block">
+            <span className="text-[10px] text-gray-400 font-mono font-extrabold tracking-wider uppercase block">
               Workspace
             </span>
             <h2 className="text-base md:text-lg font-black text-white tracking-tight mt-0.5">
@@ -356,7 +356,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             {/* Quick Money Hub Action Button */}
             <button
               onClick={() => setIsQuickActionOpen(true)}
-              className="flex items-center gap-2 py-2 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-black text-xs shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shrink-0 border border-emerald-300/30"
+              className="flex items-center gap-2 py-2 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-black text-xs shadow-md shadow-emerald-500/15 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shrink-0"
               id="navbar-quick-action-btn"
               title="Quick Money Hub (Press N)"
             >
@@ -368,7 +368,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <div className="relative">
               <button
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
-                className="relative p-2.5 text-gray-400 hover:text-white bg-gray-900 border border-gray-800 hover:border-gray-750 rounded-xl transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-emerald-500/10 flex items-center justify-center shadow-sm"
+                className="relative p-2.5 text-gray-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.04] rounded-xl transition-all cursor-pointer focus:outline-none flex items-center justify-center shadow-sm"
                 id="notification-bell-btn"
               >
                 <Bell className="h-5 w-5" />

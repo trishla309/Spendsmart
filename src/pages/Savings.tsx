@@ -262,20 +262,20 @@ export const SavingsPage: React.FC = () => {
 
       {/* TOP: Current Total Savings Card */}
       <div
-        className="bg-gradient-to-br from-gray-900/90 via-gray-900/70 to-purple-950/25 border border-purple-500/25 rounded-2xl p-5 md:p-6 shadow-xl shadow-gray-950/20 relative overflow-hidden"
+        className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-5 md:p-6 shadow-sm relative overflow-hidden"
         id="current-total-savings-card"
       >
         <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl -z-10 pointer-events-none" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <div className="p-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-400">
+              <div className="p-1.5 bg-purple-500/10 rounded-lg text-purple-400">
                 <PiggyBank className="h-4 w-4" />
               </div>
               <span className="text-xs font-black text-purple-300 uppercase tracking-wider">
                 Current Total Savings
               </span>
-              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
                 All-Time Total
               </span>
             </div>
@@ -287,13 +287,13 @@ export const SavingsPage: React.FC = () => {
           </div>
 
           {/* Asset Allocation Breakdown (Cash vs Online) */}
-          <div className="flex flex-col gap-2.5 bg-gray-950/60 border border-gray-800/80 rounded-2xl p-4 min-w-[280px]">
+          <div className="flex flex-col gap-2.5 bg-white/[0.02] border border-white/[0.04] rounded-2xl p-4 min-w-[280px]">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-gray-400 uppercase tracking-wider text-[10px]">Asset Split</span>
               <span className="font-mono text-[11px] text-gray-300 font-bold">100% Accounted</span>
             </div>
             {/* Segmented bar */}
-            <div className="h-2 w-full bg-gray-900 rounded-full overflow-hidden flex">
+            <div className="h-2 w-full bg-gray-900/80 rounded-full overflow-hidden flex">
               <div
                 className="bg-amber-400 transition-all duration-500"
                 style={{ width: `${totalSavings > 0 ? (cashSavings / totalSavings) * 100 : 0}%` }}
@@ -327,7 +327,7 @@ export const SavingsPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" id="savings-first-row-cards">
         {/* Card 1: Cash Savings */}
         <div
-          className="bg-gray-900/60 backdrop-blur-xl border border-amber-500/20 hover:border-amber-500/40 rounded-2xl p-4.5 flex flex-col justify-between transition-all"
+          className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-4.5 flex flex-col justify-between transition-all"
           id="card-cash-savings"
         >
           <div className="flex items-start justify-between">
@@ -339,13 +339,13 @@ export const SavingsPage: React.FC = () => {
                 {currency}{formatAmount(cashSavings)}
               </span>
             </div>
-            <div className="p-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-400">
+            <div className="p-2 bg-amber-500/10 rounded-xl text-amber-400">
               <Banknote className="h-4 w-4" />
             </div>
           </div>
-          <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-gray-800/60">
+          <div className="flex items-center justify-between mt-3 pt-1">
             <span className="text-[11px] text-gray-400 font-medium">Physical Cash</span>
-            <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+            <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">
               {totalSavings > 0 ? Math.round((cashSavings / totalSavings) * 100) : 0}% of Total
             </span>
           </div>
@@ -353,7 +353,7 @@ export const SavingsPage: React.FC = () => {
 
         {/* Card 2: Online Savings */}
         <div
-          className="bg-gray-900/60 backdrop-blur-xl border border-blue-500/20 hover:border-blue-500/40 rounded-2xl p-4.5 flex flex-col justify-between transition-all"
+          className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-4.5 flex flex-col justify-between transition-all"
           id="card-online-savings"
         >
           <div className="flex items-start justify-between">
@@ -365,13 +365,13 @@ export const SavingsPage: React.FC = () => {
                 {currency}{formatAmount(onlineSavings)}
               </span>
             </div>
-            <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
+            <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400">
               <CreditCard className="h-4 w-4" />
             </div>
           </div>
-          <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-gray-800/60">
+          <div className="flex items-center justify-between mt-3 pt-1">
             <span className="text-[11px] text-gray-400 font-medium">Digital Savings</span>
-            <span className="text-[10px] font-mono font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+            <span className="text-[10px] font-mono font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md">
               {totalSavings > 0 ? Math.round((onlineSavings / totalSavings) * 100) : 0}% of Total
             </span>
           </div>
@@ -379,7 +379,7 @@ export const SavingsPage: React.FC = () => {
 
         {/* Card 3: Added This Month */}
         <div
-          className="bg-gray-900/60 backdrop-blur-xl border border-emerald-500/20 hover:border-emerald-500/40 rounded-2xl p-4.5 flex flex-col justify-between transition-all"
+          className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-4.5 flex flex-col justify-between transition-all"
           id="card-added-this-month"
         >
           <div className="flex items-start justify-between">
@@ -391,18 +391,18 @@ export const SavingsPage: React.FC = () => {
                 +{currency}{formatAmount(monthMovedToSavings)}
               </span>
             </div>
-            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
+            <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400">
               <ArrowDownLeft className="h-4 w-4" />
             </div>
           </div>
-          <div className="mt-3 pt-2.5 border-t border-gray-800/60">
+          <div className="mt-3 pt-1">
             <span className="text-[11px] text-gray-400 font-medium">This month</span>
           </div>
         </div>
 
         {/* Card 4: Withdrawn */}
         <div
-          className="bg-gray-900/60 backdrop-blur-xl border border-sky-500/20 hover:border-sky-500/40 rounded-2xl p-4.5 flex flex-col justify-between transition-all"
+          className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-4.5 flex flex-col justify-between transition-all"
           id="card-withdrawn"
         >
           <div className="flex items-start justify-between">
@@ -414,11 +414,11 @@ export const SavingsPage: React.FC = () => {
                 {currency}{formatAmount(monthReturnedFromSavings)}
               </span>
             </div>
-            <div className="p-2 bg-sky-500/10 border border-sky-500/20 rounded-xl text-sky-400">
+            <div className="p-2 bg-sky-500/10 rounded-xl text-sky-400">
               <ArrowUpRight className="h-4 w-4" />
             </div>
           </div>
-          <div className="mt-3 pt-2.5 border-t border-gray-800/60">
+          <div className="mt-3 pt-1">
             <span className="text-[11px] text-gray-400 font-medium">This month</span>
           </div>
         </div>

@@ -576,7 +576,7 @@
       "__v": 0
     },
     {
-      "_id": "6ae262b421bd71b4c93dbfef",
+      "_id": "6ae264e19a687fde364543e9",
       "userId": "6a4e97b4248e6a72d9110792",
       "month": "2026-09",
       "pocketMoney": 8000,
@@ -621,11 +621,11 @@
           "p100": false
         }
       },
-      "createdAt": "2026-10-28T21:01:40.991Z",
+      "createdAt": "2026-10-28T21:10:57.054Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc001",
+      "_id": "6ae264e19a687fde364543fb",
       "userId": "6aa42690e188736503a02116",
       "month": "2026-09",
       "pocketMoney": 8000,
@@ -670,7 +670,7 @@
           "p100": false
         }
       },
-      "createdAt": "2026-10-28T21:01:41.014Z",
+      "createdAt": "2026-10-28T21:10:57.088Z",
       "__v": 0
     }
   ],
@@ -2008,7 +2008,7 @@
       "__v": 0
     },
     {
-      "_id": "6ae262b421bd71b4c93dbff0",
+      "_id": "6ae264e19a687fde364543ea",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 120,
       "category": "food",
@@ -2016,11 +2016,11 @@
       "date": "2026-09-01",
       "note": "Welcome lunch meal",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:40.996Z",
+      "createdAt": "2026-10-28T21:10:57.062Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b421bd71b4c93dbff1",
+      "_id": "6ae264e19a687fde364543eb",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 350,
       "category": "transport",
@@ -2028,11 +2028,11 @@
       "date": "2026-09-01",
       "note": "Monthly transit recharge",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:40.997Z",
+      "createdAt": "2026-10-28T21:10:57.063Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b421bd71b4c93dbff2",
+      "_id": "6ae264e19a687fde364543ec",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 170,
       "category": "stationery",
@@ -2040,11 +2040,11 @@
       "date": "2026-09-02",
       "note": "Engineering textbook",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:40.998Z",
+      "createdAt": "2026-10-28T21:10:57.064Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b421bd71b4c93dbff3",
+      "_id": "6ae264e19a687fde364543ed",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 180,
       "category": "food",
@@ -2052,11 +2052,11 @@
       "date": "2026-09-03",
       "note": "Study cafe session",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:40.999Z",
+      "createdAt": "2026-10-28T21:10:57.065Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbff4",
+      "_id": "6ae264e19a687fde364543ee",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 400,
       "category": "shopping",
@@ -2064,11 +2064,11 @@
       "date": "2026-09-04",
       "note": "Desk setup upgrade",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.000Z",
+      "createdAt": "2026-10-28T21:10:57.066Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbff5",
+      "_id": "6ae264e19a687fde364543ef",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 180,
       "category": "emergency",
@@ -2076,11 +2076,11 @@
       "date": "2026-09-05",
       "note": "Medical essentials",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.000Z",
+      "createdAt": "2026-10-28T21:10:57.067Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbff6",
+      "_id": "6ae264e19a687fde364543f0",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 60,
       "category": "food",
@@ -2088,11 +2088,11 @@
       "date": "2026-09-05",
       "note": "Campus tea break",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.001Z",
+      "createdAt": "2026-10-28T21:10:57.068Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbff7",
+      "_id": "6ae264e19a687fde364543f1",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 210,
       "category": "entertainment",
@@ -2100,11 +2100,11 @@
       "date": "2026-09-06",
       "note": "Weekend movie",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.001Z",
+      "createdAt": "2026-10-28T21:10:57.069Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbff8",
+      "_id": "6ae264e19a687fde364543f2",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 380,
       "category": "food",
@@ -2112,11 +2112,11 @@
       "date": "2026-09-07",
       "note": "Split Sunday dinner",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.002Z",
+      "createdAt": "2026-10-28T21:10:57.070Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbff9",
+      "_id": "6ae264e19a687fde364543f3",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 120,
       "category": "entertainment",
@@ -2124,11 +2124,11 @@
       "date": "2026-09-08",
       "note": "Monthly music subscription",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.003Z",
+      "createdAt": "2026-10-28T21:10:57.071Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbffa",
+      "_id": "6ae264e19a687fde364543f4",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 110,
       "category": "transport",
@@ -2136,11 +2136,11 @@
       "date": "2026-09-08",
       "note": "Library auto ride",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.003Z",
+      "createdAt": "2026-10-28T21:10:57.072Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbffb",
+      "_id": "6ae264e19a687fde364543f5",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 80,
       "category": "stationery",
@@ -2148,11 +2148,11 @@
       "date": "2026-09-09",
       "note": "Project stationery",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.004Z",
+      "createdAt": "2026-10-28T21:10:57.073Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbffc",
+      "_id": "6ae264e19a687fde364543f6",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 200,
       "category": "other",
@@ -2160,11 +2160,11 @@
       "date": "2026-09-10",
       "note": "Monthly Wi-Fi contribution",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.004Z",
+      "createdAt": "2026-10-28T21:10:57.073Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbffd",
+      "_id": "6ae264e19a687fde364543f7",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 140,
       "category": "food",
@@ -2172,11 +2172,11 @@
       "date": "2026-09-11",
       "note": "Co-working space snack",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.005Z",
+      "createdAt": "2026-10-28T21:10:57.074Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbffe",
+      "_id": "6ae264e19a687fde364543f8",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 100,
       "category": "food",
@@ -2184,11 +2184,11 @@
       "date": "2026-09-12",
       "note": "Quick morning breakfast",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.005Z",
+      "createdAt": "2026-10-28T21:10:57.074Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc002",
+      "_id": "6ae264e19a687fde364543fc",
       "userId": "6aa42690e188736503a02116",
       "amount": 120,
       "category": "food",
@@ -2196,11 +2196,11 @@
       "date": "2026-09-01",
       "note": "Welcome lunch meal",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.015Z",
+      "createdAt": "2026-10-28T21:10:57.089Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc003",
+      "_id": "6ae264e19a687fde364543fd",
       "userId": "6aa42690e188736503a02116",
       "amount": 350,
       "category": "transport",
@@ -2208,11 +2208,11 @@
       "date": "2026-09-01",
       "note": "Monthly transit recharge",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.016Z",
+      "createdAt": "2026-10-28T21:10:57.090Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc004",
+      "_id": "6ae264e19a687fde364543fe",
       "userId": "6aa42690e188736503a02116",
       "amount": 170,
       "category": "stationery",
@@ -2220,11 +2220,11 @@
       "date": "2026-09-02",
       "note": "Engineering textbook",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.017Z",
+      "createdAt": "2026-10-28T21:10:57.090Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc005",
+      "_id": "6ae264e19a687fde364543ff",
       "userId": "6aa42690e188736503a02116",
       "amount": 180,
       "category": "food",
@@ -2232,11 +2232,11 @@
       "date": "2026-09-03",
       "note": "Study cafe session",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.017Z",
+      "createdAt": "2026-10-28T21:10:57.091Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc006",
+      "_id": "6ae264e19a687fde36454400",
       "userId": "6aa42690e188736503a02116",
       "amount": 400,
       "category": "shopping",
@@ -2244,11 +2244,11 @@
       "date": "2026-09-04",
       "note": "Desk setup upgrade",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.018Z",
+      "createdAt": "2026-10-28T21:10:57.092Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc007",
+      "_id": "6ae264e19a687fde36454401",
       "userId": "6aa42690e188736503a02116",
       "amount": 180,
       "category": "emergency",
@@ -2256,11 +2256,11 @@
       "date": "2026-09-05",
       "note": "Medical essentials",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.019Z",
+      "createdAt": "2026-10-28T21:10:57.092Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc008",
+      "_id": "6ae264e19a687fde36454402",
       "userId": "6aa42690e188736503a02116",
       "amount": 60,
       "category": "food",
@@ -2268,11 +2268,11 @@
       "date": "2026-09-05",
       "note": "Campus tea break",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.019Z",
+      "createdAt": "2026-10-28T21:10:57.093Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc009",
+      "_id": "6ae264e19a687fde36454403",
       "userId": "6aa42690e188736503a02116",
       "amount": 210,
       "category": "entertainment",
@@ -2280,11 +2280,11 @@
       "date": "2026-09-06",
       "note": "Weekend movie",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.020Z",
+      "createdAt": "2026-10-28T21:10:57.093Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc00a",
+      "_id": "6ae264e19a687fde36454404",
       "userId": "6aa42690e188736503a02116",
       "amount": 380,
       "category": "food",
@@ -2292,11 +2292,11 @@
       "date": "2026-09-07",
       "note": "Split Sunday dinner",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.020Z",
+      "createdAt": "2026-10-28T21:10:57.094Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc00b",
+      "_id": "6ae264e19a687fde36454405",
       "userId": "6aa42690e188736503a02116",
       "amount": 120,
       "category": "entertainment",
@@ -2304,11 +2304,11 @@
       "date": "2026-09-08",
       "note": "Monthly music subscription",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.021Z",
+      "createdAt": "2026-10-28T21:10:57.095Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc00c",
+      "_id": "6ae264e19a687fde36454406",
       "userId": "6aa42690e188736503a02116",
       "amount": 110,
       "category": "transport",
@@ -2316,11 +2316,11 @@
       "date": "2026-09-08",
       "note": "Library auto ride",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.021Z",
+      "createdAt": "2026-10-28T21:10:57.096Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc00d",
+      "_id": "6ae264e19a687fde36454407",
       "userId": "6aa42690e188736503a02116",
       "amount": 80,
       "category": "stationery",
@@ -2328,11 +2328,11 @@
       "date": "2026-09-09",
       "note": "Project stationery",
       "paidUsing": "cash",
-      "createdAt": "2026-10-28T21:01:41.021Z",
+      "createdAt": "2026-10-28T21:10:57.096Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc00e",
+      "_id": "6ae264e19a687fde36454408",
       "userId": "6aa42690e188736503a02116",
       "amount": 200,
       "category": "other",
@@ -2340,11 +2340,11 @@
       "date": "2026-09-10",
       "note": "Monthly Wi-Fi contribution",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.022Z",
+      "createdAt": "2026-10-28T21:10:57.097Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc00f",
+      "_id": "6ae264e19a687fde36454409",
       "userId": "6aa42690e188736503a02116",
       "amount": 140,
       "category": "food",
@@ -2352,11 +2352,11 @@
       "date": "2026-09-11",
       "note": "Co-working space snack",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.022Z",
+      "createdAt": "2026-10-28T21:10:57.097Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc010",
+      "_id": "6ae264e19a687fde3645440a",
       "userId": "6aa42690e188736503a02116",
       "amount": 100,
       "category": "food",
@@ -2364,7 +2364,7 @@
       "date": "2026-09-12",
       "note": "Quick morning breakfast",
       "paidUsing": "online",
-      "createdAt": "2026-10-28T21:01:41.023Z",
+      "createdAt": "2026-10-28T21:10:57.098Z",
       "__v": 0
     }
   ],
@@ -4977,7 +4977,7 @@
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dbfff",
+      "_id": "6ae264e19a687fde364543f9",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 400,
       "direction": "to_savings",
@@ -4987,11 +4987,11 @@
       "countsTowardGoal": false,
       "date": "2026-09-03",
       "note": "Tech Fund weekly stash",
-      "createdAt": "2026-10-28T21:01:41.006Z",
+      "createdAt": "2026-10-28T21:10:57.075Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc000",
+      "_id": "6ae264e19a687fde364543fa",
       "userId": "6a4e97b4248e6a72d9110792",
       "amount": 200,
       "direction": "to_savings",
@@ -5001,11 +5001,11 @@
       "countsTowardGoal": false,
       "date": "2026-09-07",
       "note": "Emergency cash envelope",
-      "createdAt": "2026-10-28T21:01:41.007Z",
+      "createdAt": "2026-10-28T21:10:57.076Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc011",
+      "_id": "6ae264e19a687fde3645440b",
       "userId": "6aa42690e188736503a02116",
       "amount": 400,
       "direction": "to_savings",
@@ -5015,11 +5015,11 @@
       "countsTowardGoal": false,
       "date": "2026-09-03",
       "note": "Tech Fund weekly stash",
-      "createdAt": "2026-10-28T21:01:41.023Z",
+      "createdAt": "2026-10-28T21:10:57.099Z",
       "__v": 0
     },
     {
-      "_id": "6ae262b521bd71b4c93dc012",
+      "_id": "6ae264e19a687fde3645440c",
       "userId": "6aa42690e188736503a02116",
       "amount": 200,
       "direction": "to_savings",
@@ -5029,7 +5029,7 @@
       "countsTowardGoal": false,
       "date": "2026-09-07",
       "note": "Emergency cash envelope",
-      "createdAt": "2026-10-28T21:01:41.024Z",
+      "createdAt": "2026-10-28T21:10:57.101Z",
       "__v": 0
     }
   ],

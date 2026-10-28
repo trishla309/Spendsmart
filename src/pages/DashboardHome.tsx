@@ -858,7 +858,7 @@ export const DashboardHome: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-12 md:gap-16 max-w-6xl mx-auto pb-16" id="dashboard-wrapper">
+    <div className="flex flex-col gap-7 md:gap-8 max-w-6xl mx-auto pb-16" id="dashboard-wrapper">
       {/* Undo Toast Notification */}
       <AnimatePresence>
         {showUndoToast && (
@@ -866,10 +866,10 @@ export const DashboardHome: React.FC = () => {
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 z-50 bg-gray-900 border border-emerald-500/30 text-gray-100 px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm"
+            className="fixed bottom-6 right-6 z-50 bg-gray-900/90 backdrop-blur-xl border border-emerald-500/30 text-gray-100 px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm"
             id="undo-toast"
           >
-            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl">
+            <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl">
               <Undo2 className="h-5 w-5 animate-pulse" />
             </div>
             <div className="flex-1 min-w-0">
@@ -878,7 +878,7 @@ export const DashboardHome: React.FC = () => {
             </div>
             <button
               onClick={handleUndoDelete}
-              className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-xl transition-all cursor-pointer flex items-center gap-1"
+              className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-xs font-extrabold rounded-xl transition-all cursor-pointer flex items-center gap-1 shadow-sm"
               id="undo-action-btn"
             >
               Undo
@@ -895,7 +895,7 @@ export const DashboardHome: React.FC = () => {
 
       {/* 1. Ultra-Modern Executive Greeting & Month Hub */}
       <div
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-gray-900/90 via-gray-900/60 to-gray-900/90 backdrop-blur-xl border border-gray-800/80 p-5 sm:p-6 md:p-7 shadow-xl shadow-gray-950/20 hover:border-gray-700/60 transition-all duration-300"
+        className="relative overflow-hidden rounded-3xl bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] p-5 sm:p-6 shadow-sm hover:border-white/[0.08] transition-all duration-300"
         id="dashboard-header-container"
       >
         {/* Subtle ambient lighting effect */}
@@ -911,12 +911,12 @@ export const DashboardHome: React.FC = () => {
                 <span className="inline-block text-lg">✨</span>
               </h1>
               {isCurrentMonthEditable ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 shadow-sm">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/10 text-emerald-400 shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Live Sync
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/10 border border-amber-500/25 text-amber-400 shadow-sm">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/10 text-amber-400 shadow-sm">
                   <Lock className="w-3 h-3 text-amber-400" />
                   Archived Month
                 </span>
@@ -937,11 +937,11 @@ export const DashboardHome: React.FC = () => {
 
           {/* Right: Sleek Month Navigator Pill with Prev / Next Chevrons */}
           <div className="flex items-center gap-2.5 self-start md:self-auto">
-            <div className="flex items-center bg-gray-950/80 border border-gray-800 rounded-2xl p-1 shadow-inner hover:border-gray-700/80 transition-all">
+            <div className="flex items-center bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] rounded-2xl p-1 transition-all">
               <button
                 type="button"
                 onClick={() => navigateMonth(-1)}
-                className="p-2 text-gray-400 hover:text-white hover:bg-gray-850 rounded-xl transition-all cursor-pointer"
+                className="p-2 text-gray-400 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all cursor-pointer"
                 title="Previous Month"
               >
                 <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
@@ -965,7 +965,7 @@ export const DashboardHome: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigateMonth(1)}
-                className="p-2 text-gray-400 hover:text-white hover:bg-gray-850 rounded-xl transition-all cursor-pointer"
+                className="p-2 text-gray-400 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all cursor-pointer"
                 title="Next Month"
               >
                 <ChevronRight className="w-4 h-4 stroke-[2.5]" />
@@ -976,7 +976,7 @@ export const DashboardHome: React.FC = () => {
 
         {/* Read-Only Archive Bar when viewing a past month */}
         {!isCurrentMonthEditable && (
-          <div className="mt-4 pt-3.5 border-t border-amber-500/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-300 bg-amber-500/5 px-4 py-3 rounded-2xl border border-amber-500/20" id="readonly-warning-banner">
+          <div className="mt-4 pt-3.5 border-t border-amber-500/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-300 bg-amber-500/5 px-4 py-3 rounded-2xl" id="readonly-warning-banner">
             <div className="flex items-center gap-2.5">
               <Lock className="w-4 h-4 text-amber-400 shrink-0" />
               <span>Historical archive for <strong>{formatMonthName(selectedMonth)}</strong> is in view-only mode.</span>
@@ -994,7 +994,7 @@ export const DashboardHome: React.FC = () => {
       {/* 2. Unified Financial Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5" id="dashboard-summary-cards">
         {/* Metric 1: Money Received */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-emerald-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden" id="money-received-metric-card">
+        <div className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-5 sm:p-5.5 flex flex-col justify-between min-h-[160px] shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 relative group overflow-hidden" id="money-received-metric-card">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
           <div>
             <div className="flex items-start justify-between">
@@ -1009,7 +1009,7 @@ export const DashboardHome: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 group-hover:bg-emerald-500/20 group-hover:text-emerald-300 transition-all duration-300 shadow-inner">
+              <div className="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-500/20 group-hover:text-emerald-300 transition-all duration-300 shadow-inner">
                 <Wallet className="h-5 w-5" />
               </div>
             </div>
@@ -1027,7 +1027,7 @@ export const DashboardHome: React.FC = () => {
                 setMoneyError(null);
                 setIsAddMoneyOpen(true);
               }}
-              className="mt-4 w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              className="mt-4 w-full py-2 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 hover:text-emerald-200 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
               id="add-money-metric-btn"
             >
               <Plus className="h-3.5 w-3.5 stroke-[2.5px]" />
@@ -1037,7 +1037,7 @@ export const DashboardHome: React.FC = () => {
         </div>
 
         {/* Metric 2: Total Spent */}
-        <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-rose-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+        <div className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-5 sm:p-5.5 flex flex-col justify-between min-h-[160px] shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 relative group overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-rose-500/10 transition-colors" />
           <div>
             <div className="flex items-start justify-between">
@@ -1052,7 +1052,7 @@ export const DashboardHome: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 group-hover:bg-rose-500/20 group-hover:text-rose-300 transition-all duration-300 shadow-inner">
+              <div className="p-2.5 bg-rose-500/10 rounded-xl text-rose-400 group-hover:bg-rose-500/20 group-hover:text-rose-300 transition-all duration-300 shadow-inner">
                 <TrendingDown className="h-5 w-5" />
               </div>
             </div>
@@ -1060,7 +1060,7 @@ export const DashboardHome: React.FC = () => {
               Outflow across all categories
             </span>
           </div>
-          <div className="mt-4 pt-2.5 border-t border-gray-800/60 flex items-center justify-between text-[11px] text-gray-400">
+          <div className="mt-4 pt-1 flex items-center justify-between text-[11px] text-gray-400">
             <span className="font-medium">Tracked expenses</span>
             <span className="text-gray-500">{formatMonthName(selectedMonth)}</span>
           </div>
@@ -1072,7 +1072,7 @@ export const DashboardHome: React.FC = () => {
             ? availableBalance
             : (summary?.monthSpendableMoney ?? summary?.monthSurplus ?? availableBalance);
           return (
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-sky-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden" id="available-balance-metric-card">
+            <div className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-5 sm:p-5.5 flex flex-col justify-between min-h-[160px] shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 relative group overflow-hidden" id="available-balance-metric-card">
               <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
               <div>
                 <div className="flex items-start justify-between">
@@ -1087,7 +1087,7 @@ export const DashboardHome: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  <div className={`p-2.5 rounded-xl border ${displayVal < 0 ? "bg-rose-500/10 border-rose-500/20 text-rose-400 group-hover:bg-rose-500/20 group-hover:text-rose-300" : "bg-sky-500/10 border-sky-500/20 text-sky-400 group-hover:bg-sky-500/20 group-hover:text-sky-300"} transition-all duration-300 shadow-inner`}>
+                  <div className={`p-2.5 rounded-xl ${displayVal < 0 ? "bg-rose-500/10 text-rose-400 group-hover:bg-rose-500/20 group-hover:text-rose-300" : "bg-sky-500/10 text-sky-400 group-hover:bg-sky-500/20 group-hover:text-sky-300"} transition-all duration-300 shadow-inner`}>
                     <TrendingDown className="h-5 w-5 rotate-180" />
                   </div>
                 </div>
@@ -1097,7 +1097,7 @@ export const DashboardHome: React.FC = () => {
                     : `Net unspent surplus for ${formatMonthName(selectedMonth)}`}
                 </span>
               </div>
-              <div className="mt-4 pt-2.5 border-t border-gray-800/60 flex items-center justify-between text-[11px]">
+              <div className="mt-4 pt-1 flex items-center justify-between text-[11px]">
                 <span className={`inline-flex items-center gap-1.5 font-bold ${displayVal < 0 ? "text-rose-400" : "text-emerald-400"}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${displayVal < 0 ? "bg-rose-400" : "bg-emerald-400"} animate-pulse`} />
                   {displayVal >= 0 ? "Available to spend" : "Attention needed"}
@@ -1112,7 +1112,7 @@ export const DashboardHome: React.FC = () => {
           const actualSavingsPercentage = savingsGoal > 0 ? Math.round((monthSavingsProgress / savingsGoal) * 100) : 0;
           const visualBarWidth = Math.min(100, actualSavingsPercentage);
           return (
-            <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[175px] shadow-xl shadow-gray-950/15 hover:border-purple-500/35 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden" id="savings-goal-card">
+            <div className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] hover:border-white/[0.09] rounded-2xl p-5 sm:p-5.5 flex flex-col justify-between min-h-[160px] shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 relative group overflow-hidden" id="savings-goal-card">
               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-purple-500/10 transition-colors" />
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -1127,7 +1127,7 @@ export const DashboardHome: React.FC = () => {
                         setGoalError(null);
                         setIsSetGoalOpen(true);
                       }}
-                      className="px-2 py-0.5 bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/25 text-purple-300 text-[10px] font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                      className="px-2 py-0.5 bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 text-[10px] font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer"
                       title={savingsGoal > 0 ? "Edit monthly savings goal" : "Set monthly savings goal"}
                     >
                       {savingsGoal > 0 ? (
@@ -1142,7 +1142,7 @@ export const DashboardHome: React.FC = () => {
                         </>
                       )}
                     </button>
-                    <div className="p-2 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-400 group-hover:bg-purple-500/20 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
+                    <div className="p-2 bg-purple-500/10 rounded-xl text-purple-400 group-hover:bg-purple-500/20 group-hover:text-purple-300 transition-colors duration-300 shadow-inner">
                       <Target className="h-4 w-4" />
                     </div>
                   </div>
@@ -1156,7 +1156,7 @@ export const DashboardHome: React.FC = () => {
                         {formatIndianNumber(savingsGoal)}
                       </span>
                       {savingsGoal > 0 && (
-                        <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/15 border border-purple-500/30 text-purple-300 font-mono">
+                        <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/15 text-purple-300 font-mono">
                           {actualSavingsPercentage}%
                         </span>
                       )}
@@ -1168,18 +1168,18 @@ export const DashboardHome: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-4 pt-2.5 border-t border-gray-800/60">
-                <div className="flex justify-between items-center text-[10px] mb-1 font-bold">
+              <div className="mt-4 pt-1 flex flex-col gap-1.5">
+                <div className="flex justify-between items-center text-[10px] mb-0.5 font-bold">
                   <span className="text-gray-400">Monthly Progress</span>
                   <span className="text-purple-300 font-mono font-bold">{actualSavingsPercentage}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-gray-950 rounded-full overflow-hidden relative border border-gray-800/50 shadow-inner">
+                <div className="h-1.5 w-full bg-gray-950/70 rounded-full overflow-hidden relative shadow-inner">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-400 transition-all duration-500"
                     style={{ width: `${visualBarWidth}%` }}
                   />
                 </div>
-                <div className="flex justify-between items-center text-[10px] mt-1 font-medium">
+                <div className="flex justify-between items-center text-[10px] mt-0.5 font-medium">
                   <span className="text-gray-400">
                     {savingsGoal > 0
                       ? `${currency}${formatIndianNumber(monthSavingsProgress)} saved`
@@ -1199,13 +1199,13 @@ export const DashboardHome: React.FC = () => {
 
 
       {/* 3. Category Progress Cards Layout */}
-      <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 rounded-3xl p-6 md:p-7 flex flex-col gap-6 shadow-xl shadow-gray-950/20 hover:border-gray-700/50 transition-all duration-300" id="active-category-cards-section">
-        <div className="border-b border-gray-800 pb-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-gray-900/35 backdrop-blur-xl border border-white/[0.04] rounded-3xl p-6 md:p-7 flex flex-col gap-6 shadow-sm hover:border-white/[0.08] transition-all duration-300" id="active-category-cards-section">
+        <div className="border-b border-white/[0.04] pb-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <h3 className="text-lg font-black text-white flex items-center gap-2 tracking-tight">
               <span>Active Category Budgets</span>
             </h3>
-            <span className="text-[11px] px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 font-extrabold rounded-full border border-emerald-500/20 font-mono">
+            <span className="text-[11px] px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 font-extrabold rounded-full font-mono">
               {categories.length}
             </span>
           </div>
@@ -1214,7 +1214,7 @@ export const DashboardHome: React.FC = () => {
             <button
               type="button"
               onClick={handleResetCategories}
-              className="text-[11px] text-gray-500 hover:text-emerald-400 font-bold transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-gray-800/50 border border-transparent hover:border-gray-700/50 cursor-pointer"
+              className="text-[11px] text-gray-400 hover:text-emerald-400 font-bold transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-white/[0.04] cursor-pointer"
               title="Reset all categories back to system defaults"
               id="reset-categories-defaults-btn"
             >
@@ -1224,7 +1224,7 @@ export const DashboardHome: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {categories.map((cat) => {
             const allocatedAmt = summary ? Number(summary.categoryAllocated?.[cat.key] || 0) : 0;
             const spentAmt = summary ? Number(summary.categorySpending?.[cat.key] || 0) : 0;
@@ -1238,7 +1238,7 @@ export const DashboardHome: React.FC = () => {
             return (
               <div
                 key={cat.key}
-                className="bg-gray-950/40 border border-gray-800/50 rounded-2xl p-5.5 flex flex-col gap-4 hover:border-gray-700/60 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-gray-950/20 transition-all duration-300 relative group"
+                className="bg-white/[0.02] border border-white/[0.04] rounded-2xl p-5.5 flex flex-col gap-4 hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 relative group"
                 id={`category-card-${cat.key}`}
               >
                 {/* Header: Name and action icons */}
@@ -1252,7 +1252,7 @@ export const DashboardHome: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => openEditBudgetModal(cat.key, allocatedAmt)}
-                        className="p-1.5 bg-gray-900/60 border border-gray-800/80 hover:border-emerald-500/20 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all duration-200 cursor-pointer"
+                        className="p-1.5 bg-white/[0.03] hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 rounded-xl transition-all duration-200 cursor-pointer"
                         title={`Edit ${cat.label} Budget`}
                         id={`edit-budget-btn-${cat.key}`}
                       >
