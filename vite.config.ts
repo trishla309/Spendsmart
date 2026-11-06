@@ -4,6 +4,7 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  const port = Number(process.env.PORT) || 3001;
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
@@ -12,10 +13,10 @@ export default defineConfig(() => {
       },
     },
     server: {
-      port: 3000,
+      port,
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: `http://localhost:${port}`,
           changeOrigin: true,
         },
       },

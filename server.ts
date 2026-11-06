@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import net from "net";
 import { createServer as createViteServer } from "vite";
 import { initDatabaseConnection, getMongoConnectionStatus } from "./src/server/db";
 import authRouter, { seedDemoUser } from "./src/server/auth";
@@ -12,9 +13,34 @@ import moneyLentRouter from "./src/server/moneyLent";
 import moneyToPayRouter from "./src/server/moneyToPay";
 import { initCronJobs } from "./src/server/cron";
 
+function checkPortFree(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const tester = net.createServer();
+    tester.once("error", () => resolve(false));
+    tester.once("listening", () => {
+      tester.close(() => resolve(true));
+    });
+    tester.listen(port, "0.0.0.0");
+  });
+}
+
+async function findAvailablePort(startPort: number, maxTries: number = 30): Promise<number> {
+  // If hosted on cloud providers (e.g. Render) where PORT is assigned by the host, use it directly
+  if (process.env.RENDER) {
+    return Number(process.env.PORT) || startPort;
+  }
+  for (let p = startPort; p < startPort + maxTries; p++) {
+    if (await checkPortFree(p)) {
+      return p;
+    }
+  }
+  return startPort;
+}
+
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  const requestedPort = Number(process.env.PORT) || 3001;
+  const PORT = await findAvailablePort(requestedPort);
 
   // Determine production environment reliably across Render, local builds, and process runners
   const isProduction =
@@ -101,7 +127,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`SpendSmart Server is live on port ${PORT} [Mode: ${isProduction ? "PRODUCTION" : "DEVELOPMENT"}]`);
+    console.log(`SpendSmart Server is live on port ${PORT} -> http://localhost:${PORT} [Mode: ${isProduction ? "PRODUCTION" : "DEVELOPMENT"}]`);
   });
 
   // Helper redirect: if port 5173 is visited in local development, automatically forward to port 3000
